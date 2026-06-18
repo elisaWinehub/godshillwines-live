@@ -1,0 +1,293 @@
+{% comment %} Contact · Our Team card grid with alternating backgrounds {% endcomment %}
+{% liquid
+  assign show = section.settings.section_enabled | default: true
+  assign root_class = 'gh-ctg'
+  if section.settings.custom_css_class != blank
+    assign root_class = root_class | append: ' ' | append: section.settings.custom_css_class | strip
+  endif
+%}
+{% unless show %}
+  <div {{ section.shopify_attributes }} hidden></div>
+{% else %}
+  <section
+    id="GHCTG-{{ section.id }}"
+    class="{{ root_class }}"
+    {{ section.shopify_attributes }}
+    style="
+      --gh-ctg-bg: {{ section.settings.section_background }};
+      --gh-ctg-pt: {{ section.settings.padding_top }}px;
+      --gh-ctg-pb: {{ section.settings.padding_bottom }}px;
+      --gh-ctg-cw: {{ section.settings.container_width }}px;
+      --gh-ctg-heading: {{ section.settings.heading_color }};
+      --gh-ctg-heading-m: {{ section.settings.heading_size_mobile }}px;
+      --gh-ctg-heading-d: {{ section.settings.heading_size_desktop }}px;
+      --gh-ctg-div: {{ section.settings.divider_color }};
+      --gh-ctg-card-1: {{ section.settings.card_background_1 }};
+      --gh-ctg-card-2: {{ section.settings.card_background_2 }};
+      --gh-ctg-border: {{ section.settings.card_border_color }};
+      --gh-ctg-border-h: {{ section.settings.card_hover_border_color }};
+      --gh-ctg-pad: {{ section.settings.card_padding }}px;
+      --gh-ctg-title: {{ section.settings.card_title_color }};
+      --gh-ctg-text: {{ section.settings.text_color }};
+      --gh-ctg-link: {{ section.settings.link_color }};
+      --gh-ctg-d: {{ section.settings.columns_desktop }};
+      --gh-ctg-t: {{ section.settings.columns_tablet }};
+      --gh-ctg-m: {{ section.settings.columns_mobile }};
+      --gh-ctg-gap: {{ section.settings.grid_gap }}px;
+    "
+    data-hover="{% if section.settings.enable_hover_effect %}true{% else %}false{% endif %}"
+  >
+    <div class="gh-ctg__inner">
+      {% if section.settings.heading != blank %}
+        <header class="gh-ctg__header">
+          <h2 class="gh-ctg__heading">{{ section.settings.heading }}</h2>
+          <div class="gh-ctg__divider" role="presentation" aria-hidden="true"></div>
+        </header>
+      {% endif %}
+
+      {% if section.blocks.size == 0 %}
+        <p class="gh-ctg__empty">Add team card blocks in the theme editor.</p>
+      {% else %}
+        <ul class="gh-ctg__grid" role="list">
+          {% for block in section.blocks %}
+            {% case block.type %}
+              {% when 'team_card' %}
+                {% assign alt_bg = forloop.index | modulo: 2 %}
+                <li
+                  class="gh-ctg__card{% if alt_bg == 0 %} gh-ctg__card--alt{% endif %}"
+                  {{ block.shopify_attributes }}
+                >
+                  {% if block.settings.title != blank %}
+                    <h3 class="gh-ctg__card-title">{{ block.settings.title }}</h3>
+                  {% endif %}
+                  {% if block.settings.content != blank %}
+                    <div class="gh-ctg__card-body rte">{{ block.settings.content }}</div>
+                  {% endif %}
+                </li>
+            {% endcase %}
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+  </section>
+
+  <style>
+    #GHCTG-{{ section.id }}.gh-ctg {
+      background: var(--gh-ctg-bg);
+      padding-block: var(--gh-ctg-pt) var(--gh-ctg-pb);
+      color: var(--gh-ctg-text);
+    }
+    #GHCTG-{{ section.id }} .gh-ctg__inner {
+      width: min(100%, var(--gh-ctg-cw));
+      margin-inline: auto;
+      padding-inline: clamp(16px, 3vw, 32px);
+    }
+    #GHCTG-{{ section.id }} .gh-ctg__header {
+      text-align: center;
+      margin-bottom: clamp(32px, 5vw, 48px);
+    }
+    #GHCTG-{{ section.id }} .gh-ctg__heading {
+      margin: 0 0 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(var(--gh-ctg-heading-m), 3vw, var(--gh-ctg-heading-d));
+      font-weight: 500;
+      color: var(--gh-ctg-heading);
+    }
+    #GHCTG-{{ section.id }} .gh-ctg__divider {
+      width: 48px;
+      height: 2px;
+      background: var(--gh-ctg-div);
+      margin-inline: auto;
+    }
+    #GHCTG-{{ section.id }} .gh-ctg__empty {
+      text-align: center;
+      opacity: 0.7;
+    }
+    #GHCTG-{{ section.id }} .gh-ctg__grid {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(var(--gh-ctg-m), minmax(0, 1fr));
+      gap: var(--gh-ctg-gap);
+      align-items: stretch;
+    }
+    @media screen and (min-width: 750px) {
+      #GHCTG-{{ section.id }} .gh-ctg__grid {
+        grid-template-columns: repeat(var(--gh-ctg-t), minmax(0, 1fr));
+      }
+    }
+    @media screen and (min-width: 990px) {
+      #GHCTG-{{ section.id }} .gh-ctg__grid {
+        grid-template-columns: repeat(var(--gh-ctg-d), minmax(0, 1fr));
+      }
+    }
+    #GHCTG-{{ section.id }} .gh-ctg__card {
+      background: var(--gh-ctg-card-1);
+      border: 1px solid var(--gh-ctg-border);
+      padding: var(--gh-ctg-pad);
+      text-align: center;
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      box-shadow: 0 4px 18px rgb(0 0 0 / 0.04);
+      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+    }
+    #GHCTG-{{ section.id }} .gh-ctg__card--alt {
+      background: var(--gh-ctg-card-2);
+    }
+    #GHCTG-{{ section.id }}[data-hover='true'] .gh-ctg__card:hover {
+      transform: translateY(-3px);
+      border-color: var(--gh-ctg-border-h);
+      box-shadow: 0 10px 28px rgb(0 0 0 / 0.08);
+    }
+    #GHCTG-{{ section.id }} .gh-ctg__card-title {
+      margin: 0 0 14px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gh-ctg-title);
+      line-height: 1.4;
+    }
+    #GHCTG-{{ section.id }} .gh-ctg__card-body {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--gh-ctg-text);
+    }
+    #GHCTG-{{ section.id }} .gh-ctg__card-body :is(p, ul, ol) { margin: 0; }
+    #GHCTG-{{ section.id }} .gh-ctg__card-body :is(p + p) { margin-top: 0.65em; }
+    #GHCTG-{{ section.id }} .gh-ctg__card-body a {
+      color: var(--gh-ctg-link);
+      text-decoration: none;
+    }
+    #GHCTG-{{ section.id }} .gh-ctg__card-body a:hover {
+      text-decoration: underline;
+    }
+  </style>
+{% endunless %}
+
+{% schema %}
+{
+  "name": "Contact team grid",
+  "tag": "section",
+  "class": "gh-contact-team-grid",
+  "max_blocks": 24,
+  "settings": [
+    { "type": "checkbox", "id": "section_enabled", "label": "Show section", "default": true },
+    { "type": "color", "id": "section_background", "label": "Section background", "default": "#FFFFFF" },
+    { "type": "range", "id": "container_width", "label": "Container max width", "min": 960, "max": 1440, "step": 20, "unit": "px", "default": 1200 },
+    { "type": "range", "id": "padding_top", "label": "Padding top", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding bottom", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "OUR TEAM" },
+    { "type": "color", "id": "heading_color", "label": "Heading colour", "default": "#B29B33" },
+    { "type": "range", "id": "heading_size_mobile", "label": "Heading size mobile", "min": 22, "max": 36, "step": 2, "unit": "px", "default": 26 },
+    { "type": "range", "id": "heading_size_desktop", "label": "Heading size desktop", "min": 26, "max": 48, "step": 2, "unit": "px", "default": 36 },
+    { "type": "color", "id": "divider_color", "label": "Divider colour", "default": "#B29B33" },
+    { "type": "range", "id": "columns_desktop", "label": "Desktop columns", "min": 1, "max": 4, "step": 1, "default": 3 },
+    { "type": "range", "id": "columns_tablet", "label": "Tablet columns", "min": 1, "max": 3, "step": 1, "default": 2 },
+    { "type": "range", "id": "columns_mobile", "label": "Mobile columns", "min": 1, "max": 3, "step": 1, "default": 1 },
+    { "type": "range", "id": "grid_gap", "label": "Grid gap", "min": 12, "max": 40, "step": 4, "unit": "px", "default": 20 },
+    { "type": "color", "id": "card_background_1", "label": "Card background 1", "default": "#FFFFFF" },
+    { "type": "color", "id": "card_background_2", "label": "Card background 2", "default": "#F3EDE3" },
+    { "type": "color", "id": "card_border_color", "label": "Card border colour", "default": "#E8DFD0" },
+    { "type": "color", "id": "card_hover_border_color", "label": "Card hover border", "default": "#B29B33" },
+    { "type": "range", "id": "card_padding", "label": "Card padding", "min": 20, "max": 48, "step": 4, "unit": "px", "default": 28 },
+    { "type": "color", "id": "card_title_color", "label": "Card title colour", "default": "#1F1A14" },
+    { "type": "color", "id": "text_color", "label": "Text colour", "default": "#333333" },
+    { "type": "color", "id": "link_color", "label": "Link / email colour", "default": "#B29B33" },
+    { "type": "checkbox", "id": "enable_hover_effect", "label": "Enable card hover effect", "default": true },
+    { "type": "text", "id": "custom_css_class", "label": "Custom CSS class" }
+  ],
+  "blocks": [
+    {
+      "type": "team_card",
+      "name": "Team card",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Role / department", "default": "DEPARTMENT" },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Card content",
+          "default": "<p>Name<br><a href=\"mailto:email@example.com\">email@example.com</a><br>Mobile: 0000 000 000</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contact team grid",
+      "category": "God's Hill",
+      "blocks": [
+        {
+          "type": "team_card",
+          "settings": {
+            "title": "ASSISTING GENERAL MANAGER",
+            "content": "<p>Edward Scalzi<br>Mobile: 0412 107 926</p><p>OR</p><p>Felice Scalzi<br>Mobile: 0408 808 150</p><p><a href=\"mailto:sales@godshillwines.com\">sales@godshillwines.com</a></p>"
+          }
+        },
+        {
+          "type": "team_card",
+          "settings": {
+            "title": "SALES & MARKETING",
+            "content": "<p>Carmine (Charlie) Scalzi</p><p><a href=\"mailto:sales@godshillwines.com\">sales@godshillwines.com</a></p><p>Mobile: 0412 836 004</p><p>Wechat: wxid_aastjjnoaOwsf2</p>"
+          }
+        },
+        {
+          "type": "team_card",
+          "settings": {
+            "title": "CELLAR DOOR",
+            "content": "<p>Tristan Massara</p><p><a href=\"mailto:tristanmassara@godshillwines.com\">tristanmassara@godshillwines.com</a></p><p>Mobile: 0422 588 605</p>"
+          }
+        },
+        {
+          "type": "team_card",
+          "settings": {
+            "title": "RESTAURANT",
+            "content": "<p>Edward Scalzi</p><p><a href=\"mailto:edward@scalziwines.com\">edward@scalziwines.com</a></p><p>Mobile: 0468 420 883</p>"
+          }
+        },
+        {
+          "type": "team_card",
+          "settings": {
+            "title": "EXPORT / IMPORT",
+            "content": "<p>Charlie Scalzi</p><p><a href=\"mailto:charlie@godshillwines.com\">charlie@godshillwines.com</a></p><p>Mobile: 0412 836 004</p><p>International Exports</p><p>John Gallagher</p><p>Mobile: 0418 819 537</p><p>E: john.g@horizoninternational.com.au</p>"
+          }
+        },
+        {
+          "type": "team_card",
+          "settings": {
+            "title": "SA SALES",
+            "content": "<p>Tristan Massara</p><p><a href=\"mailto:sales@scalziwines.com\">sales@scalziwines.com</a></p>"
+          }
+        },
+        {
+          "type": "team_card",
+          "settings": {
+            "title": "OFFICE ADMIN/ACCOUNTS",
+            "content": "<p>Charlie Scalzi</p><p><a href=\"mailto:charlie@godshillwines.com\">charlie@godshillwines.com</a></p><p>Mobile: 0412 836 004</p>"
+          }
+        },
+        {
+          "type": "team_card",
+          "settings": {
+            "title": "EUROPEAN DISTRIBUTOR",
+            "content": "<p>TERROIRS ITALIA</p><p>Claudio Serena</p><p>E: info@terroirsitalia.it</p><p>Phone: +39 366 8249494</p>"
+          }
+        },
+        {
+          "type": "team_card",
+          "settings": {
+            "title": "NSW & VIC DISTRIBUTOR",
+            "content": "<p>Il Mercante | Antonio Brunetti</p><p><a href=\"mailto:antonio@ilmercante.com.au\">antonio@ilmercante.com.au</a></p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

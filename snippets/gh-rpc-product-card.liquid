@@ -1,0 +1,39 @@
+{% comment %} Product card snippet for related products carousel {% endcomment %}
+{% liquid
+  assign card_product = product
+  assign card_variant = card_product.selected_or_first_available_variant
+  assign card_image = card_variant.featured_media | default: card_product.featured_media
+
+  assign subtitle_text = ''
+  if show_subtitle
+    if subtitle_metafield != blank
+      assign mf = card_product.metafields.custom[subtitle_metafield]
+      if mf != blank
+        assign subtitle_text = mf.value | default: mf
+      endif
+    endif
+    if subtitle_text == blank
+      assign subtitle_text = card_product.vendor
+    endif
+  endif
+%}
+<article class="gh-rpc__slide" role="listitem" aria-roledescription="slide">
+  <a href="{{ card_product.url }}" class="gh-rpc__card">
+    <div class="gh-rpc__card-media">
+      {% if card_image %}
+        {{
+          card_image
+          | image_url: width: 600
+          | image_tag: loading: 'lazy', class: 'gh-rpc__card-img', widths: '300,600', alt: card_product.title
+        }}
+      {% else %}
+        {{ 'product-apparel-2' | placeholder_svg_tag: 'gh-rpc__card-img' }}
+      {% endif %}
+    </div>
+    <h3 class="gh-rpc__card-title">{{ card_product.title }}</h3>
+    {% if subtitle_text != blank %}
+      <p class="gh-rpc__card-sub">{{ subtitle_text }}</p>
+    {% endif %}
+    <p class="gh-rpc__card-price">{{ card_variant.price | money }} AUD</p>
+  </a>
+</article>

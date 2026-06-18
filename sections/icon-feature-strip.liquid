@@ -1,0 +1,666 @@
+{% comment %} Icon feature strip · optional dark inner card over vineyard background {% endcomment %}
+{% liquid
+  assign show = section.settings.section_enabled | default: true
+  assign overlay_o = section.settings.overlay_opacity | divided_by: 100.0
+  assign inner_o = section.settings.inner_background_opacity | divided_by: 100.0
+  assign inner_bg = section.settings.inner_background_color | color_modify: 'alpha', inner_o
+  assign div_o = section.settings.divider_opacity | divided_by: 100.0
+  assign div_color = section.settings.divider_color | color_modify: 'alpha', div_o
+%}
+{% unless show %}
+  <div {{ section.shopify_attributes }} hidden></div>
+{% else %}
+  <section
+    id="GHIFS-{{ section.id }}"
+    class="gh-ifs{% if section.settings.enable_inner_card %} gh-ifs--card{% endif %}"
+    {{ section.shopify_attributes }}
+    style="
+      --gh-ifs-bg: {{ section.settings.background_color }};
+      --gh-ifs-pt: {{ section.settings.padding_top }}px;
+      --gh-ifs-pb: {{ section.settings.padding_bottom }}px;
+      --gh-ifs-cw: {{ section.settings.container_width }}px;
+      --gh-ifs-gap: {{ section.settings.column_gap }}px;
+      --gh-ifs-d: {{ section.settings.columns_desktop }};
+      --gh-ifs-t: {{ section.settings.columns_tablet }};
+      --gh-ifs-m: {{ section.settings.columns_mobile }};
+      --gh-ifs-icon: {{ section.settings.icon_size }}px;
+      --gh-ifs-icon-color: {{ section.settings.icon_color }};
+      --gh-ifs-title-m: {{ section.settings.title_size_mobile }}px;
+      --gh-ifs-title-d: {{ section.settings.title_size_desktop }}px;
+      --gh-ifs-title-fw: {{ section.settings.title_weight }};
+      --gh-ifs-title-color: {{ section.settings.title_color }};
+      --gh-ifs-text: {{ section.settings.text_size }}px;
+      --gh-ifs-text-color: {{ section.settings.text_color }};
+      --gh-ifs-divider: {{ div_color }};
+      --gh-ifs-div-w: {{ section.settings.divider_width }}px;
+      --gh-ifs-div-h: {{ section.settings.divider_height }}%;
+      --gh-ifs-overlay: {{ section.settings.overlay_color }};
+      --gh-ifs-overlay-o: {{ overlay_o }};
+      --gh-ifs-card-bg: {{ inner_bg }};
+      --gh-ifs-card-radius: {{ section.settings.inner_border_radius }}px;
+      --gh-ifs-card-pad-d: {{ section.settings.inner_padding_desktop }}px;
+      --gh-ifs-card-pad-m: {{ section.settings.inner_padding_mobile }}px;
+      --gh-ifs-card-max: {{ section.settings.inner_max_width }}px;
+    "
+    data-show-dividers="{% if section.settings.show_dividers %}true{% else %}false{% endif %}"
+    data-inner-shadow="{% if section.settings.inner_shadow %}true{% else %}false{% endif %}"
+  >
+    {% if section.settings.background_image != blank %}
+      <div class="gh-ifs__backdrop" aria-hidden="true">
+        {{
+          section.settings.background_image
+          | image_url: width: 2400
+          | image_tag: loading: 'lazy', class: 'gh-ifs__backdrop-img', widths: '900,1400,2000'
+        }}
+        <div class="gh-ifs__backdrop-overlay"></div>
+      </div>
+    {% endif %}
+
+    <div class="gh-ifs__shell">
+      <div class="gh-ifs__inner">
+        {% if section.blocks.size == 0 %}
+          <p class="gh-ifs__empty">Add feature blocks in the theme editor.</p>
+        {% else %}
+          <ul class="gh-ifs__grid" role="list">
+            {% for block in section.blocks %}
+              {% liquid
+                assign col_o = block.settings.column_background_opacity | divided_by: 100.0
+                assign col_bg = block.settings.column_background_color | color_modify: 'alpha', col_o
+                assign block_icon_size = block.settings.icon_size | default: section.settings.icon_size
+                assign block_icon_color = block.settings.icon_color
+                if block_icon_color == blank
+                  assign block_icon_color = section.settings.icon_color
+                endif
+                assign block_title_color = block.settings.title_color
+                if block_title_color == blank
+                  assign block_title_color = section.settings.title_color
+                endif
+                assign block_text_color = block.settings.text_color
+                if block_text_color == blank
+                  assign block_text_color = section.settings.text_color
+                endif
+              %}
+              <li
+                class="gh-ifs__item"
+                style="
+                  --gh-ifs-item-bg: {{ col_bg }};
+                  --gh-ifs-item-pad: {{ block.settings.column_padding }}px;
+                  --gh-ifs-item-radius: {{ block.settings.column_border_radius }}px;
+                  --gh-ifs-icon: {{ block_icon_size }}px;
+                  --gh-ifs-icon-color: {{ block_icon_color }};
+                  --gh-ifs-title-color: {{ block_title_color }};
+                  --gh-ifs-text-color: {{ block_text_color }};
+                "
+                {{ block.shopify_attributes }}
+              >
+                <div class="gh-ifs__item-inner">
+                  <div class="gh-ifs__icon-wrap">
+                    {% if block.settings.icon_image != blank %}
+                      {{
+                        block.settings.icon_image
+                        | image_url: width: 160
+                        | image_tag: loading: 'lazy', class: 'gh-ifs__icon-img', widths: '64,96,128,160', alt: block.settings.title
+                      }}
+                    {% else %}
+                      <span class="gh-ifs__icon-svg" aria-hidden="true">
+                        {% case block.settings.icon_preset %}
+                          {% when 'pairing' %}
+                            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="presentation">
+                              <path d="M22 10h20v24a10 10 0 0 1-20 0V10Z" stroke="currentColor" stroke-width="2"/>
+                              <path d="M32 34v8M26 52h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                              <path d="M44 18h8M44 26h8M44 34h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                          {% when 'leaf' %}
+                            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="presentation">
+                              <path d="M32 8C18 8 10 24 10 36c0 12 10 20 22 20s22-8 22-20C54 24 46 8 32 8Z" stroke="currentColor" stroke-width="2"/>
+                              <path d="M32 8v48M20 28h24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                          {% when 'chef_hat' %}
+                            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="presentation">
+                              <path d="M16 30c0-8 7-14 16-14s16 6 16 14" stroke="currentColor" stroke-width="2"/>
+                              <path d="M12 30h40v8c0 4-8 8-20 8s-20-4-20-8v-8Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                              <path d="M24 30V22M32 30V18M40 30V22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                          {% when 'hospitality' %}
+                            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="presentation">
+                              <path d="M32 10l4 10h10l-8 7 3 10-9-6-9 6 3-10-8-7h10l4-10Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                              <path d="M20 48h24M32 38v10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                          {% when 'barrel' %}
+                            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="presentation">
+                              <ellipse cx="32" cy="14" rx="18" ry="6" stroke="currentColor" stroke-width="2"/>
+                              <path d="M14 14v36c0 3.3 8.1 6 18 6s18-2.7 18-6V14" stroke="currentColor" stroke-width="2"/>
+                              <path d="M14 28h36M14 42h36" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                          {% when 'vineyard' %}
+                            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="presentation">
+                              <circle cx="48" cy="16" r="8" stroke="currentColor" stroke-width="2"/>
+                              <path d="M8 52h48M16 52V30l16-10 16 10v22" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                              <path d="M24 52V36M40 52V36" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                          {% when 'wine_glass' %}
+                            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="presentation">
+                              <path d="M18 12h28l-6 22a14 14 0 0 1-16 0L18 12Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                              <path d="M32 34v14M22 52h20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                          {% else %}
+                            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="presentation">
+                              <circle cx="20" cy="22" r="6" stroke="currentColor" stroke-width="2"/>
+                              <circle cx="32" cy="16" r="6" stroke="currentColor" stroke-width="2"/>
+                              <circle cx="44" cy="22" r="6" stroke="currentColor" stroke-width="2"/>
+                              <path d="M14 28c4 8 12 14 18 14s14-6 18-14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                              <path d="M32 42v8M24 52h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        {% endcase %}
+                      </span>
+                    {% endif %}
+                  </div>
+                  {% if block.settings.title != blank %}
+                    <h3 class="gh-ifs__title">{{ block.settings.title }}</h3>
+                  {% endif %}
+                  {% if block.settings.text != blank %}
+                    <p class="gh-ifs__text">{{ block.settings.text }}</p>
+                  {% endif %}
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <style>
+    #GHIFS-{{ section.id }}.gh-ifs {
+      position: relative;
+      background: var(--gh-ifs-bg);
+      padding-block: var(--gh-ifs-pt) var(--gh-ifs-pb);
+      color: var(--gh-ifs-text-color);
+      overflow: hidden;
+    }
+    #GHIFS-{{ section.id }} .gh-ifs__backdrop {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+    #GHIFS-{{ section.id }} .gh-ifs__backdrop-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    #GHIFS-{{ section.id }} .gh-ifs__backdrop-overlay {
+      position: absolute;
+      inset: 0;
+      background: var(--gh-ifs-overlay);
+      opacity: var(--gh-ifs-overlay-o);
+    }
+    #GHIFS-{{ section.id }} .gh-ifs__shell {
+      position: relative;
+      z-index: 1;
+      width: min(100%, var(--gh-ifs-cw));
+      margin-inline: auto;
+      padding-inline: clamp(16px, 3vw, 32px);
+    }
+    #GHIFS-{{ section.id }}.gh-ifs--card .gh-ifs__inner {
+      background: var(--gh-ifs-card-bg);
+      border-radius: var(--gh-ifs-card-radius);
+      padding: var(--gh-ifs-card-pad-m);
+      width: min(100%, var(--gh-ifs-card-max));
+      margin-inline: auto;
+    }
+    #GHIFS-{{ section.id }}[data-inner-shadow='true'].gh-ifs--card .gh-ifs__inner {
+      box-shadow: 0 18px 48px rgb(0 0 0 / 0.22);
+    }
+    @media screen and (min-width: 750px) {
+      #GHIFS-{{ section.id }}.gh-ifs--card .gh-ifs__inner {
+        padding: var(--gh-ifs-card-pad-d);
+      }
+    }
+    #GHIFS-{{ section.id }} .gh-ifs__empty {
+      text-align: center;
+      margin: 0;
+      opacity: 0.7;
+    }
+    #GHIFS-{{ section.id }} .gh-ifs__grid {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(var(--gh-ifs-m), minmax(0, 1fr));
+      gap: var(--gh-ifs-gap);
+    }
+    @media screen and (min-width: 750px) {
+      #GHIFS-{{ section.id }} .gh-ifs__grid {
+        grid-template-columns: repeat(var(--gh-ifs-t), minmax(0, 1fr));
+      }
+    }
+    @media screen and (min-width: 990px) {
+      #GHIFS-{{ section.id }} .gh-ifs__grid {
+        grid-template-columns: repeat(var(--gh-ifs-d), minmax(0, 1fr));
+      }
+    }
+    #GHIFS-{{ section.id }} .gh-ifs__item {
+      position: relative;
+      text-align: center;
+    }
+    #GHIFS-{{ section.id }} .gh-ifs__item-inner {
+      background: var(--gh-ifs-item-bg, transparent);
+      border-radius: var(--gh-ifs-item-radius, 0);
+      padding: var(--gh-ifs-item-pad, 0);
+      height: 100%;
+    }
+    #GHIFS-{{ section.id }}[data-show-dividers='true'] .gh-ifs__item + .gh-ifs__item::before {
+      content: '';
+      position: absolute;
+      left: calc(var(--gh-ifs-gap) * -0.5);
+      top: calc((100% - var(--gh-ifs-div-h, 84%)) / 2);
+      height: var(--gh-ifs-div-h, 84%);
+      width: var(--gh-ifs-div-w, 1px);
+      background: var(--gh-ifs-divider);
+    }
+    @media screen and (max-width: 749px) {
+      #GHIFS-{{ section.id }}[data-show-dividers='true'] .gh-ifs__item + .gh-ifs__item::before {
+        display: none;
+      }
+    }
+    #GHIFS-{{ section.id }} .gh-ifs__icon-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 16px;
+      min-height: var(--gh-ifs-icon);
+    }
+    #GHIFS-{{ section.id }} .gh-ifs__icon-svg {
+      display: inline-flex;
+      width: var(--gh-ifs-icon);
+      height: var(--gh-ifs-icon);
+      color: var(--gh-ifs-icon-color);
+    }
+    #GHIFS-{{ section.id }} .gh-ifs__icon-svg svg {
+      width: 100%;
+      height: 100%;
+    }
+    #GHIFS-{{ section.id }} .gh-ifs__icon-img {
+      width: var(--gh-ifs-icon);
+      height: var(--gh-ifs-icon);
+      object-fit: contain;
+    }
+    #GHIFS-{{ section.id }} .gh-ifs__title {
+      margin: 0 0 10px;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(var(--gh-ifs-title-m), 2vw, var(--gh-ifs-title-d));
+      font-weight: var(--gh-ifs-title-fw);
+      color: var(--gh-ifs-title-color);
+      line-height: 1.2;
+    }
+    #GHIFS-{{ section.id }} .gh-ifs__text {
+      margin: 0;
+      font-size: var(--gh-ifs-text);
+      line-height: 1.55;
+      color: var(--gh-ifs-text-color);
+      max-width: 28ch;
+      margin-inline: auto;
+    }
+  </style>
+{% endunless %}
+
+{% schema %}
+{
+  "name": "Icon feature strip",
+  "tag": "section",
+  "class": "gh-icon-feature-strip",
+  "max_blocks": 8,
+  "settings": [
+    { "type": "checkbox", "id": "section_enabled", "label": "Show section", "default": true },
+    { "type": "header", "content": "Section background" },
+    { "type": "color", "id": "background_color", "label": "Background colour", "default": "#1A2414" },
+    { "type": "image_picker", "id": "background_image", "label": "Background image", "info": "Upload a vineyard or hero image." },
+    { "type": "color", "id": "overlay_color", "label": "Section overlay colour", "default": "#1A2414" },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Section overlay opacity",
+      "min": 0,
+      "max": 95,
+      "step": 1,
+      "unit": "%",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "label": "Container max width",
+      "min": 960,
+      "max": 1440,
+      "step": 20,
+      "unit": "px",
+      "default": 1200
+    },
+    { "type": "header", "content": "Inner card" },
+    { "type": "checkbox", "id": "enable_inner_card", "label": "Enable inner background card", "default": true },
+    { "type": "color", "id": "inner_background_color", "label": "Inner background colour", "default": "#1A2414" },
+    {
+      "type": "range",
+      "id": "inner_background_opacity",
+      "label": "Inner background opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 88
+    },
+    {
+      "type": "range",
+      "id": "inner_border_radius",
+      "label": "Inner border radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "inner_padding_desktop",
+      "label": "Inner padding desktop",
+      "min": 16,
+      "max": 96,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "inner_padding_mobile",
+      "label": "Inner padding mobile",
+      "min": 16,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "inner_max_width",
+      "label": "Inner max width",
+      "min": 800,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "default": 1200
+    },
+    { "type": "checkbox", "id": "inner_shadow", "label": "Enable inner shadow", "default": true },
+    { "type": "header", "content": "Columns" },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Desktop columns",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "label": "Tablet columns",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Mobile columns",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Column gap",
+      "min": 12,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    { "type": "header", "content": "Default typography & icons" },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Default icon size",
+      "min": 32,
+      "max": 96,
+      "step": 4,
+      "unit": "px",
+      "default": 52
+    },
+    { "type": "color", "id": "icon_color", "label": "Default icon colour", "default": "#C49A52" },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Title size mobile",
+      "min": 16,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "label": "Title size desktop",
+      "min": 18,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 22
+    },
+    {
+      "type": "select",
+      "id": "title_weight",
+      "label": "Title weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "500"
+    },
+    { "type": "color", "id": "title_color", "label": "Default title colour", "default": "#F9F7F2" },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Default description size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    { "type": "color", "id": "text_color", "label": "Default description colour", "default": "#E8E2D8" },
+    { "type": "header", "content": "Dividers" },
+    { "type": "checkbox", "id": "show_dividers", "label": "Show vertical dividers", "default": true },
+    { "type": "color", "id": "divider_color", "label": "Divider colour", "default": "#C49A52" },
+    {
+      "type": "range",
+      "id": "divider_opacity",
+      "label": "Divider opacity",
+      "min": 10,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 70
+    },
+    {
+      "type": "range",
+      "id": "divider_height",
+      "label": "Divider height",
+      "min": 40,
+      "max": 100,
+      "step": 2,
+      "unit": "%",
+      "default": 84
+    },
+    {
+      "type": "range",
+      "id": "divider_width",
+      "label": "Divider width",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon_preset",
+          "label": "Default icon",
+          "options": [
+            { "value": "grape", "label": "Grapes" },
+            { "value": "barrel", "label": "Barrel" },
+            { "value": "vineyard", "label": "Vineyard / estate" },
+            { "value": "wine_glass", "label": "Wine glass" },
+            { "value": "pairing", "label": "Pairing / dining" },
+            { "value": "leaf", "label": "Leaf / local" },
+            { "value": "chef_hat", "label": "Chef hat" },
+            { "value": "hospitality", "label": "Hospitality" }
+          ],
+          "default": "pairing"
+        },
+        { "type": "image_picker", "id": "icon_image", "label": "Custom icon image", "info": "Overrides the default icon when set." },
+        {
+          "type": "range",
+          "id": "icon_size",
+          "label": "Icon size",
+          "min": 0,
+          "max": 96,
+          "step": 4,
+          "unit": "px",
+          "default": 0,
+          "info": "0 uses section default."
+        },
+        { "type": "color", "id": "icon_color", "label": "Icon colour" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Feature title" },
+        { "type": "textarea", "id": "text", "label": "Description", "default": "Short supporting description for this feature." },
+        { "type": "color", "id": "title_color", "label": "Title colour" },
+        { "type": "color", "id": "text_color", "label": "Description colour" },
+        { "type": "color", "id": "column_background_color", "label": "Column background", "default": "#1A2414" },
+        {
+          "type": "range",
+          "id": "column_background_opacity",
+          "label": "Column background opacity",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "column_padding",
+          "label": "Column padding",
+          "min": 0,
+          "max": 40,
+          "step": 4,
+          "unit": "px",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "column_border_radius",
+          "label": "Column border radius",
+          "min": 0,
+          "max": 20,
+          "step": 2,
+          "unit": "px",
+          "default": 0
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Icon feature strip",
+      "category": "God's Hill",
+      "settings": {
+        "enable_inner_card": true,
+        "inner_background_color": "#1A2414",
+        "inner_background_opacity": 88,
+        "inner_border_radius": 12,
+        "title_color": "#F9F7F2",
+        "text_color": "#E8E2D8",
+        "icon_color": "#C49A52",
+        "divider_color": "#C49A52",
+        "overlay_opacity": 20
+      },
+      "blocks": [
+        {
+          "type": "feature",
+          "settings": {
+            "icon_preset": "pairing",
+            "title": "Perfect Pairings",
+            "text": "Our menu is thoughtfully crafted to pair beautifully with our estate wines, creating an unforgettable dining experience."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon_preset": "leaf",
+            "title": "Local Ingredients",
+            "text": "Sourced locally and seasonally for exceptional flavour and the freshest taste."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon_preset": "chef_hat",
+            "title": "Traditional Recipes",
+            "text": "Authentic Italian recipes passed down through generations."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon_preset": "hospitality",
+            "title": "Warm Hospitality",
+            "text": "Enjoy genuine hospitality in a beautiful vineyard setting."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

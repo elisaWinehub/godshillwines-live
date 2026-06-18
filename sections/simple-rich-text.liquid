@@ -1,0 +1,350 @@
+{% liquid
+  assign subtitle_font_style_css = 'normal'
+  assign subtitle_text_transform = 'none'
+  case section.settings.subtitle_font_style
+    when 'italic'
+      assign subtitle_font_style_css = 'italic'
+    when 'uppercase'
+      assign subtitle_text_transform = 'uppercase'
+      assign subtitle_font_style_css = 'normal'
+  endcase
+
+  assign heading_weight = 400
+  case section.settings.heading_font_weight
+    when 'medium'
+      assign heading_weight = 500
+    when 'bold'
+      assign heading_weight = 700
+  endcase
+
+  assign text_lh = section.settings.text_line_height | times: 1.0 | divided_by: 100.0
+
+  assign align_items = 'flex-start'
+  assign text_align = 'start'
+  case section.settings.text_alignment
+    when 'center'
+      assign align_items = 'center'
+      assign text_align = 'center'
+    when 'right'
+      assign align_items = 'flex-end'
+      assign text_align = 'end'
+  endcase
+
+  assign root_class = 'simple-rich-text simple-rich-text--scoped simple-rich-text--' | append: section.id | append: ' simple-rich-text--box-' | append: section.settings.text_alignment
+-%}
+
+<div
+  class="{{ root_class }}"
+  {{ section.shopify_attributes }}
+  style="
+    --srt-pad-top: {{ section.settings.section_padding_top }}px;
+    --srt-pad-bottom: {{ section.settings.section_padding_bottom }}px;
+    --srt-shell-max: {{ section.settings.section_max_width }}px;
+    --srt-content-max: {{ section.settings.content_max_width }}px;
+    --srt-bg: {{ section.settings.section_background_color }};
+    --srt-align: {{ align_items }};
+    --srt-text-align: {{ text_align }};
+    --srt-subtitle-size: {{ section.settings.subtitle_font_size }}px;
+    --srt-subtitle-style: {{ subtitle_font_style_css }};
+    --srt-subtitle-transform: {{ subtitle_text_transform }};
+    --srt-subtitle-color: {{ section.settings.subtitle_color }};
+    --srt-heading-size: {{ section.settings.heading_font_size }}px;
+    --srt-heading-weight: {{ heading_weight }};
+    --srt-heading-color: {{ section.settings.heading_color }};
+    --srt-text-size: {{ section.settings.text_font_size }}px;
+    --srt-text-color: {{ section.settings.text_color }};
+    --srt-text-lh: {{ text_lh }};
+    --srt-divider: {{ section.settings.divider_icon_color }};
+  "
+>
+  {% style %}
+    .simple-rich-text--{{ section.id }} {
+      background-color: var(--srt-bg);
+      padding-block-start: var(--srt-pad-top);
+      padding-block-end: var(--srt-pad-bottom);
+    }
+
+    .simple-rich-text--{{ section.id }} .simple-rich-text__shell {
+      width: 100%;
+      max-width: var(--srt-shell-max);
+      margin-inline: auto;
+      padding-inline: var(--page-margin, 1.25rem);
+    }
+
+    .simple-rich-text--{{ section.id }} .simple-rich-text__inner {
+      width: 100%;
+      max-width: min(var(--srt-content-max), 100%);
+      margin-inline: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: var(--srt-align);
+      text-align: var(--srt-text-align);
+    }
+
+    .simple-rich-text--{{ section.id }}.simple-rich-text--box-center .simple-rich-text__inner {
+      margin-inline: auto;
+    }
+
+    .simple-rich-text--{{ section.id }}.simple-rich-text--box-right .simple-rich-text__inner {
+      margin-inline-start: auto;
+      margin-inline-end: 0;
+    }
+
+    .simple-rich-text--{{ section.id }} .simple-rich-text__subtitle {
+      margin: 0 0 0.65rem;
+      font-size: clamp(calc(var(--srt-subtitle-size) * 0.85), 2.8vw, var(--srt-subtitle-size));
+      font-style: var(--srt-subtitle-style);
+      text-transform: var(--srt-subtitle-transform);
+      color: var(--srt-subtitle-color);
+      letter-spacing: 0.06em;
+    }
+
+    .simple-rich-text--{{ section.id }} .simple-rich-text__subtitle.srt-subtitle--uppercase {
+      letter-spacing: 0.14em;
+    }
+
+    .simple-rich-text--{{ section.id }} .simple-rich-text__divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
+      width: 100%;
+      max-width: 12rem;
+      margin-block: 0.35rem 1rem;
+      color: var(--srt-divider);
+    }
+
+    .simple-rich-text--{{ section.id }} .simple-rich-text__divider::before,
+    .simple-rich-text--{{ section.id }} .simple-rich-text__divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, transparent, currentColor, transparent);
+      opacity: 0.85;
+    }
+
+    .simple-rich-text--{{ section.id }} .simple-rich-text__divider-icon {
+      width: 0.45rem;
+      height: 0.45rem;
+      border: 1px solid currentColor;
+      transform: rotate(45deg);
+      flex-shrink: 0;
+      opacity: 0.95;
+    }
+
+    .simple-rich-text--{{ section.id }} .simple-rich-text__heading {
+      margin: 0 0 1rem;
+      font-family: var(--font-heading--family);
+      font-weight: var(--srt-heading-weight);
+      font-size: clamp(calc(var(--srt-heading-size) * 0.72), 4.5vw, var(--srt-heading-size));
+      line-height: 1.15;
+      color: var(--srt-heading-color);
+    }
+
+    .simple-rich-text--{{ section.id }} .simple-rich-text__rte {
+      margin: 0;
+      font-size: clamp(calc(var(--srt-text-size) * 0.92), 2.4vw, var(--srt-text-size));
+      line-height: var(--srt-text-lh);
+      color: var(--srt-text-color);
+    }
+
+    .simple-rich-text--{{ section.id }} .simple-rich-text__rte p:first-child {
+      margin-block-start: 0;
+    }
+
+    .simple-rich-text--{{ section.id }} .simple-rich-text__rte p:last-child {
+      margin-block-end: 0;
+    }
+  {% endstyle %}
+
+  <div class="simple-rich-text__shell">
+    <div class="simple-rich-text__inner">
+      {% if section.settings.subtitle != blank %}
+        <p class="simple-rich-text__subtitle{% if subtitle_text_transform == 'uppercase' %} srt-subtitle--uppercase{% endif %}">
+          {{ section.settings.subtitle | escape }}
+        </p>
+      {% endif %}
+
+      {% if section.settings.show_divider_icon %}
+        <div class="simple-rich-text__divider" aria-hidden="true">
+          <span class="simple-rich-text__divider-icon"></span>
+        </div>
+      {% endif %}
+
+      {% if section.settings.heading != blank %}
+        <h2 class="simple-rich-text__heading">{{ section.settings.heading | escape }}</h2>
+      {% endif %}
+
+      {% if section.settings.rich_text != blank %}
+        <div class="simple-rich-text__rte rte">{{ section.settings.rich_text }}</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Simple rich text",
+  "class": "section-wrapper",
+  "disabled_on": { "groups": ["header"] },
+  "settings": [
+    { "type": "header", "content": "General" },
+    {
+      "type": "color",
+      "id": "section_background_color",
+      "label": "Background color",
+      "default": "#F7F3E8"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "section_max_width",
+      "label": "Section max width",
+      "min": 600,
+      "max": 1800,
+      "step": 20,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content max width",
+      "min": 400,
+      "max": 1000,
+      "step": 10,
+      "unit": "px",
+      "default": 720
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    { "type": "header", "content": "Content" },
+    { "type": "text", "id": "subtitle", "label": "Subtitle" },
+    { "type": "text", "id": "heading", "label": "Heading" },
+    { "type": "richtext", "id": "rich_text", "label": "Rich text" },
+    {
+      "type": "checkbox",
+      "id": "show_divider_icon",
+      "label": "Show divider flourish",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "divider_icon_color",
+      "label": "Divider color",
+      "default": "#AA932D",
+      "visible_if": "{{ section.settings.show_divider_icon }}"
+    },
+    { "type": "header", "content": "Typography" },
+    {
+      "type": "range",
+      "id": "subtitle_font_size",
+      "label": "Subtitle font size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle color",
+      "default": "#AA932D"
+    },
+    {
+      "type": "select",
+      "id": "subtitle_font_style",
+      "label": "Subtitle style",
+      "options": [
+        { "value": "regular", "label": "Regular" },
+        { "value": "italic", "label": "Italic" },
+        { "value": "uppercase", "label": "Uppercase" }
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size",
+      "label": "Heading font size",
+      "min": 22,
+      "max": 52,
+      "step": 1,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#333333"
+    },
+    {
+      "type": "select",
+      "id": "heading_font_weight",
+      "label": "Heading weight",
+      "options": [
+        { "value": "regular", "label": "Regular" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "bold", "label": "Bold" }
+      ],
+      "default": "regular"
+    },
+    {
+      "type": "range",
+      "id": "text_font_size",
+      "label": "Text font size",
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "text_line_height",
+      "label": "Text line height (×0.01)",
+      "min": 140,
+      "max": 200,
+      "step": 5,
+      "default": 165,
+      "info": "165 = 1.65 line-height"
+    }
+  ],
+  "presets": [{ "name": "Simple rich text", "category": "t:categories.storytelling" }]
+}
+{% endschema %}

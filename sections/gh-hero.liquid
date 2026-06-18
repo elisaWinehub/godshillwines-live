@@ -1,0 +1,187 @@
+{% render 'gh-tokens' %}
+{% assign overlay = section.settings.overlay_opacity | default: 55 | divided_by: 100.0 %}
+{% assign min_height = section.settings.min_height | default: 600 %}
+
+<section class="gh-hero gh-hero-{{ section.id }}" {{ section.shopify_attributes }}>
+  <div class="gh-hero__bg">
+    {% if section.settings.bg_image %}
+      {{ section.settings.bg_image | image_url: width: 2200 | image_tag: class: 'gh-hero__image', loading: 'lazy' }}
+    {% endif %}
+    <div class="gh-hero__overlay"></div>
+  </div>
+  <div class="gh-hero__content">
+    <p class="gh-hero__eyebrow">{{ section.settings.eyebrow | default: 'Barossa Valley · Family owned since generation one' }}</p>
+    <span class="gh-hero__line"></span>
+    <div class="gh-hero__title">{{ section.settings.title | default: '<p>Wine grown from <em>generations of care</em></p>' }}</div>
+    <p class="gh-hero__subheading">{{ section.settings.subheading | default: 'Small-batch Barossa wines poured with the passion of their maker' }}</p>
+    <div class="gh-hero__actions">
+      <a class="gh-hero__btn gh-hero__btn--primary" href="{{ section.settings.btn_primary_link | default: '/collections/all' }}">
+        {{ section.settings.btn_primary_label | default: 'Explore Our Wines' }}
+      </a>
+      <a class="gh-hero__btn gh-hero__btn--secondary" href="{{ section.settings.btn_secondary_link | default: '/pages/about' }}">
+        {{ section.settings.btn_secondary_label | default: 'Our Story' }}
+      </a>
+    </div>
+  </div>
+  {% if section.settings.show_scroll_hint %}
+    <div class="gh-hero__scroll-hint">
+      <span>Scroll</span>
+      <i aria-hidden="true"></i>
+    </div>
+  {% endif %}
+</section>
+
+<style>
+  .gh-hero-{{ section.id }} {
+    position: relative;
+    height: 100vh;
+    min-height: {{ min_height }}px;
+    overflow: hidden;
+    color: var(--gh-cream);
+  }
+  .gh-hero-{{ section.id }} .gh-hero__bg,
+  .gh-hero-{{ section.id }} .gh-hero__image,
+  .gh-hero-{{ section.id }} .gh-hero__overlay {
+    position: absolute;
+    inset: 0;
+  }
+  .gh-hero-{{ section.id }} .gh-hero__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .gh-hero-{{ section.id }} .gh-hero__bg {
+    background: var(--gh-vine);
+  }
+  .gh-hero-{{ section.id }} .gh-hero__overlay {
+    background: linear-gradient(to bottom, rgba(20, 28, 18, {{ overlay }}) 0%, rgba(20, 28, 18, 0.15) 45%, rgba(20, 28, 18, 0.75) 100%);
+  }
+  .gh-hero-{{ section.id }} .gh-hero__content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 90px 20px 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .gh-hero-{{ section.id }} .gh-hero__eyebrow {
+    margin: 0;
+    font: 500 10px/1.5 'Inter', sans-serif;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gh-dust);
+  }
+  .gh-hero-{{ section.id }} .gh-hero__line {
+    width: 48px;
+    height: 1px;
+    background: var(--gh-gold-light);
+    margin: 16px 0 24px;
+  }
+  .gh-hero-{{ section.id }} .gh-hero__title {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: clamp(48px, 7vw, 86px);
+    line-height: 1.06;
+    font-weight: 400;
+    color: var(--gh-cream);
+  }
+  .gh-hero-{{ section.id }} .gh-hero__title p {
+    margin: 0;
+  }
+  .gh-hero-{{ section.id }} .gh-hero__title em {
+    color: var(--gh-gold-light);
+    font-style: italic;
+  }
+  .gh-hero-{{ section.id }} .gh-hero__subheading {
+    margin: 18px 0 0;
+    font: 400 14px/1.6 'Inter', sans-serif;
+    letter-spacing: 0.08em;
+    color: rgba(245, 239, 227, 0.65);
+  }
+  .gh-hero-{{ section.id }} .gh-hero__actions {
+    margin-top: 30px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .gh-hero-{{ section.id }} .gh-hero__btn {
+    padding: 13px 28px;
+    border-radius: 2px;
+    font: 600 11px/1 'Inter', sans-serif;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+  .gh-hero-{{ section.id }} .gh-hero__btn--primary {
+    background: var(--gh-gold);
+    color: var(--gh-cream);
+  }
+  .gh-hero-{{ section.id }} .gh-hero__btn--secondary {
+    color: var(--gh-cream);
+    border: 0.5px solid rgba(245, 239, 227, 0.5);
+  }
+  .gh-hero-{{ section.id }} .gh-hero__scroll-hint {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: rgba(245, 239, 227, 0.75);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font: 500 9px/1 'Inter', sans-serif;
+  }
+  .gh-hero-{{ section.id }} .gh-hero__scroll-hint i {
+    width: 1px;
+    height: 36px;
+    background: rgba(245, 239, 227, 0.6);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .gh-hero-{{ section.id }} .gh-hero__scroll-hint i {
+      animation: ghHeroPulse 1.6s ease-in-out infinite;
+    }
+    .gh-hero-{{ section.id }} .gh-hero__btn:hover {
+      transform: translateY(-1px);
+      opacity: 0.95;
+    }
+  }
+  @keyframes ghHeroPulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+  @media (max-width: 768px) {
+    .gh-hero-{{ section.id }} .gh-hero__content {
+      padding: 90px 20px 60px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "GH — Hero",
+  "settings": [
+    { "type": "image_picker", "id": "bg_image", "label": "Background image" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow text", "default": "Barossa Valley · Family owned since generation one" },
+    { "type": "richtext", "id": "title", "label": "Hero title (use <em> for italic gold)", "default": "<p>Wine grown from <em>generations of care</em></p>" },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "Small-batch Barossa wines poured with the passion of their maker" },
+    { "type": "text", "id": "btn_primary_label", "label": "Primary button label", "default": "Explore Our Wines" },
+    { "type": "url", "id": "btn_primary_link", "label": "Primary button URL" },
+    { "type": "text", "id": "btn_secondary_label", "label": "Secondary button label", "default": "Our Story" },
+    { "type": "url", "id": "btn_secondary_link", "label": "Secondary button URL" },
+    { "type": "range", "id": "overlay_opacity", "label": "Overlay darkness", "min": 0, "max": 100, "step": 5, "default": 55, "unit": "%" },
+    { "type": "checkbox", "id": "show_scroll_hint", "label": "Show scroll hint", "default": true },
+    { "type": "range", "id": "min_height", "label": "Min height (px)", "min": 400, "max": 1000, "step": 50, "default": 600, "unit": "px" }
+  ],
+  "presets": [{ "name": "GH — Hero" }]
+}
+{% endschema %}

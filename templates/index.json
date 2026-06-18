@@ -1,0 +1,285 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "layout": "theme",
+  "sections": {
+    "gh_hero": {
+      "type": "gh-hero",
+      "settings": {
+        "bg_image": "shopify://shop_images/ghwines_2.png",
+        "eyebrow": "Barossa Valley · Family owned since generation one",
+        "title": "<p>Wine grown from <em>generations of care</em></p>",
+        "subheading": "Small-batch Barossa wines poured with the passion of their maker",
+        "btn_primary_label": "Explore Our Wines",
+        "btn_primary_link": "",
+        "btn_secondary_label": "Our Story",
+        "btn_secondary_link": "",
+        "overlay_opacity": 55,
+        "show_scroll_hint": true,
+        "min_height": 600
+      }
+    },
+    "gh_destination_tiles": {
+      "type": "gh-destination-tiles",
+      "blocks": {
+        "tile_1": {
+          "type": "tile",
+          "settings": {
+            "image": "shopify://shop_images/gh-6pack.png",
+            "category": "Cellar door",
+            "title": "Our Wines",
+            "description": "Shiraz, Cabernet, whites and more — small-batch wines that carry the deep character of Barossa's rich soil and warm summers.",
+            "link_label": "Explore wines",
+            "link_url": "/collections/all"
+          }
+        },
+        "tile_2": {
+          "type": "tile",
+          "settings": {
+            "image": "shopify://shop_images/winetasting.png",
+            "category": "Authentic Italian food",
+            "title": "Ennia Cucina",
+            "description": "A table in the vines. Handmade Italian food with local produce, matched perfectly with God's Hill wines.",
+            "link_label": "View menu & book",
+            "link_url": "/pages/restaurant"
+          }
+        },
+        "tile_3": {
+          "type": "tile",
+          "settings": {
+            "image": "shopify://shop_images/bnb-airbnb-accommodation-lyndoch-gods-hill-scalzi-winery-barossa-valley-south-australia-510x510.png",
+            "category": "Barossa accommodation",
+            "title": "Villa Scalzi",
+            "description": "Wake up among the vines. Old-world Barossa comfort with modern ease, minutes from Lyndoch.",
+            "link_label": "Make a booking",
+            "link_url": "/pages/accommodation"
+          }
+        }
+      },
+      "block_order": [
+        "tile_1",
+        "tile_2",
+        "tile_3"
+      ],
+      "settings": {
+        "section_height": 480,
+        "gold_color": "#b8913a"
+      }
+    },
+    "gh_infobar": {
+      "type": "gh-infobar",
+      "blocks": {
+        "info_1": {
+          "type": "info_item",
+          "settings": {
+            "icon": "clock",
+            "text": "Cellar door: Thu – Sun, 11am – 5pm"
+          }
+        },
+        "info_2": {
+          "type": "info_item",
+          "settings": {
+            "icon": "pin",
+            "text": "34 Moppert Rd, Lyndoch SA 5351"
+          }
+        },
+        "info_3": {
+          "type": "info_item",
+          "settings": {
+            "icon": "phone",
+            "text": "+61 408 838 004"
+          }
+        },
+        "info_4": {
+          "type": "info_item",
+          "settings": {
+            "icon": "car",
+            "text": "Only 55 min from Adelaide CBD"
+          }
+        }
+      },
+      "block_order": [
+        "info_1",
+        "info_2",
+        "info_3",
+        "info_4"
+      ],
+      "settings": {
+        "bg_color": "#1c2b1a",
+        "text_color": "#f5efe3",
+        "accent_color": "#b8913a"
+      }
+    },
+    "gh_featured_products": {
+      "type": "gh-featured-products",
+      "settings": {
+        "eyebrow": "From the cellar",
+        "heading": "Featured Wines",
+        "collection": "god-s-hill-wines",
+        "view_all_label": "View all wines →",
+        "view_all_url": "",
+        "promo_eyebrow": "Limited offer",
+        "promo_heading": "<p>Winter Wine <em>Specials Bundle</em></p>",
+        "promo_body": "Order 12 bottles of your favourites and receive a complimentary bottle of Ennia by Tio, free delivery anywhere in Australia or NT.",
+        "promo_price": "From $420",
+        "promo_btn_label": "Shop now",
+        "promo_btn_url": "",
+        "promo_bg_color": "#1c2b1a",
+        "show_product_badge": true,
+        "badge_label": "Winter Special"
+      }
+    },
+    "gh_tasting_banner": {
+      "type": "gh-tasting-banner",
+      "blocks": {
+        "stat_1": {
+          "type": "stat",
+          "settings": {
+            "value": "Thu–Sun",
+            "label": "Open days"
+          }
+        },
+        "stat_2": {
+          "type": "stat",
+          "settings": {
+            "value": "11–5pm",
+            "label": "Tasting hours"
+          }
+        },
+        "stat_3": {
+          "type": "stat",
+          "settings": {
+            "value": "6+",
+            "label": "Groups book ahead"
+          }
+        }
+      },
+      "block_order": [
+        "stat_1",
+        "stat_2",
+        "stat_3"
+      ],
+      "settings": {
+        "image": "shopify://shop_images/pexels-orlovamaria-4946411-768x1152.jpg",
+        "eyebrow": "Experience · Book ahead",
+        "heading": "<p>Wine Tasting<br/><em>in the heart of Barossa</em></p>",
+        "body": "Our cellar door tastings are our labour of love. Groups of six or more are welcome — we simply ask you to book ahead so we can look after you properly.",
+        "btn_primary_label": "Book a tasting",
+        "btn_primary_url": "",
+        "btn_secondary_label": "Plan your visit",
+        "btn_secondary_url": "",
+        "bg_color": "#1c2b1a",
+        "text_color": "#f5efe3"
+      }
+    },
+    "gh_our_story": {
+      "type": "gh-our-story",
+      "settings": {
+        "image": "shopify://shop_images/img2.png",
+        "image_alt": "Charlie Scalzi in the vineyard at God's Hill",
+        "eyebrow": "Our story",
+        "heading": "Godshill Winery",
+        "quote": "\"Bringing an ancient Italian tradition to a new land — one small batch at a time.\"",
+        "body_1": "God's Hill is a proudly family-owned vineyard and winery in the famous Barossa Valley. For generations our focus has been on premium reds and whites that express both the richness of our soils and the care we take from vine to bottle.",
+        "body_2": "Our grapes are made from a careful selection grown from Charlie's God's Hill vineyard, daily tended by the vigneron, Charlie's son. The vineyard is set in the famous Southern Barossa wine region, only 55 minutes from Adelaide CBD.",
+        "btn_label": "Read our full story →",
+        "btn_url": "",
+        "bg_color": "#f5efe3",
+        "accent_color": "#b8913a",
+        "show_corner_accent": true
+      }
+    },
+    "gh_instagram": {
+      "type": "gh-instagram",
+      "blocks": {
+        "photo_1": {
+          "type": "photo",
+          "settings": {
+            "alt": "",
+            "link": ""
+          }
+        },
+        "photo_2": {
+          "type": "photo",
+          "settings": {
+            "alt": "",
+            "link": ""
+          }
+        },
+        "photo_3": {
+          "type": "photo",
+          "settings": {
+            "alt": "",
+            "link": ""
+          }
+        },
+        "photo_4": {
+          "type": "photo",
+          "settings": {
+            "alt": "",
+            "link": ""
+          }
+        },
+        "photo_5": {
+          "type": "photo",
+          "settings": {
+            "alt": "",
+            "link": ""
+          }
+        },
+        "photo_6": {
+          "type": "photo",
+          "settings": {
+            "alt": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "photo_1",
+        "photo_2",
+        "photo_3",
+        "photo_4",
+        "photo_5",
+        "photo_6"
+      ],
+      "settings": {
+        "eyebrow": "From the vineyard",
+        "heading": "Instagram",
+        "button_label": "Follow us on Instagram →",
+        "button_url": ""
+      }
+    },
+    "gh_newsletter": {
+      "type": "gh-newsletter",
+      "settings": {
+        "eyebrow": "Stay in the loop",
+        "heading": "<p>New releases,<br><em>events &amp; offers</em></p>",
+        "subheading": "Be the first to hear about new vintages, wine club news, cellar door events and exclusive member offers.",
+        "btn_label": "Subscribe",
+        "placeholder": "Your email address",
+        "privacy_note": "We respect your privacy. Unsubscribe any time.",
+        "bg_color": "#1c2b1a",
+        "accent_color": "#b8913a",
+        "text_color": "#f5efe3"
+      }
+    }
+  },
+  "order": [
+    "gh_hero",
+    "gh_destination_tiles",
+    "gh_infobar",
+    "gh_featured_products",
+    "gh_tasting_banner",
+    "gh_our_story",
+    "gh_instagram",
+    "gh_newsletter"
+  ]
+}

@@ -1,0 +1,274 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-product-custom",
+      "blocks": {
+        "breadcrumbs": {
+          "type": "breadcrumbs",
+          "settings": {
+            "show_home": true,
+            "home_label": "Home",
+            "show_all_products": false,
+            "all_products_collection": "",
+            "all_products_label": "",
+            "show_collection": true
+          }
+        },
+        "vendor": {
+          "type": "vendor",
+          "settings": {
+            "text": "GOD'S HILL WINES",
+            "link": ""
+          }
+        },
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "rating": {
+          "type": "rating",
+          "settings": {
+            "rating_value": "4.5",
+            "filled_stars": 4,
+            "show_review_count": true,
+            "review_count": "12",
+            "review_count_label": "reviews"
+          }
+        },
+        "price": {
+          "type": "price",
+          "settings": {
+            "show_sale_price_first": true,
+            "show_unit_price": false,
+            "show_currency_code": false
+          }
+        },
+        "description": {
+          "type": "description",
+          "settings": {
+            "text": "",
+            "truncate_words": 0
+          }
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "variant_style": "buttons",
+            "show_swatches": true,
+            "alignment": "left"
+          }
+        },
+        "purchase_options": {
+          "type": "purchase_options",
+          "settings": {
+            "show_purchase_options": true,
+            "box_title": "CHOOSE YOUR PURCHASE OPTION",
+            "one_time_label": "One-time purchase",
+            "subscribe_label": "Subscribe & Save",
+            "plan_1_label": "Every 1 month – 20% off",
+            "plan_1_price": "$32.00",
+            "plan_2_label": "Every 2 months – 15% off",
+            "plan_2_price": "$34.00",
+            "plan_3_label": "Every 3 months – 10% off",
+            "plan_3_price": "$36.00",
+            "selected_background": "#f3ede3",
+            "border_color": "#b29b33",
+            "accent_color": "#b29b33"
+          }
+        },
+        "quantity": {
+          "type": "quantity_selector",
+          "settings": {}
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "button_label": "ADD TO CART"
+          }
+        },
+        "pickup": {
+          "type": "pickup_availability",
+          "settings": {
+            "show_pickup": true,
+            "pickup_available_text": "Pickup available at Cellar Door",
+            "pickup_ready_text": "Usually ready in 24 hours",
+            "view_store_label": "View store information"
+          }
+        },
+        "acc_wine_details": {
+          "type": "accordion_item",
+          "settings": {
+            "show_item": true,
+            "title": "WINE DETAILS",
+            "content_mode": "static",
+            "metafield_group": "wine_details",
+            "static_content": "<p>Vintage, colour, alcohol and region details will appear here once product metafields are connected.</p>",
+            "fallback_content": "",
+            "pdf_link_label": "Download Tasting Note PDF"
+          }
+        },
+        "acc_vineyard": {
+          "type": "accordion_item",
+          "settings": {
+            "show_item": true,
+            "title": "VINEYARD",
+            "content_mode": "static",
+            "metafield_group": "vineyard",
+            "static_content": "<p>Vineyard information will appear here.</p>",
+            "fallback_content": "",
+            "pdf_link_label": "Download Tasting Note PDF"
+          }
+        },
+        "acc_tasting": {
+          "type": "accordion_item",
+          "settings": {
+            "show_item": true,
+            "title": "TASTING NOTES",
+            "content_mode": "static",
+            "metafield_group": "tasting_notes",
+            "static_content": "<p>Tasting notes will appear here.</p>",
+            "fallback_content": "",
+            "pdf_link_label": "Download Tasting Note PDF"
+          }
+        },
+        "acc_winemaking": {
+          "type": "accordion_item",
+          "settings": {
+            "show_item": true,
+            "title": "WINEMAKING",
+            "content_mode": "static",
+            "metafield_group": "winemaking",
+            "static_content": "<p>Winemaking details will appear here.</p>",
+            "fallback_content": "",
+            "pdf_link_label": "Download Tasting Note PDF"
+          }
+        },
+        "acc_pdf": {
+          "type": "accordion_item",
+          "settings": {
+            "show_item": true,
+            "title": "TASTING NOTE PDF",
+            "content_mode": "static",
+            "metafield_group": "tasting_note_pdf",
+            "static_content": "<p>PDF download will appear when a tasting note file metafield is added.</p>",
+            "fallback_content": "",
+            "pdf_link_label": "Download Tasting Note PDF"
+          }
+        },
+        "acc_reviews": {
+          "type": "accordion_item",
+          "settings": {
+            "show_item": true,
+            "title": "REVIEWS (0)",
+            "content_mode": "static",
+            "metafield_group": "reviews",
+            "static_content": "<p>Reviews will appear here or via your review app.</p>",
+            "fallback_content": "",
+            "pdf_link_label": "Download Tasting Note PDF"
+          }
+        },
+        "acc_awards": {
+          "type": "accordion_item",
+          "settings": {
+            "show_item": true,
+            "title": "AWARDS",
+            "content_mode": "static",
+            "metafield_group": "awards",
+            "static_content": "<p>Award information will appear here.</p>",
+            "fallback_content": "",
+            "pdf_link_label": "Download Tasting Note PDF"
+          }
+        }
+      },
+      "block_order": [
+        "breadcrumbs",
+        "vendor",
+        "title",
+        "rating",
+        "price",
+        "description",
+        "variant_picker",
+        "purchase_options",
+        "quantity",
+        "buy_buttons",
+        "pickup",
+        "acc_wine_details",
+        "acc_vineyard",
+        "acc_tasting",
+        "acc_winemaking",
+        "acc_pdf",
+        "acc_reviews",
+        "acc_awards"
+      ],
+      "settings": {
+        "section_enabled": true,
+        "color_scheme": "scheme-1",
+        "section_background": "#ffffff",
+        "container_width": 1200,
+        "padding_top": 48,
+        "padding_bottom": 48,
+        "column_gap": 48,
+        "media_panel_background": "#f3ede3",
+        "accent_color": "#b29b33",
+        "heading_color": "#1f1a14",
+        "text_color": "#333333",
+        "muted_text_color": "#6b6560",
+        "button_background": "#b29b33",
+        "button_text_color": "#ffffff",
+        "button_hover_background": "#96782a",
+        "accordion_heading_color": "#1f1a14",
+        "accordion_text_color": "#333333",
+        "accordion_divider_color": "#e0d8cc",
+        "custom_css_class": ""
+      }
+    },
+    "related_products": {
+      "type": "related-products-carousel",
+      "settings": {
+        "section_enabled": true,
+        "heading": "You may also like",
+        "heading_color": "#1f1a14",
+        "heading_size_mobile": 26,
+        "heading_size_desktop": 32,
+        "divider_color": "#b29b33",
+        "source_type": "auto",
+        "collection": "god-s-hill-wines",
+        "products_count": 8,
+        "products_per_row_desktop": 4,
+        "products_per_row_tablet": 2,
+        "products_per_row_mobile": 1,
+        "show_arrows": true,
+        "show_dots": false,
+        "image_ratio_percent": 100,
+        "section_background": "#ffffff",
+        "container_width": 1200,
+        "padding_top": 48,
+        "padding_bottom": 64,
+        "card_background": "#f3ede3",
+        "title_color": "#1f1a14",
+        "show_subtitle": true,
+        "subtitle_metafield": "region",
+        "subtitle_color": "#6b6560",
+        "price_color": "#b29b33",
+        "arrow_color": "#b29b33",
+        "arrow_hover_color": "#1a2414",
+        "dot_active_color": "#b29b33",
+        "dot_inactive_color": "#d8d2c8",
+        "custom_css_class": ""
+      }
+    }
+  },
+  "order": [
+    "main",
+    "related_products"
+  ]
+}

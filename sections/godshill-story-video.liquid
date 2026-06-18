@@ -1,0 +1,583 @@
+{% comment %} Story editorial + playable media {% endcomment %}
+{% liquid
+  assign show_section = section.settings.section_enabled | default: true
+  assign host_video = section.settings.shopify_video
+  assign raw_url = section.settings.external_video_url | strip
+  assign yt = ''
+  assign vmid = ''
+
+  if raw_url contains 'youtube.com/watch?v='
+    assign yt = raw_url | split: 'v=' | last | split: '&' | first
+  elsif raw_url contains 'youtu.be/'
+    assign yt = raw_url | split: 'youtu.be/' | last | split: '?' | first
+  endif
+
+  if raw_url contains 'vimeo.com/'
+    assign vmid = raw_url | split: '.com/' | last | split: '/' | last | split: '?' | first
+  endif
+%}
+{% unless show_section %}
+  <div {{ section.shopify_attributes }} hidden></div>
+{% else %}
+  <section
+    id="GHStory-{{ section.id }}"
+    class="gh-story {{ section.settings.custom_css_class | strip }}"
+    {{ section.shopify_attributes }}
+    style="
+      --bg: {{ section.settings.section_background }};
+      --pt: {{ section.settings.padding_top }}px;
+      --pb: {{ section.settings.padding_bottom }}px;
+      --cw: {{ section.settings.container_width }}px;
+      --video-bg: {{ section.settings.video_area_bg }};
+      --play-size: {{ section.settings.play_circle_size }}px;
+      --play-border: {{ section.settings.play_circle_border_width }}px;
+      --play-bdr-c: {{ section.settings.play_circle_color }};
+      --play-fill: {{ section.settings.play_triangle_fill }};
+      --poster-o: {{ section.settings.poster_overlay | divided_by: 100.0 }};
+      --poster-tint: {{ section.settings.poster_tint_color }};
+    "
+  >
+    <div class="gh-story__grid">
+      <div class="gh-story__panel">
+        {% if section.settings.subheading != blank %}
+          <p class="gh-story__eyeb">{{ section.settings.subheading }}</p>
+        {% endif %}
+        {% if section.settings.heading != blank %}
+          <h2 class="gh-story__heading">{{ section.settings.heading }}</h2>
+        {% endif %}
+        {% if section.settings.body_richtext != blank %}
+          <div class="gh-story__rte rte">{{ section.settings.body_richtext }}</div>
+        {% endif %}
+        {% if section.settings.cta_style != 'secondary' %}
+          {% render 'godshill-cta-btn',
+            label: section.settings.cta_label,
+            url: section.settings.cta_link,
+            style: 'primary',
+            bg: section.settings.p_btn_bg,
+            fg: section.settings.p_btn_fg,
+            border_c: section.settings.p_btn_bd,
+            h_bg: section.settings.p_btn_h_bg,
+            h_fg: section.settings.p_btn_h_fg,
+            h_border: section.settings.p_btn_h_bd
+          %}
+        {% else %}
+          {% render 'godshill-cta-btn',
+            label: section.settings.cta_label,
+            url: section.settings.cta_link,
+            style: 'secondary',
+            bg: section.settings.s_btn_bg,
+            fg: section.settings.s_btn_fg,
+            border_c: section.settings.s_btn_bd,
+            h_bg: section.settings.s_btn_h_bg,
+            h_fg: section.settings.s_btn_h_fg,
+            h_border: section.settings.s_btn_h_bd
+          %}
+        {% endif %}
+      </div>
+
+      {% liquid
+        assign poster_media = section.settings.cover_image
+        if poster_media == blank and host_video != blank and host_video.preview_image != blank
+          assign poster_media = host_video.preview_image
+        endif
+      %}
+
+      <div class="gh-story__video" style="background: {{ section.settings.video_area_bg }};">
+        {% if yt != blank %}
+          <iframe
+            class="gh-story__iframe"
+            src=""
+            loading="lazy"
+            data-src="https://www.youtube-nocookie.com/embed/{{ yt }}?autoplay=0&controls=1&rel=0&playsinline=1"
+            title="Video"
+          ></iframe>
+        {% elsif vmid != blank %}
+          <iframe
+            class="gh-story__iframe"
+            loading="lazy"
+            src=""
+            data-src="https://player.vimeo.com/video/{{ vmid }}?title=0&byline=0&portrait=0"
+          ></iframe>
+        {% elsif host_video != blank %}
+          <div class="gh-story__hosted">
+            {{ host_video | video_tag: autoplay: false, muted: section.settings.shopify_video_muted, controls: section.settings.shopify_controls, loop: section.settings.shopify_video_loop }}
+          </div>
+        {% else %}
+          <div class="gh-story__hosted"></div>
+        {% endif %}
+
+        {% if yt != blank or vmid != blank %}
+          {% if poster_media != blank %}
+            <button
+              type="button"
+              class="gh-story__poster"
+              data-story-play
+              aria-label="Play video"
+            >
+              {{
+                poster_media
+                | image_url: width: 1600
+                | image_tag: loading: 'lazy', class: 'gh-story__poster-img', widths: '600,980,1400'
+              }}
+              <div class="gh-story__shade" aria-hidden="true"></div>
+              <div class="gh-story__controls">
+                <span class="gh-story__circle" aria-hidden="true"><span class="gh-story__tri"></span></span>
+                {% if section.settings.play_label != blank %}
+                  <span class="gh-story__lbl">{{ section.settings.play_label }}</span>
+                {% endif %}
+              </div>
+            </button>
+          {% else %}
+            <div class="gh-story__shade-only">
+              <button type="button" class="gh-story__bare-play" data-story-play aria-label="Play video">
+                <span class="gh-story__circle"><span class="gh-story__tri"></span></span>
+                {% if section.settings.play_label != blank %}
+                  <span class="gh-story__lbl">{{ section.settings.play_label }}</span>
+                {% endif %}
+              </button>
+            </div>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <style>
+    #GHStory-{{ section.id }} .gh-story__grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.06fr);
+      background: {{ section.settings.content_column_bg | default: section.settings.section_background }};
+      min-height: clamp(340px, 55vw, 420px);
+    }
+    #GHStory-{{ section.id }} .gh-story__panel {
+      padding: clamp(48px, 8vw, 88px) clamp(18px, 7vw, 12%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: inherit;
+      text-align: left;
+      color: {{ section.settings.text_color }};
+    }
+    #GHStory-{{ section.id }} .gh-story__heading {
+      font-family: Georgia, serif;
+      font-size: clamp(28px, 3vw, 44px);
+      margin: 0 0 12px;
+      color: inherit;
+      font-weight: {{ section.settings.head_weight }};
+    }
+    #GHStory-{{ section.id }} .gh-story__eyeb {
+      text-transform: uppercase;
+      color: {{ section.settings.eyebrow_color | default: '#A67B22' }};
+      letter-spacing: 0.09em;
+      font-size: 12px;
+      font-weight: 700;
+      margin: 0 0 14px;
+    }
+    #GHStory-{{ section.id }} .gh-story__rte {
+      margin: 0 0 18px;
+      font-size: {{ section.settings.copy_size }}px;
+      color: inherit;
+      line-height: {{ section.settings.copy_line_height_pct | divided_by: 100.0 }};
+      font-weight: {{ section.settings.copy_weight }};
+      opacity: {{ section.settings.copy_opacity | divided_by: 100.0 }};
+    }
+    #GHStory-{{ section.id }} .gh-story__video {
+      position: relative;
+      min-height: clamp(340px, 55vw, 420px);
+    }
+    #GHStory-{{ section.id }} .gh-story__iframe,
+    #GHStory-{{ section.id }} .gh-story__hosted video,
+    #GHStory-{{ section.id }} .gh-story__hosted .shopify-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      object-fit: cover;
+    }
+    #GHStory-{{ section.id }} .gh-story__hosted {
+      position: absolute;
+      inset: 0;
+    }
+    #GHStory-{{ section.id }} .gh-story__iframe {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    #GHStory-{{ section.id }} .gh-story__iframe.gh-story--revealed {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    #GHStory-{{ section.id }} .gh-story__poster {
+      position: absolute;
+      inset: 0;
+      border: 0;
+      padding: 0;
+      margin: 0;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+    #GHStory-{{ section.id }} .gh-story__poster-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    #GHStory-{{ section.id }} .gh-story__shade {
+      position: absolute;
+      inset: 0;
+      background: rgb(0 0 0 / var(--poster-o));
+      backdrop-filter: blur(0px);
+    }
+    #GHStory-{{ section.id }} .gh-story__shade-only {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, #111312, #3b3f3f);
+    }
+    #GHStory-{{ section.id }} .gh-story__bare-play {
+      background: transparent;
+      border: 0;
+      display: grid;
+      place-items: center;
+      gap: 12px;
+      cursor: pointer;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    #GHStory-{{ section.id }} .gh-story__controls {
+      position: relative;
+      display: grid;
+      place-items: center;
+      gap: 12px;
+    }
+    #GHStory-{{ section.id }} .gh-story__lbl {
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 12px;
+      font-weight: 700;
+      color: #faf8f5;
+      text-shadow: 0 1px 14px rgb(0 0 0 / 0.45);
+      margin-top: -4px;
+    }
+    #GHStory-{{ section.id }} .gh-story__circle {
+      width: var(--play-size, 74px);
+      height: var(--play-size, 74px);
+      border: var(--play-border, 2px) solid var(--play-bdr-c, #a67b22);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgb(0 0 0 / 28%), rgb(8 33 31 / 0.22));
+      display: grid;
+      place-items: center;
+      box-shadow: 0 22px 50px rgb(0 0 0 / 0.45);
+      transition:
+        transform 0.35s ease,
+        box-shadow 0.35s ease;
+    }
+    #GHStory-{{ section.id }} .gh-story__tri {
+      width: 0;
+      height: 0;
+      margin-left: 5px;
+      border-style: solid;
+      border-width: 13px 0 13px 20px;
+      border-color: transparent transparent transparent var(--play-fill);
+    }
+    #GHStory-{{ section.id }} .gh-story__poster:focus-visible .gh-story__circle,
+    #GHStory-{{ section.id }} .gh-story__bare-play:focus-visible .gh-story__circle {
+      outline: 2px solid #fff;
+      outline-offset: 4px;
+    }
+    #GHStory-{{ section.id }} .gh-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      padding: 12px 21px;
+      text-transform: uppercase;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      transition: 0.22s ease;
+    }
+    #GHStory-{{ section.id }} .gh-cta::after {
+      content: '\2192';
+    }
+    #GHStory-{{ section.id }} .gh-cta:hover {
+      transform: translateY(-1px);
+      background-color: var(--gh-h-bg) !important;
+      color: var(--gh-h-fg) !important;
+      border-color: var(--gh-h-bd) !important;
+    }
+    @media screen and (max-width: 989px) {
+      #GHStory-{{ section.id }} .gh-story__grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
+  {% if yt != blank or vmid != blank %}
+    <script>
+      (function () {
+        var root = document.getElementById('GHStory-{{ section.id }}');
+        if (!root) return;
+
+        /** @returns {HTMLElement | null} */
+        function qp(sel) {
+          return root.querySelector(sel);
+        }
+        var iframe = qp('.gh-story__iframe');
+        var triggers = [...root.querySelectorAll('[data-story-play]')];
+        triggers.forEach(function (trigger) {
+          trigger.addEventListener('click', function () {
+            if (!iframe || !iframe.dataset.src) return;
+            if (!iframe.getAttribute('src')) {
+              iframe.setAttribute('src', iframe.dataset.src);
+            }
+            iframe.classList.add('gh-story--revealed');
+            triggers.forEach(function (t) {
+              var shadeWrapper = /** @type {HTMLElement} **/ (t.closest('.gh-story__shade-only'));
+              if (shadeWrapper) shadeWrapper.style.display = 'none';
+              t.style.display = 'none';
+            });
+            var iframeParent = qp('.gh-story__video');
+            if (iframeParent) iframeParent.dataset.playing = 'true';
+          });
+        });
+      })();
+    </script>
+  {% endif %}
+
+{% endunless %}
+
+{% schema %}
+{
+  "name": "Godshill Story + Video",
+  "tag": "section",
+  "class": "godshill-story-video",
+  "settings": [
+    { "type": "checkbox", "id": "section_enabled", "label": "Show section", "default": true },
+    {
+      "type": "paragraph",
+      "content": "Add either a Shopify-hosted video or a YouTube / Vimeo embed URL · optional poster image overlays external embeds."
+    },
+    {
+      "type": "video",
+      "id": "shopify_video",
+      "label": "Shopify-hosted video"
+    },
+    {
+      "type": "textarea",
+      "id": "external_video_url",
+      "label": "YouTube/Vimeo embed URL fallback",
+      "info": "https://youtube.com/watch?v=... · https://vimeo.com/123"
+    },
+
+    {
+      "type": "checkbox",
+      "id": "shopify_video_muted",
+      "label": "Shopify autoplay prerequisites · start muted when enabled",
+      "default": false
+    },
+    { "type": "checkbox", "id": "shopify_video_loop", "label": "Shopify hosted loop video", "default": false },
+    { "type": "checkbox", "id": "shopify_controls", "label": "Show Shopify video controls when inline", "default": true },
+
+    { "type": "image_picker", "id": "cover_image", "label": "Poster / fallback imagery" },
+
+    { "type": "color", "id": "section_background", "label": "Section gutter background", "default": "#FFFFFF" },
+    {
+      "type": "color",
+      "id": "content_column_bg",
+      "label": "Left column tint",
+      "default": "#F7F3E8"
+    },
+    {
+      "type": "color",
+      "id": "video_area_bg",
+      "label": "Right column tint",
+      "default": "#0d1210"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+
+    {
+      "type": "range",
+      "id": "container_width",
+      "label": "Content max-width",
+      "min": 980,
+      "max": 1500,
+      "step": 10,
+      "unit": "px",
+      "default": 1400
+    },
+
+    { "type": "text", "id": "subheading", "label": "Eyebrow", "default": "Our Story" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Godshill Winery" },
+    {
+      "type": "richtext",
+      "id": "body_richtext",
+      "label": "Story copy",
+      "default": "<p>We family craft premium reds and whites nestled in Australia’s famed Barossa Valley.</p>"
+    },
+
+    {
+      "type": "range",
+      "id": "copy_size",
+      "label": "Body size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "copy_line_height_pct",
+      "label": "Line height multiplier (%)",
+      "min": 120,
+      "max": 200,
+      "step": 1,
+      "unit": "%",
+      "default": 164
+    },
+    {
+      "type": "range",
+      "id": "copy_weight",
+      "label": "Body weight",
+      "min": 400,
+      "max": 700,
+      "step": 100,
+      "default": 400
+    },
+    {
+      "type": "range",
+      "id": "copy_opacity",
+      "label": "Body opacity multiplier",
+      "min": 50,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 94
+    },
+    {
+      "type": "range",
+      "id": "head_weight",
+      "label": "Heading weight",
+      "min": 400,
+      "max": 800,
+      "step": 100,
+      "default": 500
+    },
+
+    {
+      "type": "paragraph",
+      "content": "Button + play controls"
+    },
+    {
+      "type": "select",
+      "id": "cta_style",
+      "label": "Story CTA style",
+      "options": [{ "value": "primary", "label": "Primary solid" }, { "value": "secondary", "label": "Secondary outline" }],
+      "default": "primary"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Story CTA label",
+      "default": "Read Our Story"
+    },
+    { "type": "url", "id": "cta_link", "label": "Story CTA URL" },
+
+    { "type": "color", "id": "p_btn_bg", "label": "Primary BG", "default": "#A67B22" },
+    { "type": "color", "id": "p_btn_fg", "label": "Primary FG", "default": "#FFFFFF" },
+    { "type": "color", "id": "p_btn_bd", "label": "Primary border", "default": "#A67B22" },
+    { "type": "color", "id": "p_btn_h_bg", "label": "Primary hover bg", "default": "#846118" },
+    { "type": "color", "id": "p_btn_h_fg", "label": "Primary hover FG", "default": "#FFFFFF" },
+    { "type": "color", "id": "p_btn_h_bd", "label": "Primary hover bd", "default": "#846118" },
+
+    { "type": "color", "id": "s_btn_bg", "label": "Secondary accent", "default": "#A67B22" },
+    { "type": "color", "id": "s_btn_fg", "label": "Secondary label", "default": "#102219" },
+    { "type": "color", "id": "s_btn_bd", "label": "Secondary bd", "default": "#102219" },
+    { "type": "color", "id": "s_btn_h_bg", "label": "Secondary hover bg", "default": "#A67B22" },
+    { "type": "color", "id": "s_btn_h_fg", "label": "Secondary hover fg", "default": "#FFFFFF" },
+    { "type": "color", "id": "s_btn_h_bd", "label": "Secondary hover bd", "default": "#102219" },
+
+    { "type": "text", "id": "play_label", "label": "Play label beside icon", "default": "PLAY VIDEO" },
+    {
+      "type": "range",
+      "id": "play_circle_size",
+      "label": "Play badge diameter px",
+      "min": 46,
+      "max": 120,
+      "step": 1,
+      "default": 78
+    },
+    {
+      "type": "range",
+      "id": "play_circle_border_width",
+      "label": "Play ring thickness",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+
+    {
+      "type": "color",
+      "id": "play_circle_color",
+      "label": "Play ring colour",
+      "default": "#A67B22"
+    },
+    { "type": "color", "id": "play_triangle_fill", "label": "Play triangle tint", "default": "#FFFFFF" },
+    {
+      "type": "range",
+      "id": "poster_overlay",
+      "label": "Poster shade opacity",
+      "min": 0,
+      "max": 92,
+      "step": 1,
+      "unit": "%",
+      "default": 48
+    },
+    {
+      "type": "color",
+      "id": "poster_tint_color",
+      "label": "Poster overlay colour",
+      "default": "#000000"
+    },
+    { "type": "color", "id": "eyebrow_color", "label": "Eyebrow colour token", "default": "#A67B22" },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Editorial lettering",
+      "default": "#25211B"
+    },
+    { "type": "text", "id": "custom_css_class", "label": "Extra CSS hook" },
+  ],
+  "presets": [{ "name": "Godshill Story Video", "category": "God's Hill" }]
+}
+{% endschema %}

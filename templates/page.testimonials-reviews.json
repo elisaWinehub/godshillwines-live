@@ -1,0 +1,332 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "godshill_page_hero_kJrg4r": {
+      "type": "godshill-page-hero",
+      "blocks": {
+        "heading_WFxX8L": {
+          "type": "heading",
+          "settings": {
+            "text": "",
+            "use_auto_title": true,
+            "alignment": "center",
+            "font_size_mobile": 32,
+            "font_size_desktop": 48,
+            "font_weight": "500",
+            "text_color": "#ffffff",
+            "max_width_pct": 100
+          }
+        },
+        "divider_neR9yy": {
+          "type": "divider",
+          "settings": {
+            "alignment": "center",
+            "line_color": "#a67b22",
+            "line_width_px": 48,
+            "line_thickness_px": 2
+          }
+        }
+      },
+      "block_order": [
+        "heading_WFxX8L",
+        "divider_neR9yy"
+      ],
+      "name": "Godshill page hero",
+      "settings": {
+        "section_enabled": true,
+        "viewport_height_pct": 50,
+        "content_max_width": 720,
+        "vertical_align": "center",
+        "background_image": "shopify://shop_images/banner2_1.png",
+        "overlay_color": "#1a2414",
+        "overlay_opacity": 42,
+        "color_scheme": "",
+        "accessibility_label": ""
+      }
+    },
+    "testimonials_featured_review": {
+      "type": "featured-review",
+      "settings": {
+        "section_enabled": true,
+        "section_background": "#f3ede3",
+        "container_width": 1200,
+        "padding_top": 72,
+        "padding_bottom": 72,
+        "column_gap": 48,
+        "column_order_desktop": "content_left",
+        "column_order_mobile": "content_first",
+        "custom_css_class": "",
+        "eyebrow": "FEATURED REVIEW",
+        "eyebrow_color": "#b29b33",
+        "heading": "Walkabout 2012 –God's Hill, Lyndoch.",
+        "heading_color": "#1f1a14",
+        "heading_size_mobile": 28,
+        "heading_size_desktop": 40,
+        "star_rating": 5,
+        "star_color": "#b29b33",
+        "review": "<p>Koala's first face to face meeting with Charlie was arranged when calling for an appointment to visit the Cellar Door of God's Hill Wines. Charlie asked where Koala was calling from and discovering they were only a couple miles apart...</p>",
+        "text_color": "#333333",
+        "enable_read_more": true,
+        "read_more_limit": 200,
+        "read_more_text": "Read more",
+        "read_less_text": "Read less",
+        "read_more_link_color": "#b29b33",
+        "button_label": "READ THE FULL REVIEW",
+        "button_link": "",
+        "button_style": "primary",
+        "primary_bg": "#b29b33",
+        "primary_text": "#ffffff",
+        "primary_border": "#b29b33",
+        "primary_hover_bg": "#96782a",
+        "primary_hover_text": "#ffffff",
+        "primary_hover_border": "#96782a",
+        "secondary_bg": "#b29b33",
+        "secondary_text": "#1a2414",
+        "secondary_border": "#1a2414",
+        "secondary_hover_bg": "#1a2414",
+        "secondary_hover_text": "#ffffff",
+        "secondary_hover_border": "#1a2414",
+        "image": "shopify://shop_images/winetasting.png",
+        "image_aspect_ratio": "portrait",
+        "image_object_position": "center"
+      }
+    },
+    "testimonials_slider": {
+      "type": "testimonials-slider",
+      "blocks": {
+        "testimonial_1": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "<p>Thank you soooooooooooo much for the most amazing food and function. We absolutely loved it and think every single person had an incredible time.</p>",
+            "name": "Lydia R. Porto",
+            "role": "Operations Lead",
+            "rating": 0,
+            "link_label": "",
+            "link_url": ""
+          }
+        },
+        "testimonial_2": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "<p>Please excuse delay with this note of thanks. Your incredibly delicious and beautiful food was appreciated enormously. Everything was perfect!</p>",
+            "name": "Harry K. Baird",
+            "role": "Logistics Manager",
+            "rating": 0,
+            "link_label": "",
+            "link_url": ""
+          }
+        },
+        "testimonial_3": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "<p>On behalf of Les and myself, I wanted to say a very, very big thank you for your mammoth effort on Sunday. We were blown away by the service.</p>",
+            "name": "Amira Q.",
+            "role": "Marketing Director",
+            "rating": 0,
+            "link_label": "",
+            "link_url": ""
+          }
+        },
+        "testimonial_4": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "<p>We can't thank you enough for all the care, passion and professionalism that you both inject into everything you do.</p>",
+            "name": "Kenji S.",
+            "role": "Product Owner",
+            "rating": 0,
+            "link_label": "",
+            "link_url": ""
+          }
+        }
+      },
+      "block_order": [
+        "testimonial_1",
+        "testimonial_2",
+        "testimonial_3",
+        "testimonial_4"
+      ],
+      "settings": {
+        "section_enabled": true,
+        "show_heading": true,
+        "heading": "WHAT OUR GUESTS SAY",
+        "subheading": "",
+        "heading_color": "#b29b33",
+        "heading_size_mobile": 22,
+        "heading_size_desktop": 28,
+        "section_background": "#ffffff",
+        "container_width": 1200,
+        "padding_top": 64,
+        "padding_bottom": 64,
+        "custom_css_class": "",
+        "card_background": "#ffffff",
+        "card_text_color": "#333333",
+        "quote_icon_color": "#b29b33",
+        "divider_color": "#b29b33",
+        "name_color": "#1f1a14",
+        "role_color": "#6b6560",
+        "card_border_radius": 4,
+        "card_shadow": true,
+        "center_card_scale": 106,
+        "side_card_opacity": 55,
+        "visible_desktop": 3,
+        "visible_tablet": 2,
+        "visible_mobile": 1,
+        "show_arrows": true,
+        "arrow_color": "#b29b33",
+        "arrow_hover_color": "#1a2414",
+        "show_dots": true,
+        "dot_active_color": "#b29b33",
+        "dot_inactive_color": "#d8d2c8",
+        "enable_autoplay": false,
+        "autoplay_speed": 6,
+        "pause_on_hover": true,
+        "enable_read_more": true,
+        "read_more_limit": 160,
+        "read_more_text": "Read more",
+        "read_less_text": "Read less",
+        "read_more_link_color": "#b29b33"
+      }
+    },
+    "testimonials_awards": {
+      "type": "award-winning-wines",
+      "blocks": {
+        "medal_1": {
+          "type": "medal",
+          "settings": {
+            "alt_text": "Award medal",
+            "link": "",
+            "open_new_tab": false
+          }
+        },
+        "medal_2": {
+          "type": "medal",
+          "settings": {
+            "alt_text": "Award medal",
+            "link": "",
+            "open_new_tab": false
+          }
+        },
+        "medal_3": {
+          "type": "medal",
+          "settings": {
+            "alt_text": "Award medal",
+            "link": "",
+            "open_new_tab": false
+          }
+        },
+        "medal_4": {
+          "type": "medal",
+          "settings": {
+            "alt_text": "Award medal",
+            "link": "",
+            "open_new_tab": false
+          }
+        },
+        "medal_5": {
+          "type": "medal",
+          "settings": {
+            "alt_text": "Award medal",
+            "link": "",
+            "open_new_tab": false
+          }
+        },
+        "medal_6": {
+          "type": "medal",
+          "settings": {
+            "alt_text": "Award medal",
+            "link": "",
+            "open_new_tab": false
+          }
+        },
+        "medal_7": {
+          "type": "medal",
+          "settings": {
+            "alt_text": "Award medal",
+            "link": "",
+            "open_new_tab": false
+          }
+        },
+        "medal_8": {
+          "type": "medal",
+          "settings": {
+            "alt_text": "Award medal",
+            "link": "",
+            "open_new_tab": false
+          }
+        },
+        "medal_9": {
+          "type": "medal",
+          "settings": {
+            "alt_text": "Award medal",
+            "link": "",
+            "open_new_tab": false
+          }
+        }
+      },
+      "block_order": [
+        "medal_1",
+        "medal_2",
+        "medal_3",
+        "medal_4",
+        "medal_5",
+        "medal_6",
+        "medal_7",
+        "medal_8",
+        "medal_9"
+      ],
+      "settings": {
+        "section_enabled": true,
+        "section_background": "#f9f7f2",
+        "container_width": 1200,
+        "padding_top": 64,
+        "padding_bottom": 64,
+        "heading": "AWARD WINNING WINES",
+        "heading_color": "#a67b22",
+        "heading_size_mobile": 22,
+        "heading_size_desktop": 28,
+        "show_divider": true,
+        "divider_color": "#a67b22",
+        "divider_width": 48,
+        "divider_thickness": 2,
+        "medal_size": 72,
+        "medal_spacing": 20,
+        "mobile_wrap": true,
+        "description": "<p>Winner of DECANTER and IWC – International Wine Challenge 2012 – CWSA Double Gold Medal and many more.</p>",
+        "text_color": "#25211b",
+        "link_style": "text",
+        "link_1_label": "VIEW TESTIMONIALS & REVIEWS",
+        "link_1_url": "",
+        "link_2_label": "VIEW ACHIEVEMENTS & AWARDS",
+        "link_2_url": "",
+        "link_color": "#a67b22",
+        "link_hover_color": "#1a2414",
+        "primary_bg": "#1a2414",
+        "primary_text": "#ffffff",
+        "primary_border": "#1a2414",
+        "primary_hover_bg": "#a67b22",
+        "primary_hover_text": "#ffffff",
+        "primary_hover_border": "#a67b22",
+        "secondary_bg": "#a67b22",
+        "secondary_text": "#1a2414",
+        "secondary_border": "#1a2414",
+        "secondary_hover_bg": "#1a2414",
+        "secondary_hover_text": "#ffffff",
+        "secondary_hover_border": "#1a2414"
+      }
+    }
+  },
+  "order": [
+    "godshill_page_hero_kJrg4r",
+    "testimonials_featured_review",
+    "testimonials_slider",
+    "testimonials_awards"
+  ]
+}

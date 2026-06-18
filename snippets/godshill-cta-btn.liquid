@@ -1,0 +1,37 @@
+{% doc %}
+Reusable primary/secondary CTA for God's Hill themed sections.
+
+@param {string} label - Visible label
+@param {string} url - Link href
+@param {string} style - "primary" or "secondary"
+@param {string} bg - Background (primary fill or transparent/outline fill on hover baseline)
+@param {string} fg - Text color
+@param {string} border_c - Border color
+@param {string} h_bg - Hover background
+@param {string} h_fg - Hover text
+@param {string} h_border - Hover border
+
+@example
+{% render 'godshill-cta-btn', label: 'Shop now', url: '/collections/all', style: section.settings.cta_style, bg: '#a67b22', fg: '#fff', border_c: '#a67b22', h_bg: '#846118', h_fg: '#fff', h_border: '#846118' %}
+{% enddoc %}
+{% liquid
+  assign st = style | default: 'primary'
+  if label == blank or url == blank
+    assign noop = true
+  else
+    assign noop = false
+  endif
+%}
+{% unless noop %}
+  <a
+    href="{{ url }}"
+    class="gh-cta gh-cta--{{ st }}"
+    {% if st == 'primary' %}
+      style="background: {{ bg }}; color: {{ fg }}; border: 1px solid {{ border_c }}; --gh-h-bg: {{ h_bg }}; --gh-h-fg: {{ h_fg }}; --gh-h-bd: {{ h_border }}"
+    {% else %}
+      style="background: transparent; color: {{ fg }}; border: 1px solid {{ border_c }}; --gh-fill: {{ bg }}; --gh-h-bg: {{ h_bg }}; --gh-h-fg: {{ h_fg }}; --gh-h-bd: {{ h_border }}"
+    {% endif %}
+  >
+    {{- label | escape -}}
+  </a>
+{% endunless %}

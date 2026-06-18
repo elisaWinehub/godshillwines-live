@@ -1,0 +1,220 @@
+{% comment %} Contact · Cellar Door two-column feature {% endcomment %}
+{% liquid
+  assign show = section.settings.section_enabled | default: true
+  assign content_first = true
+  if section.settings.column_order == 'image_left'
+    assign content_first = false
+  endif
+
+  assign aspect_ratio_css = '4 / 3'
+  case section.settings.image_aspect_ratio
+    when 'square'
+      assign aspect_ratio_css = '1 / 1'
+    when 'portrait'
+      assign aspect_ratio_css = '4 / 5'
+    when 'wide'
+      assign aspect_ratio_css = '16 / 9'
+    when 'tall'
+      assign aspect_ratio_css = '3 / 4'
+  endcase
+
+  assign root_class = 'gh-ccdf'
+  if section.settings.custom_css_class != blank
+    assign root_class = root_class | append: ' ' | append: section.settings.custom_css_class | strip
+  endif
+%}
+{% unless show %}
+  <div {{ section.shopify_attributes }} hidden></div>
+{% else %}
+  <section
+    id="GHCCDF-{{ section.id }}"
+    class="{{ root_class }}"
+    {{ section.shopify_attributes }}
+    style="
+      --gh-ccdf-bg: {{ section.settings.section_background }};
+      --gh-ccdf-pt: {{ section.settings.padding_top }}px;
+      --gh-ccdf-pb: {{ section.settings.padding_bottom }}px;
+      --gh-ccdf-cw: {{ section.settings.container_width }}px;
+      --gh-ccdf-gap: {{ section.settings.column_gap }}px;
+      --gh-ccdf-eyebrow: {{ section.settings.eyebrow_color }};
+      --gh-ccdf-heading: {{ section.settings.heading_color }};
+      --gh-ccdf-heading-m: {{ section.settings.heading_size_mobile }}px;
+      --gh-ccdf-heading-d: {{ section.settings.heading_size_desktop }}px;
+      --gh-ccdf-text: {{ section.settings.text_color }};
+      --gh-ccdf-flourish: {{ section.settings.flourish_color }};
+      --gh-ccdf-aspect: {{ aspect_ratio_css }};
+      --gh-ccdf-img-pos: {{ section.settings.image_object_position }};
+    "
+    data-content-first="{% if content_first %}true{% else %}false{% endif %}"
+  >
+    <div class="gh-ccdf__inner">
+      <div class="gh-ccdf__grid">
+        <div class="gh-ccdf__content">
+          {% if section.settings.eyebrow != blank %}
+            <p class="gh-ccdf__eyebrow">{{ section.settings.eyebrow }}</p>
+          {% endif %}
+          {% if section.settings.heading != blank %}
+            <h2 class="gh-ccdf__heading">{{ section.settings.heading | escape | newline_to_br }}</h2>
+          {% endif %}
+          {% if section.settings.show_flourish %}
+            <div class="gh-ccdf__flourish" role="presentation" aria-hidden="true">
+              <svg viewBox="0 0 120 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 12c12-8 24-8 36 0s24 8 36 0 24-8 36 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+          {% endif %}
+          {% if section.settings.body != blank %}
+            <div class="gh-ccdf__body rte">{{ section.settings.body }}</div>
+          {% endif %}
+        </div>
+        <div class="gh-ccdf__media">
+          {% if section.settings.image != blank %}
+            {{
+              section.settings.image
+              | image_url: width: 1400
+              | image_tag: loading: 'lazy', class: 'gh-ccdf__img', widths: '600,900,1200,1400', alt: section.settings.heading | default: section.settings.eyebrow
+            }}
+          {% else %}
+            <div class="gh-ccdf__img gh-ccdf__img--placeholder" role="presentation" aria-hidden="true"></div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    #GHCCDF-{{ section.id }}.gh-ccdf {
+      background: var(--gh-ccdf-bg);
+      padding-block: var(--gh-ccdf-pt) var(--gh-ccdf-pb);
+      color: var(--gh-ccdf-text);
+    }
+    #GHCCDF-{{ section.id }} .gh-ccdf__inner {
+      width: min(100%, var(--gh-ccdf-cw));
+      margin-inline: auto;
+      padding-inline: clamp(16px, 3vw, 32px);
+    }
+    #GHCCDF-{{ section.id }} .gh-ccdf__grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--gh-ccdf-gap);
+      align-items: center;
+    }
+    #GHCCDF-{{ section.id }}[data-content-first='false'] .gh-ccdf__content { order: 2; }
+    #GHCCDF-{{ section.id }}[data-content-first='false'] .gh-ccdf__media { order: 1; }
+    #GHCCDF-{{ section.id }} .gh-ccdf__eyebrow {
+      margin: 0 0 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gh-ccdf-eyebrow);
+    }
+    #GHCCDF-{{ section.id }} .gh-ccdf__heading {
+      margin: 0 0 12px;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(var(--gh-ccdf-heading-m), 3.2vw, var(--gh-ccdf-heading-d));
+      font-weight: 500;
+      color: var(--gh-ccdf-heading);
+      line-height: 1.12;
+    }
+    #GHCCDF-{{ section.id }} .gh-ccdf__flourish {
+      width: 120px;
+      color: var(--gh-ccdf-flourish);
+      margin-bottom: 18px;
+    }
+    #GHCCDF-{{ section.id }} .gh-ccdf__flourish svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    #GHCCDF-{{ section.id }} .gh-ccdf__body {
+      font-size: clamp(15px, 1.7vw, 16px);
+      line-height: 1.65;
+    }
+    #GHCCDF-{{ section.id }} .gh-ccdf__body :is(p, ul, ol) { margin: 0; }
+    #GHCCDF-{{ section.id }} .gh-ccdf__body :is(p + p) { margin-top: 1em; }
+    #GHCCDF-{{ section.id }} .gh-ccdf__img {
+      width: 100%;
+      aspect-ratio: var(--gh-ccdf-aspect);
+      object-fit: cover;
+      object-position: var(--gh-ccdf-img-pos);
+      display: block;
+    }
+    #GHCCDF-{{ section.id }} .gh-ccdf__img--placeholder {
+      background: linear-gradient(145deg, #e8e2d8 0%, #c9bfb0 100%);
+    }
+    @media screen and (max-width: 989px) {
+      #GHCCDF-{{ section.id }} .gh-ccdf__grid { grid-template-columns: 1fr; }
+      #GHCCDF-{{ section.id }} .gh-ccdf__content,
+      #GHCCDF-{{ section.id }} .gh-ccdf__media { order: unset; }
+    }
+  </style>
+{% endunless %}
+
+{% schema %}
+{
+  "name": "Contact cellar door",
+  "tag": "section",
+  "class": "gh-contact-cellar-door",
+  "settings": [
+    { "type": "checkbox", "id": "section_enabled", "label": "Show section", "default": true },
+    { "type": "color", "id": "section_background", "label": "Section background", "default": "#FFFFFF" },
+    { "type": "range", "id": "container_width", "label": "Container max width", "min": 960, "max": 1440, "step": 20, "unit": "px", "default": 1200 },
+    { "type": "range", "id": "padding_top", "label": "Padding top", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 72 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding bottom", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 72 },
+    { "type": "range", "id": "column_gap", "label": "Column gap", "min": 24, "max": 96, "step": 4, "unit": "px", "default": 48 },
+    {
+      "type": "select",
+      "id": "column_order",
+      "label": "Column order",
+      "options": [
+        { "value": "content_left", "label": "Content left, image right" },
+        { "value": "image_left", "label": "Image left, content right" }
+      ],
+      "default": "content_left"
+    },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "CELLAR DOOR" },
+    { "type": "color", "id": "eyebrow_color", "label": "Eyebrow colour", "default": "#B29B33" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Scalzi Estate Vineyard\n& Cantina Scalzi" },
+    { "type": "color", "id": "heading_color", "label": "Heading colour", "default": "#1F1A14" },
+    { "type": "range", "id": "heading_size_mobile", "label": "Heading size mobile", "min": 24, "max": 48, "step": 2, "unit": "px", "default": 28 },
+    { "type": "range", "id": "heading_size_desktop", "label": "Heading size desktop", "min": 28, "max": 56, "step": 2, "unit": "px", "default": 40 },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Body text",
+      "default": "<p>God's Hill \"Cantina Scalzi\" Cellar Door open from Thursday to Sunday from 11am to 5pm. Kitchen open 11am to 4pm We are closed Monday, Tuesday and Wednesday. Open on public holidays from 11am to 5pm.</p><p>Wine Sales can be purchased 7 days a week, please call before coming to collect. We also take other bookings during the week for wine tasting etc please call to book your event in. Call 0412 836 004.</p>"
+    },
+    { "type": "color", "id": "text_color", "label": "Text colour", "default": "#333333" },
+    { "type": "checkbox", "id": "show_flourish", "label": "Show decorative flourish", "default": true },
+    { "type": "color", "id": "flourish_color", "label": "Flourish colour", "default": "#B29B33" },
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    {
+      "type": "select",
+      "id": "image_aspect_ratio",
+      "label": "Image aspect ratio",
+      "options": [
+        { "value": "landscape", "label": "4:3 landscape" },
+        { "value": "wide", "label": "16:9 wide" },
+        { "value": "square", "label": "1:1 square" },
+        { "value": "portrait", "label": "4:5 portrait" },
+        { "value": "tall", "label": "3:4 tall" }
+      ],
+      "default": "landscape"
+    },
+    {
+      "type": "select",
+      "id": "image_object_position",
+      "label": "Image object position",
+      "options": [
+        { "value": "center", "label": "Center" },
+        { "value": "top", "label": "Top" },
+        { "value": "bottom", "label": "Bottom" }
+      ],
+      "default": "center"
+    },
+    { "type": "text", "id": "custom_css_class", "label": "Custom CSS class" }
+  ],
+  "presets": [{ "name": "Contact cellar door", "category": "God's Hill" }]
+}
+{% endschema %}

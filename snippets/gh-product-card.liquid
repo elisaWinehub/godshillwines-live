@@ -1,0 +1,36 @@
+{% liquid
+  assign card_id = section.id | default: 'gh'
+  assign show_badge = show_badge | default: false
+  assign badge_label = badge_label | default: 'Winter Special'
+%}
+
+<article class="gh-product-card gh-product-card-{{ card_id }}">
+  <a class="gh-product-card__image-wrap" href="{{ product.url | default: '#' }}">
+    {% if show_badge %}
+      <span class="gh-product-card__badge">{{ badge_label }}</span>
+    {% endif %}
+    {% if product.featured_media %}
+      {{
+        product.featured_media
+        | image_url: width: 900
+        | image_tag: class: 'gh-product-card__image', loading: 'lazy', alt: product.title
+      }}
+    {% else %}
+      <div class="gh-product-card__image gh-product-card__image--placeholder"></div>
+    {% endif %}
+  </a>
+  <div class="gh-product-card__body">
+    {% assign variety = product.metafields.custom.variety | default: product.type | default: 'Estate Wine' %}
+    <p class="gh-product-card__variety">{{ variety }}</p>
+    <h3 class="gh-product-card__title"><a href="{{ product.url | default: '#' }}">{{ product.title }}</a></h3>
+    {% assign vintage = product.metafields.custom.vintage | default: '' %}
+    {% assign region = product.metafields.custom.region | default: 'Barossa Valley' %}
+    <p class="gh-product-card__meta">
+      {% if vintage != blank %}{{ vintage }} · {% endif %}{{ region }}
+    </p>
+    <div class="gh-product-card__row">
+      <span class="gh-product-card__price">{{ product.price | money }}</span>
+      <a class="gh-product-card__btn" href="{{ product.url | default: '#' }}">Add to cart</a>
+    </div>
+  </div>
+</article>

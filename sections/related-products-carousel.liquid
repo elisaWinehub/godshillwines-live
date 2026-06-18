@@ -1,0 +1,399 @@
+{% comment %} Related products · You may also like carousel {% endcomment %}
+{% liquid
+  assign show = section.settings.section_enabled | default: true
+  assign limit = section.settings.products_count | default: 8
+  assign current_product = product
+
+  assign source_products = blank
+  if section.settings.source_type == 'collection' and section.settings.collection != blank
+    assign source_products = section.settings.collection.products
+  elsif section.settings.source_type == 'related'
+    if recommendations.performed and recommendations.products_count > 0
+      assign source_products = recommendations.products
+    endif
+  elsif current_product.collections.size > 0
+    assign source_products = current_product.collections.first.products
+  endif
+
+  assign root_class = 'gh-rpc'
+  if section.settings.custom_css_class != blank
+    assign root_class = root_class | append: ' ' | append: section.settings.custom_css_class | strip
+  endif
+%}
+
+{% unless show %}
+  <div {{ section.shopify_attributes }} hidden></div>
+{% else %}
+  <section
+    id="GHRPC-{{ section.id }}"
+    class="{{ root_class }}"
+    {{ section.shopify_attributes }}
+    style="
+      --gh-rpc-bg: {{ section.settings.section_background }};
+      --gh-rpc-pt: {{ section.settings.padding_top }}px;
+      --gh-rpc-pb: {{ section.settings.padding_bottom }}px;
+      --gh-rpc-cw: {{ section.settings.container_width }}px;
+      --gh-rpc-heading: {{ section.settings.heading_color }};
+      --gh-rpc-heading-m: {{ section.settings.heading_size_mobile }}px;
+      --gh-rpc-heading-d: {{ section.settings.heading_size_desktop }}px;
+      --gh-rpc-div: {{ section.settings.divider_color }};
+      --gh-rpc-card-bg: {{ section.settings.card_background }};
+      --gh-rpc-title: {{ section.settings.title_color }};
+      --gh-rpc-sub: {{ section.settings.subtitle_color }};
+      --gh-rpc-price: {{ section.settings.price_color }};
+      --gh-rpc-arrow: {{ section.settings.arrow_color }};
+      --gh-rpc-arrow-h: {{ section.settings.arrow_hover_color }};
+      --gh-rpc-dot-a: {{ section.settings.dot_active_color }};
+      --gh-rpc-dot-i: {{ section.settings.dot_inactive_color }};
+      --gh-rpc-visible-d: {{ section.settings.products_per_row_desktop }};
+      --gh-rpc-visible-t: {{ section.settings.products_per_row_tablet }};
+      --gh-rpc-visible-m: {{ section.settings.products_per_row_mobile }};
+      --gh-rpc-ratio: {{ section.settings.image_ratio_percent }}%;
+    "
+    data-rpc-carousel
+    data-show-arrows="{% if section.settings.show_arrows %}true{% else %}false{% endif %}"
+    data-show-dots="{% if section.settings.show_dots %}true{% else %}false{% endif %}"
+  >
+    <div class="gh-rpc__inner">
+      <header class="gh-rpc__header">
+        <div class="gh-rpc__heading-wrap">
+          {% if section.settings.heading != blank %}
+            <h2 class="gh-rpc__heading">{{ section.settings.heading }}</h2>
+            <div class="gh-rpc__divider" role="presentation" aria-hidden="true"></div>
+          {% endif %}
+        </div>
+        {% if section.settings.show_arrows %}
+          <div class="gh-rpc__arrows">
+            <button type="button" class="gh-rpc__arrow gh-rpc__arrow--prev" data-rpc-prev aria-label="Previous products">
+              <span aria-hidden="true">&lsaquo;</span>
+            </button>
+            <button type="button" class="gh-rpc__arrow gh-rpc__arrow--next" data-rpc-next aria-label="Next products">
+              <span aria-hidden="true">&rsaquo;</span>
+            </button>
+          </div>
+        {% endif %}
+      </header>
+
+      {% liquid
+        assign rendered_count = 0
+      %}
+      <div class="gh-rpc__viewport" data-rpc-viewport tabindex="0" aria-roledescription="carousel">
+        <div class="gh-rpc__track" data-rpc-track role="list">
+          {% if source_products != blank %}
+            {% for item in source_products limit: limit %}
+              {% unless item.id == current_product.id %}
+                {% assign rendered_count = rendered_count | plus: 1 %}
+                {% render 'gh-rpc-product-card',
+                  product: item,
+                  section: section,
+                  show_subtitle: section.settings.show_subtitle,
+                  subtitle_metafield: section.settings.subtitle_metafield
+                %}
+              {% endunless %}
+            {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+
+      {% if rendered_count == 0 %}
+        <p class="gh-rpc__empty">No related products to show yet. Assign a collection or add more products.</p>
+      {% endif %}
+
+      {% if section.settings.show_dots %}
+        <div class="gh-rpc__dots" data-rpc-dots role="tablist" aria-label="Carousel pagination"></div>
+      {% endif %}
+    </div>
+  </section>
+
+  <style>
+    #GHRPC-{{ section.id }}.gh-rpc {
+      background: var(--gh-rpc-bg);
+      padding-block: var(--gh-rpc-pt) var(--gh-rpc-pb);
+    }
+    #GHRPC-{{ section.id }} .gh-rpc__inner {
+      width: min(100%, var(--gh-rpc-cw));
+      margin-inline: auto;
+      padding-inline: clamp(16px, 3vw, 32px);
+    }
+    #GHRPC-{{ section.id }} .gh-rpc__header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    #GHRPC-{{ section.id }} .gh-rpc__heading {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(var(--gh-rpc-heading-m), 3vw, var(--gh-rpc-heading-d));
+      font-weight: 400;
+      color: var(--gh-rpc-heading);
+      margin: 0;
+    }
+    #GHRPC-{{ section.id }} .gh-rpc__divider {
+      width: 48px;
+      height: 2px;
+      background: var(--gh-rpc-div);
+      margin-top: 10px;
+    }
+    #GHRPC-{{ section.id }} .gh-rpc__arrows { display: flex; gap: 8px; flex-shrink: 0; }
+    #GHRPC-{{ section.id }} .gh-rpc__arrow {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: 1px solid var(--gh-rpc-div);
+      background: #fff;
+      color: var(--gh-rpc-arrow);
+      cursor: pointer;
+      display: grid; place-items: center;
+      font-size: 1.25rem;
+      line-height: 1;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    #GHRPC-{{ section.id }} .gh-rpc__arrow:hover:not(:disabled) {
+      color: var(--gh-rpc-arrow-h);
+      border-color: var(--gh-rpc-arrow);
+    }
+    #GHRPC-{{ section.id }} .gh-rpc__arrow:disabled { opacity: 0.35; cursor: default; }
+    #GHRPC-{{ section.id }} .gh-rpc__viewport { overflow: hidden; }
+    #GHRPC-{{ section.id }} .gh-rpc__track {
+      display: flex;
+      gap: 16px;
+      transition: transform 0.4s ease;
+      will-change: transform;
+    }
+    #GHRPC-{{ section.id }} .gh-rpc__slide {
+      flex: 0 0 calc((100% - (var(--gh-rpc-visible-m) - 1) * 16px) / var(--gh-rpc-visible-m));
+      min-width: 0;
+    }
+    @media (min-width: 750px) {
+      #GHRPC-{{ section.id }} .gh-rpc__slide {
+        flex-basis: calc((100% - (var(--gh-rpc-visible-t) - 1) * 16px) / var(--gh-rpc-visible-t));
+      }
+    }
+    @media (min-width: 990px) {
+      #GHRPC-{{ section.id }} .gh-rpc__slide {
+        flex-basis: calc((100% - (var(--gh-rpc-visible-d) - 1) * 16px) / var(--gh-rpc-visible-d));
+      }
+    }
+    #GHRPC-{{ section.id }} .gh-rpc__card {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      text-decoration: none;
+      color: inherit;
+    }
+    #GHRPC-{{ section.id }} .gh-rpc__card-media {
+      background: var(--gh-rpc-card-bg);
+      border-radius: 4px;
+      padding: 20px;
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    #GHRPC-{{ section.id }} .gh-rpc__card-img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    #GHRPC-{{ section.id }} .gh-rpc__card-title {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 1rem;
+      line-height: 1.3;
+      color: var(--gh-rpc-title);
+      margin: 0 0 4px;
+    }
+    #GHRPC-{{ section.id }} .gh-rpc__card-sub {
+      font-size: 0.8125rem;
+      color: var(--gh-rpc-sub);
+      margin: 0 0 6px;
+    }
+    #GHRPC-{{ section.id }} .gh-rpc__card-price {
+      font-size: 0.9375rem;
+      color: var(--gh-rpc-price);
+      margin: 0;
+    }
+    #GHRPC-{{ section.id }} .gh-rpc__dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 24px;
+    }
+    #GHRPC-{{ section.id }} .gh-rpc__dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      border: none;
+      padding: 0;
+      background: var(--gh-rpc-dot-i);
+      cursor: pointer;
+    }
+    #GHRPC-{{ section.id }} .gh-rpc__dot.is-active { background: var(--gh-rpc-dot-a); }
+    #GHRPC-{{ section.id }} .gh-rpc__empty {
+      text-align: center;
+      color: var(--gh-rpc-sub);
+      padding: 24px 0;
+    }
+  </style>
+
+  <script>
+    (function () {
+      var root = document.getElementById('GHRPC-{{ section.id }}');
+      if (!root) return;
+
+      var track = root.querySelector('[data-rpc-track]');
+      var viewport = root.querySelector('[data-rpc-viewport]');
+      var prevBtn = root.querySelector('[data-rpc-prev]');
+      var nextBtn = root.querySelector('[data-rpc-next]');
+      var dotsWrap = root.querySelector('[data-rpc-dots]');
+      if (!track || !viewport) return;
+
+      var index = 0;
+      var slides = function () { return Array.from(track.children); };
+
+      function visibleCount() {
+        var w = window.innerWidth;
+        if (w >= 990) return {{ section.settings.products_per_row_desktop }};
+        if (w >= 750) return {{ section.settings.products_per_row_tablet }};
+        return {{ section.settings.products_per_row_mobile }};
+      }
+
+      function maxIndex() {
+        return Math.max(0, slides().length - visibleCount());
+      }
+
+      function slideWidth() {
+        var s = slides()[0];
+        if (!s) return 0;
+        return s.offsetWidth + 16;
+      }
+
+      function update() {
+        var max = maxIndex();
+        if (index > max) index = max;
+        track.style.transform = 'translateX(-' + (index * slideWidth()) + 'px)';
+        if (prevBtn) prevBtn.disabled = index <= 0;
+        if (nextBtn) nextBtn.disabled = index >= max;
+        if (dotsWrap) {
+          dotsWrap.querySelectorAll('.gh-rpc__dot').forEach(function (dot, i) {
+            dot.classList.toggle('is-active', i === index);
+            dot.setAttribute('aria-selected', i === index ? 'true' : 'false');
+          });
+        }
+      }
+
+      function buildDots() {
+        if (!dotsWrap) return;
+        dotsWrap.innerHTML = '';
+        var pages = maxIndex() + 1;
+        for (var i = 0; i < pages; i++) {
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'gh-rpc__dot' + (i === 0 ? ' is-active' : '');
+          btn.setAttribute('role', 'tab');
+          btn.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+          btn.addEventListener('click', function (j) {
+            return function () { index = j; update(); };
+          }(i));
+          dotsWrap.appendChild(btn);
+        }
+      }
+
+      prevBtn && prevBtn.addEventListener('click', function () { if (index > 0) { index--; update(); } });
+      nextBtn && nextBtn.addEventListener('click', function () { if (index < maxIndex()) { index++; update(); } });
+
+      var startX = 0;
+      viewport.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, { passive: true });
+      viewport.addEventListener('touchend', function (e) {
+        var diff = startX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 40) {
+          if (diff > 0 && index < maxIndex()) index++;
+          else if (diff < 0 && index > 0) index--;
+          update();
+        }
+      });
+
+      window.addEventListener('resize', function () { buildDots(); update(); });
+      buildDots();
+      update();
+
+      {% if section.settings.source_type == 'related' and rendered_count == 0 and current_product != blank %}
+      var recUrl = '{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ current_product.id }}&limit={{ limit }}&intent=related';
+      fetch(recUrl)
+        .then(function (r) { return r.text(); })
+        .then(function (html) {
+          var doc = new DOMParser().parseFromString(html, 'text/html');
+          var newTrack = doc.querySelector('#GHRPC-{{ section.id }} [data-rpc-track]');
+          if (newTrack && newTrack.children.length) {
+            track.innerHTML = newTrack.innerHTML;
+            index = 0;
+            buildDots();
+            update();
+            var empty = root.querySelector('.gh-rpc__empty');
+            if (empty) empty.hidden = true;
+          }
+        })
+        .catch(function () {});
+      {% endif %}
+    })();
+  </script>
+{% endunless %}
+
+{% schema %}
+{
+  "name": "Related products carousel",
+  "tag": "section",
+  "class": "gh-related-products-section",
+  "settings": [
+    { "type": "checkbox", "id": "section_enabled", "label": "Enable section", "default": true },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "You may also like" },
+    { "type": "color", "id": "heading_color", "label": "Heading colour", "default": "#1F1A14" },
+    { "type": "range", "id": "heading_size_mobile", "label": "Heading size mobile", "min": 22, "max": 36, "step": 2, "unit": "px", "default": 26 },
+    { "type": "range", "id": "heading_size_desktop", "label": "Heading size desktop", "min": 26, "max": 42, "step": 2, "unit": "px", "default": 32 },
+    { "type": "color", "id": "divider_color", "label": "Divider colour", "default": "#B29B33" },
+    {
+      "type": "select",
+      "id": "source_type",
+      "label": "Product source",
+      "options": [
+        { "value": "collection", "label": "Collection" },
+        { "value": "related", "label": "Shopify related recommendations" },
+        { "value": "auto", "label": "Product's first collection" }
+      ],
+      "default": "auto"
+    },
+    { "type": "collection", "id": "collection", "label": "Collection" },
+    { "type": "range", "id": "products_count", "label": "Maximum products", "min": 4, "max": 16, "step": 1, "default": 8 },
+    { "type": "range", "id": "products_per_row_desktop", "label": "Products per row desktop", "min": 2, "max": 5, "step": 1, "default": 4 },
+    { "type": "range", "id": "products_per_row_tablet", "label": "Products per row tablet", "min": 1, "max": 4, "step": 1, "default": 2 },
+    { "type": "range", "id": "products_per_row_mobile", "label": "Products per row mobile", "min": 1, "max": 3, "step": 1, "default": 1 },
+    { "type": "checkbox", "id": "show_arrows", "label": "Show arrows", "default": true },
+    { "type": "checkbox", "id": "show_dots", "label": "Show dots", "default": false },
+    { "type": "range", "id": "image_ratio_percent", "label": "Image panel ratio helper", "min": 80, "max": 120, "step": 5, "unit": "%", "default": 100 },
+    { "type": "color", "id": "section_background", "label": "Section background", "default": "#FFFFFF" },
+    { "type": "range", "id": "container_width", "label": "Container max width", "min": 960, "max": 1440, "step": 20, "unit": "px", "default": 1200 },
+    { "type": "range", "id": "padding_top", "label": "Padding top", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 48 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding bottom", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 64 },
+    { "type": "color", "id": "card_background", "label": "Card image panel background", "default": "#F3EDE3" },
+    { "type": "color", "id": "title_color", "label": "Title colour", "default": "#1F1A14" },
+    { "type": "checkbox", "id": "show_subtitle", "label": "Show region/subtitle", "default": true },
+    { "type": "text", "id": "subtitle_metafield", "label": "Subtitle metafield key", "default": "region", "info": "Uses product.metafields.custom.[key] if set" },
+    { "type": "color", "id": "subtitle_color", "label": "Subtitle colour", "default": "#6B6560" },
+    { "type": "color", "id": "price_color", "label": "Price colour", "default": "#B29B33" },
+    { "type": "color", "id": "arrow_color", "label": "Arrow colour", "default": "#B29B33" },
+    { "type": "color", "id": "arrow_hover_color", "label": "Arrow hover colour", "default": "#1A2414" },
+    { "type": "color", "id": "dot_active_color", "label": "Active dot colour", "default": "#B29B33" },
+    { "type": "color", "id": "dot_inactive_color", "label": "Inactive dot colour", "default": "#D8D2C8" },
+    { "type": "text", "id": "custom_css_class", "label": "Custom CSS class" }
+  ],
+  "presets": [
+    {
+      "name": "Related products carousel",
+      "category": "God's Hill"
+    }
+  ],
+  "enabled_on": {
+    "templates": ["product"]
+  }
+}
+{% endschema %}

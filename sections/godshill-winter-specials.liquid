@@ -1,0 +1,522 @@
+{% comment %}
+  God's Hill · Winter Wine Specials style row — split image + editorial panel.
+{% endcomment %}
+{% liquid
+  assign show_section = section.settings.section_enabled | default: true
+  assign overlay_op = section.settings.section_overlay_opacity | divided_by: 100.0
+%}
+{% unless show_section %}
+  <div {{ section.shopify_attributes }} hidden></div>
+{% else %}
+  <section
+    id="GHWin-{{ section.id }}"
+    class="gh-win {{ section.settings.custom_css_class | strip }}"
+    {{ section.shopify_attributes }}
+    style="
+      --bg: {{ section.settings.section_background_color }};
+      --pt: {{ section.settings.padding_top }}px;
+      --pb: {{ section.settings.padding_bottom }}px;
+      --cont: {{ section.settings.container_max_width }}px;
+      --min-h: {{ section.settings.row_min_height }}px;
+      --img-bg: {{ section.settings.image_column_bg }};
+      --panel-bg: {{ section.settings.content_column_bg }};
+      --eyebrow-c: {{ section.settings.eyebrow_color }};
+      --eyebrow-fs: {{ section.settings.eyebrow_size }}px;
+      --eyebrow-fw: {{ section.settings.eyebrow_weight }};
+      --h-c: {{ section.settings.heading_color }};
+      --h-d: {{ section.settings.heading_size_desktop }}px;
+      --h-m: {{ section.settings.heading_size_mobile }}px;
+      --h-fw: {{ section.settings.heading_weight }};
+      --h-ls: {{ section.settings.heading_letter_spacing | divided_by: 100.0 }}em;
+      --b-fs: {{ section.settings.body_size }}px;
+      --b-c: {{ section.settings.body_color }};
+      --b-fw: {{ section.settings.body_weight }};
+      --b-ls: {{ section.settings.body_letter_spacing | divided_by: 100.0 }}em;
+      --txt: {{ section.settings.content_alignment }};
+    "
+  >
+    {% if section.settings.section_background_image != blank %}
+      <div class="gh-win__bg" aria-hidden="true">
+        {{
+          section.settings.section_background_image
+          | image_url: width: 2400
+          | image_tag: loading: 'lazy', class: 'gh-win__bg-img', widths: '800,1400,2000'
+        }}
+        <div
+          class="gh-win__bg-tint"
+          style="
+            opacity: {{ overlay_op }};
+            background: {{ section.settings.section_overlay_color }};
+          "
+        ></div>
+      </div>
+    {% endif %}
+
+    {% liquid
+      assign desktop_media_first = true
+      if section.settings.desktop_media_position == 'right'
+        assign desktop_media_first = false
+      endif
+
+      assign mobile_media_first = true
+      if section.settings.mobile_media_position == 'second'
+        assign mobile_media_first = false
+      endif
+    %}
+
+    <div
+      class="gh-win__split godshill-winter-specials__grid"
+      data-d-first="{% if desktop_media_first %}media{% else %}content{% endif %}"
+      data-m-first="{% if mobile_media_first %}media{% else %}content{% endif %}"
+    >
+      <div class="gh-win__media godshill-winter-specials__media" style="background: var(--img-bg);">
+        {% if section.settings.media_image != blank %}
+          {{
+            section.settings.media_image
+            | image_url: width: 1600
+            | image_tag:
+              widths: '400,720,1100',
+              sizes: '(min-width:990px) 50vw, 100vw',
+              class: 'gh-win__photo',
+              loading: 'lazy'
+          }}
+        {% else %}
+          <div class="gh-win__photo gh-win__photo--placeholder" role="presentation"></div>
+        {% endif %}
+      </div>
+
+      <div class="gh-win__panel godshill-winter-specials__content" style="background: var(--panel-bg);">
+        <div class="gh-win__panel-inner godshill-winter-specials__content-inner">
+          {% if section.settings.subheading != blank %}
+            <p class="gh-win__eyebrow">{{ section.settings.subheading }}</p>
+          {% endif %}
+          {% if section.settings.heading != blank %}
+            <h2 class="gh-win__title">{{ section.settings.heading }}</h2>
+          {% endif %}
+          {% if section.settings.body_richtext != blank %}
+            <div class="gh-win__body rte">{{ section.settings.body_richtext }}</div>
+          {% endif %}
+
+          {% if section.settings.cta_style != 'secondary' %}
+            {% render 'godshill-cta-btn',
+              label: section.settings.cta_label,
+              url: section.settings.cta_link,
+              style: 'primary',
+              bg: section.settings.cta_primary_bg,
+              fg: section.settings.cta_primary_text,
+              border_c: section.settings.cta_primary_border,
+              h_bg: section.settings.cta_primary_hover_bg,
+              h_fg: section.settings.cta_primary_hover_text,
+              h_border: section.settings.cta_primary_hover_border
+            %}
+          {% else %}
+            {% render 'godshill-cta-btn',
+              label: section.settings.cta_label,
+              url: section.settings.cta_link,
+              style: 'secondary',
+              bg: section.settings.cta_secondary_bg_fill,
+              fg: section.settings.cta_secondary_text,
+              border_c: section.settings.cta_secondary_border,
+              h_bg: section.settings.cta_secondary_hover_bg,
+              h_fg: section.settings.cta_secondary_hover_text,
+              h_border: section.settings.cta_secondary_hover_border
+            %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    /* Bypass Horizon/global section wrapper inset — full bleed 50|50 grid */
+    #shopify-section-{{ section.id }} {
+      padding-inline: 0;
+      margin-inline: 0;
+      max-width: none;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    #GHWin-{{ section.id }}.gh-win {
+      position: relative;
+      background: var(--bg);
+      padding-block: var(--pt) var(--pb);
+      padding-inline: 0;
+      margin-inline: 0;
+      width: 100%;
+      max-width: none;
+      box-sizing: border-box;
+      color: var(--b-c);
+      overflow-x: clip;
+    }
+    #GHWin-{{ section.id }} .gh-win__bg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    #GHWin-{{ section.id }} .gh-win__bg-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    #GHWin-{{ section.id }} .gh-win__bg-tint {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    #GHWin-{{ section.id }} .gh-win__split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      column-gap: 0;
+      row-gap: 0;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      min-height: var(--min-h);
+      overflow: clip;
+      align-items: stretch;
+      border-radius: 0;
+    }
+    #GHWin-{{ section.id }} .gh-win__split[data-d-first='content'] .gh-win__panel {
+      order: 1;
+    }
+    #GHWin-{{ section.id }} .gh-win__split[data-d-first='content'] .gh-win__media {
+      order: 2;
+    }
+    #GHWin-{{ section.id }} .gh-win__split[data-d-first='media'] .gh-win__media {
+      order: 1;
+    }
+    #GHWin-{{ section.id }} .gh-win__split[data-d-first='media'] .gh-win__panel {
+      order: 2;
+    }
+    #GHWin-{{ section.id }} .gh-win__media {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      align-self: stretch;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      min-block-size: var(--min-h);
+    }
+    #GHWin-{{ section.id }} .gh-win__photo {
+      flex: 1 1 auto;
+      width: 100%;
+      min-height: 0;
+      min-block-size: var(--min-h);
+      object-fit: cover;
+      display: block;
+    }
+    #GHWin-{{ section.id }} .gh-win__photo--placeholder {
+      flex: 1 1 auto;
+      min-height: 0;
+      align-self: stretch;
+      background: linear-gradient(135deg, #efebe4, #cfc5b7);
+    }
+    #GHWin-{{ section.id }} .gh-win__panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: stretch;
+      align-self: stretch;
+      flex: 1 1 auto;
+      margin: 0;
+      padding: clamp(36px, 6vw, 80px);
+      box-sizing: border-box;
+      text-align: var(--txt, left);
+      min-width: 0;
+    }
+    #GHWin-{{ section.id }} .gh-win__panel-inner {
+      width: 100%;
+      max-width: none;
+      box-sizing: border-box;
+    }
+    #GHWin-{{ section.id }} .gh-win__eyebrow {
+      margin: 0 0 12px;
+      text-transform: uppercase;
+      color: var(--eyebrow-c);
+      letter-spacing: 0.08em;
+      font-size: var(--eyebrow-fs);
+      font-weight: var(--eyebrow-fw, 700);
+    }
+    #GHWin-{{ section.id }} .gh-win__title {
+      margin: 0 0 18px;
+      font-family: Georgia, serif;
+      color: var(--h-c);
+      font-size: clamp(calc(var(--h-m, 38px)), 6vw, var(--h-d, 48px));
+      font-weight: var(--h-fw, 400);
+      line-height: 1.08;
+      letter-spacing: var(--h-ls);
+    }
+    #GHWin-{{ section.id }} .gh-win__body {
+      margin: 0 0 22px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: var(--b-fs, 15px);
+      color: var(--b-c);
+      font-weight: var(--b-fw, 400);
+      letter-spacing: var(--b-ls);
+      line-height: 1.65;
+    }
+    #GHWin-{{ section.id }} .gh-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 22px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: 0.22s ease;
+    }
+    #GHWin-{{ section.id }} .gh-cta::after {
+      content: '\2192';
+    }
+    #GHWin-{{ section.id }} .gh-cta--primary:hover,
+    #GHWin-{{ section.id }} .gh-cta--secondary:hover {
+      transform: translateY(-1px);
+      background-color: var(--gh-h-bg) !important;
+      color: var(--gh-h-fg) !important;
+      border-color: var(--gh-h-bd) !important;
+    }
+    @media screen and (max-width: 989px) {
+      #GHWin-{{ section.id }} .gh-win__split {
+        grid-template-columns: 1fr;
+        min-height: unset;
+      }
+      #GHWin-{{ section.id }} .gh-win__media {
+        min-block-size: min(55vw, 420px);
+      }
+      #GHWin-{{ section.id }} .gh-win__split[data-m-first='content'] .gh-win__panel {
+        order: 1;
+      }
+      #GHWin-{{ section.id }} .gh-win__split[data-m-first='content'] .gh-win__media {
+        order: 2;
+      }
+      #GHWin-{{ section.id }} .gh-win__split[data-m-first='media'] .gh-win__media {
+        order: 1;
+      }
+      #GHWin-{{ section.id }} .gh-win__split[data-m-first='media'] .gh-win__panel {
+        order: 2;
+      }
+      #GHWin-{{ section.id }} .gh-win__panel {
+        padding-block: clamp(24px, 7vw, 48px);
+        padding-inline: clamp(20px, 6vw, 32px);
+      }
+    }
+  </style>
+{% endunless %}
+
+{% schema %}
+{
+  "name": "Godshill Winter Specials",
+  "tag": "section",
+  "class": "godshill-winter-specials",
+  "settings": [
+    { "type": "checkbox", "id": "section_enabled", "label": "Show section", "default": true },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 0 },
+    {
+      "type": "range",
+      "id": "container_max_width",
+      "label": "Content max-width reference",
+      "info": "Exposed as CSS variable --cont on #GHWin-… for custom CSS (section uses edge-to-edge 50|50 columns).",
+      "min": 980,
+      "max": 1600,
+      "step": 10,
+      "unit": "px",
+      "default": 1180
+    },
+    {
+      "type": "range",
+      "id": "row_min_height",
+      "label": "Minimum row height (desktop)",
+      "min": 320,
+      "max": 720,
+      "step": 5,
+      "unit": "px",
+      "default": 445
+    },
+    { "type": "color", "id": "section_background_color", "label": "Outer section background", "default": "#F7F3E8" },
+    { "type": "image_picker", "id": "section_background_image", "label": "Optional full-bleed background image" },
+    { "type": "color", "id": "section_overlay_color", "label": "Background tint color", "default": "#000000" },
+    { "type": "range", "id": "section_overlay_opacity", "label": "Tint opacity", "min": 0, "max": 100, "step": 5, "unit": "%", "default": 0 },
+    { "type": "color", "id": "image_column_bg", "label": "Image column tint", "default": "#f0ebe4" },
+    { "type": "color", "id": "content_column_bg", "label": "Content column background", "default": "#F7F3E8" },
+    { "type": "image_picker", "id": "media_image", "label": "Featured image" },
+    {
+      "type": "select",
+      "id": "desktop_media_position",
+      "label": "Desktop · image placement",
+      "options": [
+        { "value": "left", "label": "Image left · content right" },
+        { "value": "right", "label": "Content left · image right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "mobile_media_position",
+      "label": "Mobile · stacking order",
+      "options": [
+        { "value": "first", "label": "Image first · content below" },
+        { "value": "second", "label": "Content first · image below" }
+      ],
+      "default": "first"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "Copy alignment inside panel",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    { "type": "text", "id": "subheading", "label": "Eyebrow", "default": "Limited Time Offer" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Winter Wine Specials" },
+    {
+      "type": "richtext",
+      "id": "body_richtext",
+      "label": "Body content",
+      "default": "<p>Order a 12-bottle mix of our favourites and receive a complimentary bottle of Ennia by Tini for home delivery free of charge to any Australian or NT destination.</p>"
+    },
+    { "type": "header", "content": "Typography" },
+    { "type": "color", "id": "eyebrow_color", "label": "Eyebrow color", "default": "#A67B22" },
+    {
+      "type": "range",
+      "id": "eyebrow_size",
+      "label": "Eyebrow font size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_weight",
+      "label": "Eyebrow weight",
+      "min": 400,
+      "max": 800,
+      "step": 100,
+      "default": 700
+    },
+    { "type": "color", "id": "heading_color", "label": "Heading color", "default": "#25211B" },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Heading size · desktop",
+      "min": 28,
+      "max": 64,
+      "step": 1,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading size · mobile fallback",
+      "min": 24,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "heading_weight",
+      "label": "Heading weight",
+      "min": 400,
+      "max": 800,
+      "step": 100,
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "heading_letter_spacing",
+      "label": "Heading letter-spacing ÷100",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "default": 0
+    },
+    { "type": "color", "id": "body_color", "label": "Body color", "default": "#6F6A61" },
+    {
+      "type": "range",
+      "id": "body_size",
+      "label": "Body size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "body_weight",
+      "label": "Body weight",
+      "min": 400,
+      "max": 700,
+      "step": 100,
+      "default": 400
+    },
+    {
+      "type": "range",
+      "id": "body_letter_spacing",
+      "label": "Body letter-spacing ÷100",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "default": 0
+    },
+
+    { "type": "header", "content": "Button & CTA" },
+    {
+      "type": "select",
+      "id": "cta_style",
+      "label": "Button style",
+      "options": [{ "value": "primary", "label": "Primary" }, { "value": "secondary", "label": "Secondary" }],
+      "default": "primary"
+    },
+    { "type": "text", "id": "cta_label", "label": "Button label", "default": "Shop Now" },
+    { "type": "url", "id": "cta_link", "label": "Button link" },
+
+    { "type": "color", "id": "cta_primary_bg", "label": "Primary bg", "default": "#A67B22" },
+    { "type": "color", "id": "cta_primary_text", "label": "Primary text", "default": "#FFFFFF" },
+    { "type": "color", "id": "cta_primary_border", "label": "Primary border", "default": "#A67B22" },
+    { "type": "color", "id": "cta_primary_hover_bg", "label": "Primary hover bg", "default": "#846118" },
+    { "type": "color", "id": "cta_primary_hover_text", "label": "Primary hover text", "default": "#FFFFFF" },
+    { "type": "color", "id": "cta_primary_hover_border", "label": "Primary hover border", "default": "#846118" },
+
+    {
+      "type": "paragraph",
+      "content": "Secondary/outline button colors"
+    },
+    { "type": "color", "id": "cta_secondary_bg_fill", "label": "Solid fill accent (outline hover)", "default": "#A67B22" },
+    { "type": "color", "id": "cta_secondary_text", "label": "Secondary label", "default": "#A67B22" },
+    { "type": "color", "id": "cta_secondary_border", "label": "Secondary border", "default": "#A67B22" },
+    {
+      "type": "color",
+      "id": "cta_secondary_hover_bg",
+      "label": "Secondary hover bg",
+      "default": "#A67B22"
+    },
+    { "type": "color", "id": "cta_secondary_hover_text", "label": "Secondary hover text", "default": "#FFFFFF" },
+    {
+      "type": "color",
+      "id": "cta_secondary_hover_border",
+      "label": "Secondary hover border",
+      "default": "#846118"
+    },
+
+    { "type": "text", "id": "custom_css_class", "label": "Additional CSS classes" }
+  ],
+  "presets": [{ "name": "Godshill Winter Specials", "category": "God's Hill" }]
+}
+{% endschema %}

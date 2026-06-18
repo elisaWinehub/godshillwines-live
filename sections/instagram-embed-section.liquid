@@ -1,0 +1,468 @@
+{% liquid
+  assign subtitle_font_style_css = 'normal'
+  assign subtitle_text_transform = 'none'
+  case section.settings.subtitle_font_style
+    when 'italic'
+      assign subtitle_font_style_css = 'italic'
+    when 'uppercase'
+      assign subtitle_text_transform = 'uppercase'
+      assign subtitle_font_style_css = 'normal'
+  endcase
+
+  assign heading_weight = 400
+  case section.settings.heading_font_weight
+    when 'medium'
+      assign heading_weight = 500
+    when 'bold'
+      assign heading_weight = 700
+  endcase
+
+  assign text_lh = section.settings.text_line_height | times: 1.0 | divided_by: 100.0
+
+  assign align_items = 'flex-start'
+  assign text_align = 'start'
+  case section.settings.text_alignment
+    when 'center'
+      assign align_items = 'center'
+      assign text_align = 'center'
+    when 'right'
+      assign align_items = 'flex-end'
+      assign text_align = 'end'
+  endcase
+
+  assign root_class = 'instagram-embed-section instagram-embed-section--scoped instagram-embed-section--' | append: section.id | append: ' instagram-embed-section--box-' | append: section.settings.text_alignment
+-%}
+
+<div
+  class="{{ root_class }}"
+  {{ section.shopify_attributes }}
+  style="
+    --ies-pad-top: {{ section.settings.section_padding_top }}px;
+    --ies-pad-bottom: {{ section.settings.section_padding_bottom }}px;
+    --ies-shell-max: {{ section.settings.section_max_width }}px;
+    --ies-content-max: {{ section.settings.content_max_width }}px;
+    --ies-bg: {{ section.settings.section_background_color }};
+    --ies-align: {{ align_items }};
+    --ies-text-align: {{ text_align }};
+    --ies-subtitle-size: {{ section.settings.subtitle_font_size }}px;
+    --ies-subtitle-style: {{ subtitle_font_style_css }};
+    --ies-subtitle-transform: {{ subtitle_text_transform }};
+    --ies-subtitle-color: {{ section.settings.subtitle_color }};
+    --ies-heading-size: {{ section.settings.heading_font_size }}px;
+    --ies-heading-weight: {{ heading_weight }};
+    --ies-heading-color: {{ section.settings.heading_color }};
+    --ies-text-size: {{ section.settings.text_font_size }}px;
+    --ies-text-color: {{ section.settings.text_color }};
+    --ies-text-lh: {{ text_lh }};
+    --ies-social: {{ section.settings.social_link_color }};
+    --ies-social-hover: {{ section.settings.social_link_hover_color }};
+  "
+>
+  {% style %}
+    .instagram-embed-section--{{ section.id }} {
+      background-color: var(--ies-bg);
+      padding-block-start: var(--ies-pad-top);
+      padding-block-end: var(--ies-pad-bottom);
+    }
+
+    .instagram-embed-section--{{ section.id }} .instagram-embed-section__shell {
+      width: 100%;
+      max-width: var(--ies-shell-max);
+      margin-inline: auto;
+      padding-inline: var(--page-margin, 1.25rem);
+    }
+
+    .instagram-embed-section--{{ section.id }} .instagram-embed-section__intro {
+      width: 100%;
+      max-width: min(var(--ies-content-max), 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: var(--ies-align);
+      text-align: var(--ies-text-align);
+      gap: 0.75rem;
+      margin-inline: auto;
+      margin-block-end: clamp(1.25rem, 3vw, 2rem);
+    }
+
+    .instagram-embed-section--{{ section.id }}.instagram-embed-section--box-left .instagram-embed-section__intro {
+      margin-inline: 0 auto;
+    }
+
+    .instagram-embed-section--{{ section.id }}.instagram-embed-section--box-right .instagram-embed-section__intro {
+      margin-inline: auto 0;
+    }
+
+    .instagram-embed-section--{{ section.id }} .instagram-embed-section__subtitle {
+      margin: 0;
+      font-size: clamp(calc(var(--ies-subtitle-size) * 0.85), 2.8vw, var(--ies-subtitle-size));
+      font-style: var(--ies-subtitle-style);
+      text-transform: var(--ies-subtitle-transform);
+      color: var(--ies-subtitle-color);
+      letter-spacing: 0.06em;
+    }
+
+    .instagram-embed-section--{{ section.id }} .instagram-embed-section__subtitle.ies-subtitle--uppercase {
+      letter-spacing: 0.14em;
+    }
+
+    .instagram-embed-section--{{ section.id }} .instagram-embed-section__heading {
+      margin: 0;
+      font-family: var(--font-heading--family);
+      font-weight: var(--ies-heading-weight);
+      font-size: clamp(calc(var(--ies-heading-size) * 0.72), 4.5vw, var(--ies-heading-size));
+      line-height: 1.15;
+      color: var(--ies-heading-color);
+    }
+
+    .instagram-embed-section--{{ section.id }} .instagram-embed-section__rte {
+      margin: 0;
+      font-size: clamp(calc(var(--ies-text-size) * 0.92), 2.4vw, var(--ies-text-size));
+      line-height: var(--ies-text-lh);
+      color: var(--ies-text-color);
+    }
+
+    .instagram-embed-section--{{ section.id }} .instagram-embed-section__rte p:first-child {
+      margin-block-start: 0;
+    }
+
+    .instagram-embed-section--{{ section.id }} .instagram-embed-section__rte p:last-child {
+      margin-block-end: 0;
+    }
+
+    .instagram-embed-section--{{ section.id }} .instagram-embed-section__social {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem 1rem;
+      margin-block-start: 0.35rem;
+    }
+
+    .instagram-embed-section--{{ section.id }} .instagram-embed-section__social-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.5rem;
+      height: 2.5rem;
+      color: var(--ies-social);
+      transition: color var(--animation-speed, 0.2s) var(--animation-easing, ease);
+    }
+
+    .instagram-embed-section--{{ section.id }} .instagram-embed-section__social-link:hover {
+      color: var(--ies-social-hover);
+    }
+
+    .instagram-embed-section--{{ section.id }} .instagram-embed-section__social-link svg {
+      width: 1.35rem;
+      height: 1.35rem;
+    }
+
+    .instagram-embed-section--{{ section.id }} .instagram-embed-section__embed {
+      width: 100%;
+      max-width: min(var(--ies-content-max), 100%);
+      margin-inline: auto;
+    }
+
+    .instagram-embed-section--{{ section.id }}.instagram-embed-section--box-left .instagram-embed-section__embed {
+      margin-inline: 0;
+    }
+
+    .instagram-embed-section--{{ section.id }}.instagram-embed-section--box-right .instagram-embed-section__embed {
+      margin-inline: auto 0;
+    }
+
+    .instagram-embed-section--{{ section.id }} .instagram-embed-section__embed-inner {
+      width: 100%;
+      display: flex;
+      justify-content: var(--ies-align);
+    }
+
+    .instagram-embed-section--{{ section.id }} .instagram-embed-section__embed-inner > * {
+      max-width: 100%;
+    }
+
+    .instagram-embed-section--{{ section.id }} .instagram-embed-section__embed-inner iframe {
+      max-width: 100%;
+    }
+
+    .instagram-embed-section--{{ section.id }} .instagram-embed-section__placeholder {
+      width: 100%;
+      max-width: min(var(--ies-content-max), 100%);
+      margin-inline: auto;
+      padding: 2rem 1.25rem;
+      border: 1px dashed rgb(var(--color-foreground-rgb, 51 51 51) / 0.35);
+      border-radius: 8px;
+      background: rgb(var(--color-background-rgb, 247 243 232) / 0.5);
+      color: var(--ies-text-color);
+      font-size: 0.9375rem;
+      text-align: center;
+    }
+  {% endstyle %}
+
+  <div class="instagram-embed-section__shell">
+      <div class="instagram-embed-section__intro">
+        {% if section.settings.subtitle != blank %}
+          <p class="instagram-embed-section__subtitle{% if subtitle_text_transform == 'uppercase' %} ies-subtitle--uppercase{% endif %}">
+            {{ section.settings.subtitle | escape }}
+          </p>
+        {% endif %}
+        {% if section.settings.heading != blank %}
+          <h2 class="instagram-embed-section__heading">{{ section.settings.heading | escape }}</h2>
+        {% endif %}
+        {% if section.settings.text_copy != blank %}
+          <div class="instagram-embed-section__rte rte">{{ section.settings.text_copy }}</div>
+        {% endif %}
+
+        {% if section.settings.show_social_links %}
+          <div class="instagram-embed-section__social">
+            {% if section.settings.instagram_url != blank %}
+              <a
+                href="{{ section.settings.instagram_url }}"
+                class="instagram-embed-section__social-link"
+                aria-label="Instagram"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" focusable="false">
+                  {%- render 'icon', icon: 'instagram' -%}
+                </svg>
+              </a>
+            {% endif %}
+            {% if section.settings.facebook_url != blank %}
+              <a
+                href="{{ section.settings.facebook_url }}"
+                class="instagram-embed-section__social-link"
+                aria-label="Facebook"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" focusable="false">
+                  {%- render 'icon', icon: 'facebook' -%}
+                </svg>
+              </a>
+            {% endif %}
+            {% if section.settings.twitter_url != blank %}
+              <a
+                href="{{ section.settings.twitter_url }}"
+                class="instagram-embed-section__social-link"
+                aria-label="X"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" focusable="false">
+                  {%- render 'icon', icon: 'twitter' -%}
+                </svg>
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="instagram-embed-section__embed">
+        {% if section.settings.instagram_embed_code != blank %}
+          <div class="instagram-embed-section__embed-inner">{{ section.settings.instagram_embed_code }}</div>
+        {% elsif request.design_mode %}
+          <div class="instagram-embed-section__placeholder">
+            <p>Add your Instagram embed HTML in the theme editor. Shoppers won’t see this box.</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+</div>
+
+{% schema %}
+{
+  "name": "Instagram embed section",
+  "class": "section-wrapper",
+  "disabled_on": { "groups": ["header"] },
+  "settings": [
+    { "type": "header", "content": "General" },
+    {
+      "type": "color",
+      "id": "section_background_color",
+      "label": "Background color",
+      "default": "#F7F3E8"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "section_max_width",
+      "label": "Section max width",
+      "min": 600,
+      "max": 1800,
+      "step": 20,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content max width",
+      "min": 400,
+      "max": 900,
+      "step": 10,
+      "unit": "px",
+      "default": 720
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    { "type": "header", "content": "Content" },
+    { "type": "text", "id": "subtitle", "label": "Subtitle" },
+    { "type": "text", "id": "heading", "label": "Heading" },
+    { "type": "richtext", "id": "text_copy", "label": "Text" },
+    {
+      "type": "html",
+      "id": "instagram_embed_code",
+      "label": "Instagram embed code",
+      "placeholder": "Paste the Instagram embed block or HTML snippet",
+      "info": "Paste the full embed code from Instagram (Embed → Copy embed code). Scripts load only when included in your snippet."
+    },
+    { "type": "header", "content": "Typography" },
+    {
+      "type": "range",
+      "id": "subtitle_font_size",
+      "label": "Subtitle font size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle color",
+      "default": "#AA932D"
+    },
+    {
+      "type": "select",
+      "id": "subtitle_font_style",
+      "label": "Subtitle style",
+      "options": [
+        { "value": "regular", "label": "Regular" },
+        { "value": "italic", "label": "Italic" },
+        { "value": "uppercase", "label": "Uppercase" }
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size",
+      "label": "Heading font size",
+      "min": 22,
+      "max": 52,
+      "step": 1,
+      "unit": "px",
+      "default": 38
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#333333"
+    },
+    {
+      "type": "select",
+      "id": "heading_font_weight",
+      "label": "Heading weight",
+      "options": [
+        { "value": "regular", "label": "Regular" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "bold", "label": "Bold" }
+      ],
+      "default": "regular"
+    },
+    {
+      "type": "range",
+      "id": "text_font_size",
+      "label": "Text font size",
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "text_line_height",
+      "label": "Text line height (×0.01)",
+      "min": 140,
+      "max": 200,
+      "step": 5,
+      "default": 165
+    },
+    { "type": "header", "content": "Social links" },
+    {
+      "type": "checkbox",
+      "id": "show_social_links",
+      "label": "Show social links",
+      "default": false
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "Instagram URL",
+      "visible_if": "{{ section.settings.show_social_links }}"
+    },
+    {
+      "type": "url",
+      "id": "facebook_url",
+      "label": "Facebook URL",
+      "visible_if": "{{ section.settings.show_social_links }}"
+    },
+    {
+      "type": "url",
+      "id": "twitter_url",
+      "label": "X (Twitter) URL",
+      "visible_if": "{{ section.settings.show_social_links }}"
+    },
+    {
+      "type": "color",
+      "id": "social_link_color",
+      "label": "Social icon color",
+      "default": "#AA932D",
+      "visible_if": "{{ section.settings.show_social_links }}"
+    },
+    {
+      "type": "color",
+      "id": "social_link_hover_color",
+      "label": "Social icon hover color",
+      "default": "#968328",
+      "visible_if": "{{ section.settings.show_social_links }}"
+    }
+  ],
+  "presets": [{ "name": "Instagram embed section", "category": "t:categories.storytelling" }]
+}
+{% endschema %}

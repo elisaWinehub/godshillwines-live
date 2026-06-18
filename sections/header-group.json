@@ -1,0 +1,67 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "header",
+  "name": "Header",
+  "sections": {
+    "header_announcements_9jGBFp": {
+      "type": "header-announcements",
+      "blocks": {
+        "announcement_BxgCk9": {
+          "type": "_announcement",
+          "settings": {
+            "text": "Welcome to our store",
+            "link": "",
+            "font": "var(--font-subheading--family)",
+            "font_size": "0.75rem",
+            "weight": "",
+            "letter_spacing": "normal",
+            "case": "none"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "announcement_BxgCk9"
+      ],
+      "name": "t:names.announcement_bar",
+      "settings": {
+        "speed": 5,
+        "section_width": "page-width",
+        "color_scheme": "scheme-a0ee4978-e602-4557-aa4a-67744c24d02b",
+        "divider_width": 1,
+        "padding-block-start": 15,
+        "padding-block-end": 15
+      }
+    },
+    "godshill_custom_header": {
+      "type": "custom-header",
+      "settings": {
+        "menu": "main-menu",
+        "sticky": true,
+        "header_bg_color": "#ffffff",
+        "nav_color": "#000000",
+        "nav_font_size": 12,
+        "nav_font_weight": "400",
+        "icon_colour": "#000000",
+        "overlay_hero": true,
+        "overlay_on_home": true,
+        "overlay_on_collection": true,
+        "overlay_on_page_hero": true,
+        "overlay_nav_color": "#ffffff",
+        "overlay_icon_color": "#ffffff"
+      }
+    }
+  },
+  "order": [
+    "header_announcements_9jGBFp",
+    "godshill_custom_header"
+  ]
+}

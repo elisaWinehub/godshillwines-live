@@ -1,0 +1,597 @@
+{% comment %} Awards & Achievements vertical timeline · block per year {% endcomment %}
+{% liquid
+  assign show = section.settings.section_enabled | default: true
+  assign div_o = section.settings.row_divider_opacity | divided_by: 100.0
+  assign row_divider = section.settings.row_divider_color | color_modify: 'alpha', div_o
+  assign root_class = 'gh-aat'
+  if section.settings.custom_css_class != blank
+    assign root_class = root_class | append: ' ' | append: section.settings.custom_css_class | strip
+  endif
+%}
+{% unless show %}
+  <div {{ section.shopify_attributes }} hidden></div>
+{% else %}
+  <section
+    id="GHAAT-{{ section.id }}"
+    class="{{ root_class }}"
+    {{ section.shopify_attributes }}
+    style="
+      --gh-aat-bg: {{ section.settings.section_background }};
+      --gh-aat-pt: {{ section.settings.padding_top }}px;
+      --gh-aat-pb: {{ section.settings.padding_bottom }}px;
+      --gh-aat-cw: {{ section.settings.container_width }}px;
+      --gh-aat-content-max: {{ section.settings.content_max_width }}px;
+      --gh-aat-row-gap: {{ section.settings.row_spacing }}px;
+      --gh-aat-heading: {{ section.settings.heading_color }};
+      --gh-aat-heading-m: {{ section.settings.heading_size_mobile }}px;
+      --gh-aat-heading-d: {{ section.settings.heading_size_desktop }}px;
+      --gh-aat-sub: {{ section.settings.subheading_color }};
+      --gh-aat-sub-size: {{ section.settings.subheading_size }}px;
+      --gh-aat-line: {{ section.settings.timeline_line_color }};
+      --gh-aat-line-w: {{ section.settings.timeline_line_width }}px;
+      --gh-aat-dot: {{ section.settings.timeline_dot_color }};
+      --gh-aat-dot-size: {{ section.settings.timeline_dot_size }}px;
+      --gh-aat-year: {{ section.settings.year_color }};
+      --gh-aat-year-m: {{ section.settings.year_size_mobile }}px;
+      --gh-aat-year-d: {{ section.settings.year_size_desktop }}px;
+      --gh-aat-year-fw: {{ section.settings.year_font_weight }};
+      --gh-aat-text: {{ section.settings.content_text_color }};
+      --gh-aat-text-m: {{ section.settings.content_size_mobile }}px;
+      --gh-aat-text-d: {{ section.settings.content_size_desktop }}px;
+      --gh-aat-lh: {{ section.settings.content_line_height | divided_by: 100.0 }};
+      --gh-aat-align: {{ section.settings.text_alignment }};
+      --gh-aat-hdr-div: {{ section.settings.heading_divider_color }};
+      --gh-aat-hdr-div-w: {{ section.settings.heading_divider_width }}px;
+      --gh-aat-row-div: {{ row_divider }};
+      --gh-aat-link: {{ section.settings.link_color }};
+      --gh-aat-link-h: {{ section.settings.link_hover_color }};
+      --gh-aat-year-col: {{ section.settings.year_column_width }}px;
+    "
+    data-show-row-dividers="{% if section.settings.show_row_dividers %}true{% else %}false{% endif %}"
+    data-show-timeline="{% if section.settings.show_timeline %}true{% else %}false{% endif %}"
+  >
+    <div class="gh-aat__inner">
+      {% if section.settings.show_heading %}
+        <header class="gh-aat__header">
+          {% if section.settings.heading != blank %}
+            <h2 class="gh-aat__heading">{{ section.settings.heading }}</h2>
+          {% endif %}
+          {% if section.settings.subheading != blank %}
+            <p class="gh-aat__subheading">{{ section.settings.subheading }}</p>
+          {% endif %}
+          {% if section.settings.show_heading_divider %}
+            <div class="gh-aat__heading-divider" role="presentation" aria-hidden="true"></div>
+          {% endif %}
+        </header>
+      {% endif %}
+
+      {% if section.blocks.size == 0 %}
+        <p class="gh-aat__empty">Add award year blocks in the theme editor.</p>
+      {% else %}
+        <ol class="gh-aat__timeline" role="list">
+          {% for block in section.blocks %}
+            {% case block.type %}
+              {% when 'award_year' %}
+                <li class="gh-aat__item" {{ block.shopify_attributes }}>
+                  <div class="gh-aat__marker-col">
+                    <span class="gh-aat__dot" aria-hidden="true"></span>
+                    {% if block.settings.year != blank %}
+                      <span class="gh-aat__year">{{ block.settings.year | escape }}</span>
+                    {% endif %}
+                  </div>
+                  <div class="gh-aat__content">
+                    {% if block.settings.category != blank %}
+                      <p class="gh-aat__category">{{ block.settings.category | escape }}</p>
+                    {% endif %}
+                    {% if block.settings.content != blank %}
+                      <div class="gh-aat__body rte">{{ block.settings.content }}</div>
+                    {% endif %}
+                    {% if block.settings.link_label != blank and block.settings.link_url != blank %}
+                      <a href="{{ block.settings.link_url }}" class="gh-aat__link">
+                        {{ block.settings.link_label | escape }}
+                        <span aria-hidden="true">&rsaquo;</span>
+                      </a>
+                    {% endif %}
+                  </div>
+                </li>
+            {% endcase %}
+          {% endfor %}
+        </ol>
+      {% endif %}
+    </div>
+  </section>
+
+  <style>
+    #GHAAT-{{ section.id }}.gh-aat {
+      background: var(--gh-aat-bg);
+      padding-block: var(--gh-aat-pt) var(--gh-aat-pb);
+      color: var(--gh-aat-text);
+    }
+    #GHAAT-{{ section.id }} .gh-aat__inner {
+      width: min(100%, var(--gh-aat-cw));
+      margin-inline: auto;
+      padding-inline: clamp(16px, 3vw, 32px);
+    }
+    #GHAAT-{{ section.id }} .gh-aat__header {
+      text-align: center;
+      max-width: var(--gh-aat-content-max);
+      margin: 0 auto clamp(32px, 5vw, 56px);
+    }
+    #GHAAT-{{ section.id }} .gh-aat__heading {
+      margin: 0 0 10px;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(var(--gh-aat-heading-m), 3.5vw, var(--gh-aat-heading-d));
+      font-weight: 500;
+      color: var(--gh-aat-heading);
+      line-height: 1.1;
+    }
+    #GHAAT-{{ section.id }} .gh-aat__subheading {
+      margin: 0 0 16px;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: var(--gh-aat-sub-size);
+      color: var(--gh-aat-sub);
+      line-height: 1.4;
+    }
+    #GHAAT-{{ section.id }} .gh-aat__heading-divider {
+      width: var(--gh-aat-hdr-div-w);
+      height: 2px;
+      background: var(--gh-aat-hdr-div);
+      margin-inline: auto;
+      border-radius: 1px;
+    }
+    #GHAAT-{{ section.id }} .gh-aat__empty {
+      text-align: center;
+      opacity: 0.7;
+      margin: 0;
+    }
+    #GHAAT-{{ section.id }} .gh-aat__timeline {
+      list-style: none;
+      margin: 0 auto;
+      padding: 0;
+      max-width: var(--gh-aat-content-max);
+      position: relative;
+    }
+    #GHAAT-{{ section.id }}[data-show-timeline='true'] .gh-aat__timeline::before {
+      content: '';
+      position: absolute;
+      left: calc(var(--gh-aat-dot-size) / 2 - var(--gh-aat-line-w) / 2);
+      top: 0.75rem;
+      bottom: 0.75rem;
+      width: var(--gh-aat-line-w);
+      background: var(--gh-aat-line);
+    }
+    #GHAAT-{{ section.id }} .gh-aat__item {
+      display: grid;
+      grid-template-columns: var(--gh-aat-year-col) minmax(0, 1fr);
+      gap: clamp(16px, 3vw, 32px);
+      align-items: start;
+      padding-block: var(--gh-aat-row-gap);
+      position: relative;
+    }
+    #GHAAT-{{ section.id }}[data-show-row-dividers='true'] .gh-aat__item + .gh-aat__item {
+      border-top: 1px solid var(--gh-aat-row-div);
+    }
+    #GHAAT-{{ section.id }} .gh-aat__marker-col {
+      display: flex;
+      align-items: flex-start;
+      gap: clamp(12px, 2vw, 20px);
+      position: relative;
+      z-index: 1;
+    }
+    #GHAAT-{{ section.id }} .gh-aat__dot {
+      flex: 0 0 var(--gh-aat-dot-size);
+      width: var(--gh-aat-dot-size);
+      height: var(--gh-aat-dot-size);
+      border-radius: 50%;
+      background: var(--gh-aat-dot);
+      margin-top: 0.35em;
+      box-shadow: 0 0 0 3px var(--gh-aat-bg);
+    }
+    #GHAAT-{{ section.id }} .gh-aat__year {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(var(--gh-aat-year-m), 2.5vw, var(--gh-aat-year-d));
+      font-weight: var(--gh-aat-year-fw);
+      color: var(--gh-aat-year);
+      line-height: 1.1;
+      min-width: 3.5ch;
+    }
+    #GHAAT-{{ section.id }} .gh-aat__content {
+      text-align: var(--gh-aat-align);
+      min-width: 0;
+    }
+    #GHAAT-{{ section.id }} .gh-aat__category {
+      margin: 0 0 8px;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 0.95em;
+      color: var(--gh-aat-year);
+      letter-spacing: 0.04em;
+    }
+    #GHAAT-{{ section.id }} .gh-aat__body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-size: clamp(var(--gh-aat-text-m), 1.6vw, var(--gh-aat-text-d));
+      line-height: var(--gh-aat-lh);
+      color: var(--gh-aat-text);
+    }
+    #GHAAT-{{ section.id }} .gh-aat__body :is(p, ul, ol) {
+      margin: 0;
+    }
+    #GHAAT-{{ section.id }} .gh-aat__body :is(p + p, p + ul, p + ol, ul + p, ol + p) {
+      margin-top: 0.65em;
+    }
+    #GHAAT-{{ section.id }} .gh-aat__link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gh-aat-link);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    #GHAAT-{{ section.id }} .gh-aat__link:hover {
+      color: var(--gh-aat-link-h);
+    }
+    @media screen and (max-width: 749px) {
+      #GHAAT-{{ section.id }} .gh-aat__item {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      #GHAAT-{{ section.id }}[data-show-timeline='true'] .gh-aat__timeline::before {
+        left: calc(var(--gh-aat-dot-size) / 2 - var(--gh-aat-line-w) / 2);
+      }
+      #GHAAT-{{ section.id }} .gh-aat__marker-col {
+        padding-left: 0;
+      }
+      #GHAAT-{{ section.id }} .gh-aat__content {
+        padding-left: calc(var(--gh-aat-dot-size) + 12px);
+      }
+    }
+  </style>
+{% endunless %}
+
+{% schema %}
+{
+  "name": "Awards achievements",
+  "tag": "section",
+  "class": "gh-awards-achievements-timeline",
+  "max_blocks": 48,
+  "settings": [
+    { "type": "checkbox", "id": "section_enabled", "label": "Show section", "default": true },
+    { "type": "header", "content": "Heading" },
+    { "type": "checkbox", "id": "show_heading", "label": "Show heading", "default": true },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Awards & Achievements"
+    },
+    { "type": "text", "id": "subheading", "label": "Subheading (optional)" },
+    { "type": "checkbox", "id": "show_heading_divider", "label": "Show decorative divider", "default": true },
+    { "type": "color", "id": "heading_divider_color", "label": "Heading divider colour", "default": "#B29B33" },
+    {
+      "type": "range",
+      "id": "heading_divider_width",
+      "label": "Heading divider width",
+      "min": 32,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    },
+    { "type": "header", "content": "Layout" },
+    { "type": "color", "id": "section_background", "label": "Section background", "default": "#F9F7F2" },
+    {
+      "type": "range",
+      "id": "container_width",
+      "label": "Container max width",
+      "min": 960,
+      "max": 1440,
+      "step": 20,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content max width",
+      "min": 640,
+      "max": 1000,
+      "step": 20,
+      "unit": "px",
+      "default": 860
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "row_spacing",
+      "label": "Row spacing",
+      "min": 12,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "year_column_width",
+      "label": "Year column width",
+      "min": 120,
+      "max": 220,
+      "step": 10,
+      "unit": "px",
+      "default": 160
+    },
+    { "type": "text", "id": "custom_css_class", "label": "Custom CSS class" },
+    { "type": "header", "content": "Timeline" },
+    { "type": "checkbox", "id": "show_timeline", "label": "Show timeline line", "default": true },
+    { "type": "color", "id": "timeline_line_color", "label": "Timeline line colour", "default": "#B29B33" },
+    {
+      "type": "range",
+      "id": "timeline_line_width",
+      "label": "Timeline line width",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+    { "type": "color", "id": "timeline_dot_color", "label": "Timeline dot colour", "default": "#B29B33" },
+    {
+      "type": "range",
+      "id": "timeline_dot_size",
+      "label": "Timeline dot size",
+      "min": 8,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    { "type": "checkbox", "id": "show_row_dividers", "label": "Show row dividers", "default": true },
+    { "type": "color", "id": "row_divider_color", "label": "Row divider colour", "default": "#D8D2C8" },
+    {
+      "type": "range",
+      "id": "row_divider_opacity",
+      "label": "Row divider opacity",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 70
+    },
+    { "type": "header", "content": "Typography" },
+    { "type": "color", "id": "heading_color", "label": "Heading colour", "default": "#B29B33" },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading size mobile",
+      "min": 28,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Heading size desktop",
+      "min": 32,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 44
+    },
+    { "type": "color", "id": "subheading_color", "label": "Subheading colour", "default": "#5C5348" },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "label": "Subheading size",
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    { "type": "color", "id": "year_color", "label": "Year colour", "default": "#B29B33" },
+    {
+      "type": "range",
+      "id": "year_size_mobile",
+      "label": "Year size mobile",
+      "min": 24,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "year_size_desktop",
+      "label": "Year size desktop",
+      "min": 28,
+      "max": 52,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "select",
+      "id": "year_font_weight",
+      "label": "Year font weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "500"
+    },
+    { "type": "color", "id": "content_text_color", "label": "Content text colour", "default": "#333333" },
+    {
+      "type": "range",
+      "id": "content_size_mobile",
+      "label": "Content size mobile",
+      "min": 14,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "content_size_desktop",
+      "label": "Content size desktop",
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "content_line_height",
+      "label": "Content line height",
+      "min": 130,
+      "max": 200,
+      "step": 5,
+      "unit": "%",
+      "default": 165
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Content alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    { "type": "header", "content": "Links" },
+    { "type": "color", "id": "link_color", "label": "Link colour", "default": "#B29B33" },
+    { "type": "color", "id": "link_hover_color", "label": "Link hover colour", "default": "#1A2414" }
+  ],
+  "blocks": [
+    {
+      "type": "award_year",
+      "name": "Award year",
+      "settings": [
+        { "type": "text", "id": "year", "label": "Year", "default": "2022" },
+        { "type": "text", "id": "category", "label": "Optional category" },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Awards content",
+          "default": "<p>Challenge – Silver Medal (94/100) 2021 Single Vineyard 3 Generation Shiraz</p>"
+        },
+        { "type": "text", "id": "link_label", "label": "Optional link label" },
+        { "type": "url", "id": "link_url", "label": "Optional link URL" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Awards achievements",
+      "category": "God's Hill",
+      "settings": {
+        "heading": "Awards & Achievements",
+        "heading_color": "#B29B33",
+        "show_heading_divider": true,
+        "heading_divider_color": "#B29B33",
+        "section_background": "#F9F7F2",
+        "timeline_line_color": "#B29B33",
+        "timeline_dot_color": "#B29B33",
+        "year_color": "#B29B33",
+        "show_timeline": true,
+        "show_row_dividers": true
+      },
+      "blocks": [
+        {
+          "type": "award_year",
+          "settings": {
+            "year": "2022",
+            "content": "<p>Challenge – Silver Medal (94/100) 2021 Single Vineyard 3 Generation Shiraz</p>"
+          }
+        },
+        {
+          "type": "award_year",
+          "settings": {
+            "year": "2016",
+            "content": "<p>WineState World Wine Cabernet Challenge – Gold Medal 2008 Permanent Arm Cabernet Sauvignon</p><p>2006 Menzel Shiraz – Silver Medal 2008 Menzel Shiraz – Silver Medal</p>"
+          }
+        },
+        {
+          "type": "award_year",
+          "settings": {
+            "year": "2014",
+            "content": "<p>CWSA (Chinese Wine &amp; Spirit Awards) – DOUBLE GOLD award: 2008 Menzel Shiraz</p>"
+          }
+        },
+        {
+          "type": "award_year",
+          "settings": {
+            "year": "2012",
+            "content": "<p>Decanter Awards UK – Bronze Medal: 2008 Menzel Shiraz</p><p>International Wine Challenge UK – Bronze Medal: 2008 Menzel Shiraz</p><p>WineState Best of the Best – Silver: 2008 Menzel Shiraz</p><p>WineState Barossa and Eden Tasting – Silver: 2008 Menzel Shiraz</p><p>WineWise — The Consumer's Wine Guide – Highly Recommended Wine: 2008 Menzel Shiraz</p><p>WineState World Shiraz Challenge – 3 Stars: 2008 Menzel Shiraz</p><p>WineState World Cabernet Challenge – 3 Stars: 2006 Amo Rosso</p><p>WineState Best Chardonnay – 3 Stars: 2011 Ill Rows Unwooded Chardonnay</p><p>Nicks Wine Merchants – 96 Points: 2008 Menzel Shiraz – 96 Points: 2008 Permanent Arm Cabernet Sauvignon – 91 Points: 2011 Ill Rows Unwooded Chardonnay</p><p>Visy Great Australian Shiraz Challenge – Silver: 2008 Menzel Shiraz &amp; top 20</p>"
+          }
+        },
+        {
+          "type": "award_year",
+          "settings": {
+            "year": "2011",
+            "content": "<p>Great Australian Red – Bronze Medal: 2008 Soulmate</p><p>Barossa Wine Show – Bronze Medal: 2008 Soulmate</p><p>James Halliday — Australian Wine Companion – 92 Points: 2006 Menzel Shiraz – 92 Points: 2006 Amo Rosso</p>"
+          }
+        },
+        {
+          "type": "award_year",
+          "settings": {
+            "year": "2010",
+            "content": "<p>San Diego International Wine Competition – Gold Medal: 2006 Menzel Shiraz</p><p>WineWise Small Vigneron Award – Bronze Medal: 2006 Amo Rosso</p>"
+          }
+        },
+        {
+          "type": "award_year",
+          "settings": {
+            "year": "2009",
+            "content": "<p>Visy Great Australian Shiraz Challenge – Silver Medal &amp; Top 50 Wines – (17th Place): 2006 Menzel Shiraz</p>"
+          }
+        },
+        {
+          "type": "award_year",
+          "settings": {
+            "year": "2008",
+            "content": "<p>Singapore Wine for Asia – Platinum Gold: 2005 Menzel Shiraz</p><p>Robert Parker – 96 Points: 2004 Black Olive Merlot</p><p>Philip White – 93 Points: 2005 Menzel Shiraz – 93 Points: 2002 Permanent Arm Cabernet Sauvignon</p><p>Thomas Clancy – 94 Points: 2002 Permanent Arm Cabernet Sauvignon</p><p>Martin Moran – Gold Medal: 2002 Menzel Shiraz – Gold Medal: 2004 Black Olive Merlot</p><p>Italian Sommelier Association – Judged Best Wines Presented</p>"
+          }
+        },
+        {
+          "type": "award_year",
+          "settings": {
+            "year": "2007",
+            "content": "<p>Rocky Mountain Vino Awards – Gold Medal: 2005 Permanent Arm Cabernet Sauvignon</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,179 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "godshill_page_hero_pTYWGc": {
+      "type": "godshill-page-hero",
+      "name": "Godshill page hero",
+      "settings": {
+        "section_enabled": true,
+        "viewport_height_pct": 50,
+        "content_max_width": 720,
+        "vertical_align": "center",
+        "background_image": "shopify://shop_images/winery.png",
+        "overlay_color": "#1a2414",
+        "overlay_opacity": 42,
+        "color_scheme": "",
+        "accessibility_label": ""
+      }
+    },
+    "awards_timeline": {
+      "type": "awards-achievements-timeline",
+      "blocks": {
+        "award_2022": {
+          "type": "award_year",
+          "settings": {
+            "year": "2022",
+            "category": "",
+            "content": "<p>Challenge – Silver Medal (94/100) 2021 Single Vineyard 3 Generation Shiraz</p>",
+            "link_label": "",
+            "link_url": ""
+          }
+        },
+        "award_2016": {
+          "type": "award_year",
+          "settings": {
+            "year": "2016",
+            "category": "",
+            "content": "<p>WineState World Wine Cabernet Challenge – Gold Medal 2008 Permanent Arm Cabernet Sauvignon</p><p>2006 Menzel Shiraz – Silver Medal 2008 Menzel Shiraz – Silver Medal</p>",
+            "link_label": "",
+            "link_url": ""
+          }
+        },
+        "award_2014": {
+          "type": "award_year",
+          "settings": {
+            "year": "2014",
+            "category": "",
+            "content": "<p>CWSA (Chinese Wine &amp; Spirit Awards) – DOUBLE GOLD award: 2008 Menzel Shiraz</p>",
+            "link_label": "",
+            "link_url": ""
+          }
+        },
+        "award_2012": {
+          "type": "award_year",
+          "settings": {
+            "year": "2012",
+            "category": "",
+            "content": "<p>Decanter Awards UK – Bronze Medal: 2008 Menzel Shiraz</p><p>International Wine Challenge UK – Bronze Medal: 2008 Menzel Shiraz</p><p>WineState Best of the Best – Silver: 2008 Menzel Shiraz</p><p>WineState Barossa and Eden Tasting – Silver: 2008 Menzel Shiraz</p><p>WineWise — The Consumer's Wine Guide – Highly Recommended Wine: 2008 Menzel Shiraz</p><p>WineState World Shiraz Challenge – 3 Stars: 2008 Menzel Shiraz</p><p>WineState World Cabernet Challenge – 3 Stars: 2006 Amo Rosso</p><p>WineState Best Chardonnay – 3 Stars: 2011 Ill Rows Unwooded Chardonnay</p><p>Nicks Wine Merchants – 96 Points: 2008 Menzel Shiraz – 96 Points: 2008 Permanent Arm Cabernet Sauvignon – 91 Points: 2011 Ill Rows Unwooded Chardonnay</p><p>Visy Great Australian Shiraz Challenge – Silver: 2008 Menzel Shiraz &amp; top 20</p>",
+            "link_label": "",
+            "link_url": ""
+          }
+        },
+        "award_2011": {
+          "type": "award_year",
+          "settings": {
+            "year": "2011",
+            "category": "",
+            "content": "<p>Great Australian Red – Bronze Medal: 2008 Soulmate</p><p>Barossa Wine Show – Bronze Medal: 2008 Soulmate</p><p>James Halliday — Australian Wine Companion – 92 Points: 2006 Menzel Shiraz – 92 Points: 2006 Amo Rosso</p>",
+            "link_label": "",
+            "link_url": ""
+          }
+        },
+        "award_2010": {
+          "type": "award_year",
+          "settings": {
+            "year": "2010",
+            "category": "",
+            "content": "<p>San Diego International Wine Competition – Gold Medal: 2006 Menzel Shiraz</p><p>WineWise Small Vigneron Award – Bronze Medal: 2006 Amo Rosso</p>",
+            "link_label": "",
+            "link_url": ""
+          }
+        },
+        "award_2009": {
+          "type": "award_year",
+          "settings": {
+            "year": "2009",
+            "category": "",
+            "content": "<p>Visy Great Australian Shiraz Challenge – Silver Medal &amp; Top 50 Wines – (17th Place): 2006 Menzel Shiraz</p>",
+            "link_label": "",
+            "link_url": ""
+          }
+        },
+        "award_2008": {
+          "type": "award_year",
+          "settings": {
+            "year": "2008",
+            "category": "",
+            "content": "<p>Singapore Wine for Asia – Platinum Gold: 2005 Menzel Shiraz</p><p>Robert Parker – 96 Points: 2004 Black Olive Merlot</p><p>Philip White – 93 Points: 2005 Menzel Shiraz – 93 Points: 2002 Permanent Arm Cabernet Sauvignon</p><p>Thomas Clancy – 94 Points: 2002 Permanent Arm Cabernet Sauvignon</p><p>Martin Moran – Gold Medal: 2002 Menzel Shiraz – Gold Medal: 2004 Black Olive Merlot</p><p>Italian Sommelier Association – Judged Best Wines Presented</p>",
+            "link_label": "",
+            "link_url": ""
+          }
+        },
+        "award_2007": {
+          "type": "award_year",
+          "settings": {
+            "year": "2007",
+            "category": "",
+            "content": "<p>Rocky Mountain Vino Awards – Gold Medal: 2005 Permanent Arm Cabernet Sauvignon</p>",
+            "link_label": "",
+            "link_url": ""
+          }
+        }
+      },
+      "block_order": [
+        "award_2022",
+        "award_2016",
+        "award_2014",
+        "award_2012",
+        "award_2011",
+        "award_2010",
+        "award_2009",
+        "award_2008",
+        "award_2007"
+      ],
+      "settings": {
+        "section_enabled": true,
+        "show_heading": true,
+        "heading": "Awards & Achievements",
+        "subheading": "",
+        "show_heading_divider": true,
+        "heading_divider_color": "#b29b33",
+        "heading_divider_width": 56,
+        "section_background": "#f9f7f2",
+        "container_width": 1200,
+        "content_max_width": 860,
+        "padding_top": 64,
+        "padding_bottom": 80,
+        "row_spacing": 24,
+        "year_column_width": 160,
+        "custom_css_class": "",
+        "show_timeline": true,
+        "timeline_line_color": "#b29b33",
+        "timeline_line_width": 2,
+        "timeline_dot_color": "#b29b33",
+        "timeline_dot_size": 12,
+        "show_row_dividers": true,
+        "row_divider_color": "#d8d2c8",
+        "row_divider_opacity": 70,
+        "heading_color": "#b29b33",
+        "heading_size_mobile": 32,
+        "heading_size_desktop": 44,
+        "subheading_color": "#5c5348",
+        "subheading_size": 16,
+        "year_color": "#b29b33",
+        "year_size_mobile": 28,
+        "year_size_desktop": 36,
+        "year_font_weight": "500",
+        "content_text_color": "#333333",
+        "content_size_mobile": 15,
+        "content_size_desktop": 16,
+        "content_line_height": 165,
+        "text_alignment": "left",
+        "link_color": "#b29b33",
+        "link_hover_color": "#1a2414"
+      }
+    }
+  },
+  "order": [
+    "godshill_page_hero_pTYWGc",
+    "awards_timeline"
+  ]
+}

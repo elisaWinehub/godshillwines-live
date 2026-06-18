@@ -1,0 +1,495 @@
+{% comment %} Generic one-column rich content section {% endcomment %}
+{% liquid
+  assign show = section.settings.section_enabled | default: true
+  assign overlay_o = section.settings.overlay_opacity | divided_by: 100.0
+  assign img_pos = section.settings.image_position | default: 'below_heading'
+%}
+{% unless show %}
+  <div {{ section.shopify_attributes }} hidden></div>
+{% else %}
+  <section
+    id="GHOCRC-{{ section.id }}"
+    class="gh-ocrc gh-ocrc--align-{{ section.settings.text_alignment }}"
+    {{ section.shopify_attributes }}
+    style="
+      --gh-ocrc-bg: {{ section.settings.section_background }};
+      --gh-ocrc-pt: {{ section.settings.padding_top }}px;
+      --gh-ocrc-pb: {{ section.settings.padding_bottom }}px;
+      --gh-ocrc-cw: {{ section.settings.container_width }}px;
+      --gh-ocrc-content-max: {{ section.settings.content_max_width }}px;
+      --gh-ocrc-eyebrow: {{ section.settings.eyebrow_color }};
+      --gh-ocrc-heading-m: {{ section.settings.heading_size_mobile }}px;
+      --gh-ocrc-heading-d: {{ section.settings.heading_size_desktop }}px;
+      --gh-ocrc-text: {{ section.settings.text_color }};
+      --gh-ocrc-img-w: {{ section.settings.image_width }}%;
+      --gh-ocrc-img-radius: {{ section.settings.image_border_radius }}px;
+      --gh-ocrc-overlay: {{ section.settings.overlay_color }};
+      --gh-ocrc-overlay-o: {{ overlay_o }};
+      --gh-ocrc-btn-gap: {{ section.settings.button_gap }}px;
+    "
+  >
+    {% if section.settings.background_image != blank %}
+      <div class="gh-ocrc__backdrop" aria-hidden="true">
+        {{
+          section.settings.background_image
+          | image_url: width: 2400
+          | image_tag: loading: 'lazy', class: 'gh-ocrc__backdrop-img', widths: '900,1400,2000'
+        }}
+        <div class="gh-ocrc__backdrop-overlay"></div>
+      </div>
+    {% endif %}
+
+    <div class="gh-ocrc__inner">
+      <div class="gh-ocrc__content">
+        {% if img_pos == 'above_content' and section.settings.image != blank %}
+          <div class="gh-ocrc__figure">
+            {{
+              section.settings.image
+              | image_url: width: 1400
+              | image_tag: loading: 'lazy', class: 'gh-ocrc__img', widths: '400,700,1000,1400', alt: section.settings.image.alt | default: section.settings.heading
+            }}
+          </div>
+        {% endif %}
+
+        {% if section.settings.eyebrow != blank %}
+          <p class="gh-ocrc__eyebrow">{{ section.settings.eyebrow }}</p>
+        {% endif %}
+
+        {% if section.settings.heading != blank %}
+          <h2 class="gh-ocrc__heading">{{ section.settings.heading }}</h2>
+        {% endif %}
+
+        {% if img_pos == 'below_heading' and section.settings.image != blank %}
+          <div class="gh-ocrc__figure">
+            {{
+              section.settings.image
+              | image_url: width: 1400
+              | image_tag: loading: 'lazy', class: 'gh-ocrc__img', widths: '400,700,1000,1400', alt: section.settings.image.alt | default: section.settings.heading
+            }}
+          </div>
+        {% endif %}
+
+        {% if section.settings.body != blank %}
+          <div class="gh-ocrc__body rte">{{ section.settings.body }}</div>
+        {% endif %}
+
+        {% if img_pos == 'below_content' and section.settings.image != blank %}
+          <div class="gh-ocrc__figure">
+            {{
+              section.settings.image
+              | image_url: width: 1400
+              | image_tag: loading: 'lazy', class: 'gh-ocrc__img', widths: '400,700,1000,1400', alt: section.settings.image.alt | default: section.settings.heading
+            }}
+          </div>
+        {% endif %}
+
+        {% if section.settings.button_1_label != blank or section.settings.button_2_label != blank %}
+          <div class="gh-ocrc__buttons gh-ocrc__buttons--{{ section.settings.button_alignment }}">
+            {% if section.settings.button_1_style == 'secondary' %}
+              {% render 'godshill-cta-btn',
+                label: section.settings.button_1_label,
+                url: section.settings.button_1_link,
+                style: 'secondary',
+                bg: section.settings.btn1_secondary_bg,
+                fg: section.settings.btn1_secondary_text,
+                border_c: section.settings.btn1_secondary_border,
+                h_bg: section.settings.btn1_secondary_hover_bg,
+                h_fg: section.settings.btn1_secondary_hover_text,
+                h_border: section.settings.btn1_secondary_hover_border
+              %}
+            {% else %}
+              {% render 'godshill-cta-btn',
+                label: section.settings.button_1_label,
+                url: section.settings.button_1_link,
+                style: 'primary',
+                bg: section.settings.btn1_primary_bg,
+                fg: section.settings.btn1_primary_text,
+                border_c: section.settings.btn1_primary_border,
+                h_bg: section.settings.btn1_primary_hover_bg,
+                h_fg: section.settings.btn1_primary_hover_text,
+                h_border: section.settings.btn1_primary_hover_border
+              %}
+            {% endif %}
+
+            {% if section.settings.button_2_style == 'secondary' %}
+              {% render 'godshill-cta-btn',
+                label: section.settings.button_2_label,
+                url: section.settings.button_2_link,
+                style: 'secondary',
+                bg: section.settings.btn2_secondary_bg,
+                fg: section.settings.btn2_secondary_text,
+                border_c: section.settings.btn2_secondary_border,
+                h_bg: section.settings.btn2_secondary_hover_bg,
+                h_fg: section.settings.btn2_secondary_hover_text,
+                h_border: section.settings.btn2_secondary_hover_border
+              %}
+            {% else %}
+              {% render 'godshill-cta-btn',
+                label: section.settings.button_2_label,
+                url: section.settings.button_2_link,
+                style: 'primary',
+                bg: section.settings.btn2_primary_bg,
+                fg: section.settings.btn2_primary_text,
+                border_c: section.settings.btn2_primary_border,
+                h_bg: section.settings.btn2_primary_hover_bg,
+                h_fg: section.settings.btn2_primary_hover_text,
+                h_border: section.settings.btn2_primary_hover_border
+              %}
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <style>
+    #GHOCRC-{{ section.id }}.gh-ocrc {
+      position: relative;
+      background: var(--gh-ocrc-bg);
+      padding-block: var(--gh-ocrc-pt) var(--gh-ocrc-pb);
+      color: var(--gh-ocrc-text);
+      overflow: hidden;
+    }
+    #GHOCRC-{{ section.id }} .gh-ocrc__backdrop {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+    #GHOCRC-{{ section.id }} .gh-ocrc__backdrop-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    #GHOCRC-{{ section.id }} .gh-ocrc__backdrop-overlay {
+      position: absolute;
+      inset: 0;
+      background: var(--gh-ocrc-overlay);
+      opacity: var(--gh-ocrc-overlay-o);
+    }
+    #GHOCRC-{{ section.id }} .gh-ocrc__inner {
+      position: relative;
+      z-index: 1;
+      width: min(100%, var(--gh-ocrc-cw));
+      margin-inline: auto;
+      padding-inline: clamp(16px, 3vw, 32px);
+    }
+    #GHOCRC-{{ section.id }} .gh-ocrc__content {
+      width: min(100%, var(--gh-ocrc-content-max));
+      margin-inline: auto;
+    }
+    #GHOCRC-{{ section.id }}.gh-ocrc--align-left .gh-ocrc__content {
+      margin-inline: 0;
+      text-align: left;
+    }
+    #GHOCRC-{{ section.id }}.gh-ocrc--align-center .gh-ocrc__content {
+      text-align: center;
+    }
+    #GHOCRC-{{ section.id }}.gh-ocrc--align-right .gh-ocrc__content {
+      margin-inline: auto 0;
+      text-align: right;
+    }
+    #GHOCRC-{{ section.id }} .gh-ocrc__eyebrow {
+      margin: 0 0 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gh-ocrc-eyebrow);
+    }
+    #GHOCRC-{{ section.id }} .gh-ocrc__heading {
+      margin: 0 0 20px;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(var(--gh-ocrc-heading-m), 3vw, var(--gh-ocrc-heading-d));
+      font-weight: 500;
+      line-height: 1.12;
+      color: inherit;
+    }
+    #GHOCRC-{{ section.id }} .gh-ocrc__figure {
+      margin: 0 0 24px;
+    }
+    #GHOCRC-{{ section.id }}.gh-ocrc--align-center .gh-ocrc__figure {
+      display: flex;
+      justify-content: center;
+    }
+    #GHOCRC-{{ section.id }}.gh-ocrc--align-right .gh-ocrc__figure {
+      display: flex;
+      justify-content: flex-end;
+    }
+    #GHOCRC-{{ section.id }} .gh-ocrc__img {
+      width: min(100%, var(--gh-ocrc-img-w));
+      height: auto;
+      border-radius: var(--gh-ocrc-img-radius);
+      display: block;
+    }
+    #GHOCRC-{{ section.id }} .gh-ocrc__body {
+      margin: 0 0 24px;
+      font-size: 16px;
+      line-height: 1.65;
+      color: inherit;
+    }
+    #GHOCRC-{{ section.id }} .gh-ocrc__body :is(p, ul, ol) {
+      margin: 0;
+    }
+    #GHOCRC-{{ section.id }} .gh-ocrc__body :is(p + p, p + ul, p + ol) {
+      margin-top: 1em;
+    }
+    #GHOCRC-{{ section.id }} .gh-ocrc__buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--gh-ocrc-btn-gap);
+    }
+    #GHOCRC-{{ section.id }} .gh-ocrc__buttons--left {
+      justify-content: flex-start;
+    }
+    #GHOCRC-{{ section.id }} .gh-ocrc__buttons--center {
+      justify-content: center;
+    }
+    #GHOCRC-{{ section.id }} .gh-ocrc__buttons--right {
+      justify-content: flex-end;
+    }
+    #GHOCRC-{{ section.id }} .gh-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 22px;
+      text-transform: uppercase;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      transition: 0.22s ease;
+    }
+    #GHOCRC-{{ section.id }} .gh-cta::after {
+      content: '\2192';
+    }
+    #GHOCRC-{{ section.id }} .gh-cta:hover {
+      transform: translateY(-1px);
+      background-color: var(--gh-h-bg) !important;
+      color: var(--gh-h-fg) !important;
+      border-color: var(--gh-h-bd) !important;
+    }
+  </style>
+{% endunless %}
+
+{% schema %}
+{
+  "name": "One column rich content",
+  "tag": "section",
+  "class": "gh-one-column-rich-content",
+  "settings": [
+    { "type": "checkbox", "id": "section_enabled", "label": "Show section", "default": true },
+    { "type": "header", "content": "Layout" },
+    { "type": "color", "id": "section_background", "label": "Section background", "default": "#F9F7F2" },
+    { "type": "image_picker", "id": "background_image", "label": "Background image (optional)" },
+    { "type": "color", "id": "overlay_color", "label": "Background overlay colour", "default": "#F9F7F2" },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Background overlay opacity",
+      "min": 0,
+      "max": 95,
+      "step": 1,
+      "unit": "%",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "label": "Container max width",
+      "min": 720,
+      "max": 1440,
+      "step": 20,
+      "unit": "px",
+      "default": 960
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content max width",
+      "min": 480,
+      "max": 960,
+      "step": 20,
+      "unit": "px",
+      "default": 720
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    { "type": "header", "content": "Content" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "color", "id": "eyebrow_color", "label": "Eyebrow colour", "default": "#A67B22" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Section heading" },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading size mobile",
+      "min": 24,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Heading size desktop",
+      "min": 28,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Rich text",
+      "default": "<p>Add your content here. This section works well for intro copy, story sections, or simple call-to-action blocks.</p>"
+    },
+    { "type": "color", "id": "text_color", "label": "Text colour", "default": "#25211B" },
+    { "type": "header", "content": "Image" },
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    {
+      "type": "range",
+      "id": "image_width",
+      "label": "Image width",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image position",
+      "options": [
+        { "value": "above_content", "label": "Above content (top)" },
+        { "value": "below_heading", "label": "Below heading" },
+        { "value": "below_content", "label": "Below content" }
+      ],
+      "default": "below_heading"
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Image border radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    { "type": "header", "content": "Button 1" },
+    { "type": "text", "id": "button_1_label", "label": "Button 1 label" },
+    { "type": "url", "id": "button_1_link", "label": "Button 1 link" },
+    {
+      "type": "select",
+      "id": "button_1_style",
+      "label": "Button 1 style",
+      "options": [
+        { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Secondary" }
+      ],
+      "default": "primary"
+    },
+    { "type": "color", "id": "btn1_primary_bg", "label": "Button 1 primary background", "default": "#1A2414" },
+    { "type": "color", "id": "btn1_primary_text", "label": "Button 1 primary text", "default": "#FFFFFF" },
+    { "type": "color", "id": "btn1_primary_border", "label": "Button 1 primary border", "default": "#1A2414" },
+    { "type": "color", "id": "btn1_primary_hover_bg", "label": "Button 1 primary hover background", "default": "#A67B22" },
+    { "type": "color", "id": "btn1_primary_hover_text", "label": "Button 1 primary hover text", "default": "#FFFFFF" },
+    { "type": "color", "id": "btn1_primary_hover_border", "label": "Button 1 primary hover border", "default": "#A67B22" },
+    { "type": "color", "id": "btn1_secondary_bg", "label": "Button 1 secondary accent", "default": "#A67B22" },
+    { "type": "color", "id": "btn1_secondary_text", "label": "Button 1 secondary text", "default": "#1A2414" },
+    { "type": "color", "id": "btn1_secondary_border", "label": "Button 1 secondary border", "default": "#1A2414" },
+    { "type": "color", "id": "btn1_secondary_hover_bg", "label": "Button 1 secondary hover background", "default": "#1A2414" },
+    { "type": "color", "id": "btn1_secondary_hover_text", "label": "Button 1 secondary hover text", "default": "#FFFFFF" },
+    { "type": "color", "id": "btn1_secondary_hover_border", "label": "Button 1 secondary hover border", "default": "#1A2414" },
+    { "type": "header", "content": "Button 2" },
+    { "type": "text", "id": "button_2_label", "label": "Button 2 label" },
+    { "type": "url", "id": "button_2_link", "label": "Button 2 link" },
+    {
+      "type": "select",
+      "id": "button_2_style",
+      "label": "Button 2 style",
+      "options": [
+        { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Secondary" }
+      ],
+      "default": "secondary"
+    },
+    { "type": "color", "id": "btn2_primary_bg", "label": "Button 2 primary background", "default": "#1A2414" },
+    { "type": "color", "id": "btn2_primary_text", "label": "Button 2 primary text", "default": "#FFFFFF" },
+    { "type": "color", "id": "btn2_primary_border", "label": "Button 2 primary border", "default": "#1A2414" },
+    { "type": "color", "id": "btn2_primary_hover_bg", "label": "Button 2 primary hover background", "default": "#A67B22" },
+    { "type": "color", "id": "btn2_primary_hover_text", "label": "Button 2 primary hover text", "default": "#FFFFFF" },
+    { "type": "color", "id": "btn2_primary_hover_border", "label": "Button 2 primary hover border", "default": "#A67B22" },
+    { "type": "color", "id": "btn2_secondary_bg", "label": "Button 2 secondary accent", "default": "#A67B22" },
+    { "type": "color", "id": "btn2_secondary_text", "label": "Button 2 secondary text", "default": "#1A2414" },
+    { "type": "color", "id": "btn2_secondary_border", "label": "Button 2 secondary border", "default": "#1A2414" },
+    { "type": "color", "id": "btn2_secondary_hover_bg", "label": "Button 2 secondary hover background", "default": "#1A2414" },
+    { "type": "color", "id": "btn2_secondary_hover_text", "label": "Button 2 secondary hover text", "default": "#FFFFFF" },
+    { "type": "color", "id": "btn2_secondary_hover_border", "label": "Button 2 secondary hover border", "default": "#1A2414" },
+    {
+      "type": "select",
+      "id": "button_alignment",
+      "label": "Button alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "button_gap",
+      "label": "Button gap",
+      "min": 8,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "One column rich content",
+      "category": "God's Hill",
+      "settings": {
+        "eyebrow": "OUR STORY",
+        "heading": "Crafted with passion in the Barossa Valley",
+        "body": "<p>Use this flexible section for intro copy, story content, or a simple call to action on any page.</p>"
+      }
+    }
+  ]
+}
+{% endschema %}

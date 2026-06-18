@@ -1,0 +1,341 @@
+{% comment %}
+  Renders a single main-product-custom info column block.
+  @param {object} block - Section block
+  @param {object} section - Section
+  @param {object} product - Product
+  @param {object} variant - Selected variant
+  @param {boolean} can_add_to_cart
+  @param {string} add_to_cart_text
+{% endcomment %}
+{% case block.type %}
+  {% when 'breadcrumbs' %}
+    <nav class="gh-mpc__breadcrumbs" aria-label="Breadcrumb" {{ block.shopify_attributes }}>
+      {% if block.settings.show_home %}
+        <a class="gh-mpc__crumb-link" href="{{ routes.root_url }}">{{ block.settings.home_label | default: 'Home' }}</a>
+        <span class="gh-mpc__crumb-sep" aria-hidden="true">/</span>
+      {% endif %}
+      {% if block.settings.show_all_products and block.settings.all_products_collection != blank %}
+        <a class="gh-mpc__crumb-link" href="{{ block.settings.all_products_collection.url }}">{{ block.settings.all_products_label | default: block.settings.all_products_collection.title }}</a>
+        <span class="gh-mpc__crumb-sep" aria-hidden="true">/</span>
+      {% endif %}
+      {% if block.settings.show_collection %}
+        {% liquid
+          assign crumb_collection = collection
+          if crumb_collection == blank and product.collections.size > 0
+            assign crumb_collection = product.collections.first
+          endif
+        %}
+        {% if crumb_collection %}
+          <a class="gh-mpc__crumb-link" href="{{ crumb_collection.url }}">{{ crumb_collection.title }}</a>
+          <span class="gh-mpc__crumb-sep" aria-hidden="true">/</span>
+        {% endif %}
+      {% endif %}
+      <span class="gh-mpc__crumb-current" aria-current="page">{{ product.title }}</span>
+    </nav>
+
+  {% when 'vendor' %}
+    {% liquid
+      assign vendor_text = block.settings.text
+      if vendor_text == blank
+        assign vendor_text = product.vendor
+      endif
+      assign vendor_link = block.settings.link
+      if vendor_link == blank and product.vendor != blank
+        assign vendor_link = product.vendor | url_for_vendor
+      endif
+    %}
+    {% if vendor_text != blank %}
+      <p class="gh-mpc__vendor" {{ block.shopify_attributes }}>
+        {% if vendor_link != blank %}
+          <a class="gh-mpc__vendor-link" href="{{ vendor_link }}">{{ vendor_text | upcase }}</a>
+        {% else %}
+          {{ vendor_text | upcase }}
+        {% endif %}
+      </p>
+    {% endif %}
+
+  {% when 'title' %}
+    <h1 class="gh-mpc__title" {{ block.shopify_attributes }}>{{ product.title }}</h1>
+
+  {% when 'rating' %}
+    {% liquid
+      assign rating_value = block.settings.rating_value | default: '4.5'
+      assign filled_stars = block.settings.filled_stars | default: 4
+    %}
+    <div class="gh-mpc__rating" {{ block.shopify_attributes }}>
+      <div class="gh-mpc__stars" role="img" aria-label="Rated {{ rating_value }} out of 5 stars">
+        {% for i in (1..5) %}
+          <span class="gh-mpc__star{% if i <= filled_stars %} is-filled{% endif %}" aria-hidden="true">&#9733;</span>
+        {% endfor %}
+      </div>
+      {% if block.settings.show_review_count %}
+        <span class="gh-mpc__rating-meta">
+          {{ rating_value }}
+          {% if block.settings.review_count != blank %}
+            &middot; {{ block.settings.review_count }} {{ block.settings.review_count_label | default: 'reviews' }}
+          {% endif %}
+        </span>
+      {% endif %}
+    </div>
+
+  {% when 'price' %}
+    <div class="gh-mpc__price-wrap" {{ block.shopify_attributes }}>
+      <product-price
+        class="gh-mpc__price"
+        data-block-id="{{ block.id }}"
+        data-product-id="{{ product.id }}"
+      >
+        {% render 'price',
+          product_resource: product,
+          show_unit_price: block.settings.show_unit_price,
+          show_sale_price_first: block.settings.show_sale_price_first,
+          show_savings_percent: true
+        %}
+        {% if block.settings.show_currency_code %}
+          <span class="gh-mpc__currency">AUD</span>
+        {% endif %}
+      </product-price>
+    </div>
+
+  {% when 'description' %}
+    {% liquid
+      assign desc_html = block.settings.text
+      if desc_html == blank
+        assign desc_html = product.description
+      endif
+    %}
+    {% if desc_html != blank %}
+      <div class="gh-mpc__description rte" {{ block.shopify_attributes }}>
+        {% if block.settings.truncate_words > 0 %}
+          {{ desc_html | strip_html | truncatewords: block.settings.truncate_words }}
+        {% else %}
+          {{ desc_html }}
+        {% endif %}
+      </div>
+    {% endif %}
+
+  {% when 'variant_picker' %}
+    {% unless product.has_only_default_variant %}
+      {% render 'variant-main-picker', product_resource: product, section: section, product: product, block: block %}
+    {% endunless %}
+
+  {% when 'purchase_options' %}
+    {% if block.settings.show_purchase_options %}
+      <div class="gh-mpc__purchase" data-mpc-purchase {{ block.shopify_attributes }}>
+        {% if block.settings.box_title != blank %}
+          <p class="gh-mpc__purchase-title">{{ block.settings.box_title }}</p>
+        {% endif %}
+        <div class="gh-mpc__purchase-options" role="radiogroup" aria-label="{{ block.settings.box_title | escape }}">
+          <label class="gh-mpc__purchase-option is-selected" data-mpc-purchase-option>
+            <input type="radio" name="purchase-type-{{ section.id }}" value="one-time" checked data-mpc-purchase-radio>
+            <span class="gh-mpc__purchase-label">{{ block.settings.one_time_label | default: 'One-time purchase' }}</span>
+            <span class="gh-mpc__purchase-price">{{ variant.price | money }}</span>
+          </label>
+          <div class="gh-mpc__purchase-subscribe">
+            <label class="gh-mpc__purchase-option" data-mpc-purchase-option>
+              <input type="radio" name="purchase-type-{{ section.id }}" value="subscribe" data-mpc-purchase-radio>
+              <span class="gh-mpc__purchase-label">{{ block.settings.subscribe_label | default: 'Subscribe & Save' }}</span>
+            </label>
+            <div class="gh-mpc__purchase-plans" hidden data-mpc-purchase-plans>
+              {% if block.settings.plan_1_label != blank %}
+                <label class="gh-mpc__purchase-plan">
+                  <input type="radio" name="selling-plan-{{ section.id }}" value="plan-1" data-mpc-selling-plan>
+                  <span>{{ block.settings.plan_1_label }}</span>
+                  {% if block.settings.plan_1_price != blank %}
+                    <span class="gh-mpc__purchase-price">{{ block.settings.plan_1_price }}</span>
+                  {% endif %}
+                </label>
+              {% endif %}
+              {% if block.settings.plan_2_label != blank %}
+                <label class="gh-mpc__purchase-plan">
+                  <input type="radio" name="selling-plan-{{ section.id }}" value="plan-2" data-mpc-selling-plan>
+                  <span>{{ block.settings.plan_2_label }}</span>
+                  {% if block.settings.plan_2_price != blank %}
+                    <span class="gh-mpc__purchase-price">{{ block.settings.plan_2_price }}</span>
+                  {% endif %}
+                </label>
+              {% endif %}
+              {% if block.settings.plan_3_label != blank %}
+                <label class="gh-mpc__purchase-plan">
+                  <input type="radio" name="selling-plan-{{ section.id }}" value="plan-3" data-mpc-selling-plan>
+                  <span>{{ block.settings.plan_3_label }}</span>
+                  {% if block.settings.plan_3_price != blank %}
+                    <span class="gh-mpc__purchase-price">{{ block.settings.plan_3_price }}</span>
+                  {% endif %}
+                </label>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+  {% when 'quantity_selector' %}
+    <div class="gh-mpc__quantity" {{ block.shopify_attributes }}>
+      {% render 'quantity-selector', product: product, block: block, class: 'gh-mpc__qty-selector' %}
+    </div>
+
+  {% when 'buy_buttons' %}
+    {% liquid
+      assign atc_label = block.settings.button_label
+      if atc_label == blank
+        assign atc_label = add_to_cart_text
+      endif
+    %}
+    <div class="gh-mpc__buy" {{ block.shopify_attributes }}>
+      <span class="product-form-text__error hidden" ref="addToCartTextError">
+        <span class="svg-wrapper">{{ 'icon-error.svg' | inline_asset_content }}</span>
+      </span>
+                  {% render 'add-to-cart-button',
+                    product: product,
+                    can_add_to_cart: can_add_to_cart,
+                    add_to_cart_text: atc_label,
+                    class: 'gh-mpc__atc-btn button',
+                    show_loading_state: true
+                  %}
+    </div>
+
+  {% when 'pickup_availability' %}
+    {% if block.settings.show_pickup %}
+      <script src="{{ 'local-pickup.js' | asset_url }}" type="module"></script>
+      {% assign pick_up_availabilities = variant.store_availabilities | where: 'pick_up_enabled', true %}
+      <local-pickup
+        class="gh-mpc__pickup"
+        {% if pick_up_availabilities.size == 0 %}hidden{% endif %}
+        data-section-id="{{ section.id }}"
+        data-product-url="{{ product.url }}"
+        data-variant-id="{{ variant.id }}"
+        {{ block.shopify_attributes }}
+      >
+        {% if can_add_to_cart %}
+          <dialog-component>
+            <div class="gh-mpc__pickup-row">
+              <span class="gh-mpc__pickup-icon" aria-hidden="true">&#10003;</span>
+              <div>
+                {% if pick_up_availabilities.first.available %}
+                  <p class="gh-mpc__pickup-text">
+                    {{ block.settings.pickup_available_text | default: 'Pickup available at Cellar Door' }}
+                  </p>
+                  <p class="gh-mpc__pickup-sub">
+                    {{ block.settings.pickup_ready_text | default: 'Usually ready in 24 hours' }}
+                  </p>
+                {% else %}
+                  <p class="gh-mpc__pickup-text">{{ 'content.pickup_not_available' | t }}</p>
+                {% endif %}
+                <button type="button" on:click="/showDialog" class="gh-mpc__pickup-link button-unstyled">
+                  {{ block.settings.view_store_label | default: 'View store information' }}
+                </button>
+              </div>
+            </div>
+            <dialog ref="dialog" class="dialog-modal dialog-drawer pickup-location__dialog color-{{ settings.drawer_color_scheme }}" scroll-lock>
+              <div class="pickup-availability__dialog-row pickup-availability__header-container">
+                <h4 class="pickup-location__h4">{{ product.title }}</h4>
+                <button ref="closeButton" on:click="/closeDialog" class="button button-unstyled close-button" aria-label="{{ 'actions.close_dialog' | t }}">
+                  <span class="svg-wrapper">{{ 'icon-close.svg' | inline_asset_content }}</span>
+                </button>
+              </div>
+              {% for pick_up_availability in pick_up_availabilities %}
+                <div class="pickup-location__wrapper">
+                  <p class="pickup-location__text-bold">{{ pick_up_availability.location.name }}</p>
+                  <address class="pickup-location__address">{{ pick_up_availability.location.address | format_address }}</address>
+                </div>
+              {% endfor %}
+            </dialog>
+          </dialog-component>
+        {% endif %}
+      </local-pickup>
+    {% endif %}
+
+  {% when 'accordion_item' %}
+    {% if block.settings.show_item %}
+      <details class="gh-mpc__acc-item" data-mpc-acc-item {{ block.shopify_attributes }}>
+        <summary class="gh-mpc__acc-summary">
+          <span>{{ block.settings.title }}</span>
+          <span class="gh-mpc__acc-chevron" aria-hidden="true"></span>
+        </summary>
+        <div class="gh-mpc__acc-body rte">
+          {% if block.settings.content_mode == 'metafields' %}
+            {% case block.settings.metafield_group %}
+              {% when 'wine_details' %}
+                <dl class="gh-mpc__kv">
+                  {% assign wine_fields = 'vintage|Vintage,color|Color,alcohol|Alcohol,country|Country,region|Region,subregion|Subregion,vegan|Vegan' | split: ',' %}
+                  {% for field_pair in wine_fields %}
+                    {% assign parts = field_pair | split: '|' %}
+                    {% assign mf = product.metafields.custom[parts[0]] %}
+                    {% if mf != blank %}
+                      <div class="gh-mpc__kv-row"><dt>{{ parts[1] }}</dt><dd>{{ mf.value | default: mf }}</dd></div>
+                    {% endif %}
+                  {% endfor %}
+                </dl>
+              {% when 'vineyard' %}
+                <dl class="gh-mpc__kv">
+                  {% assign vine_fields = 'vineyard_country|Country,vineyard_region|Region,vineyard_subregion|Subregion,farming_method|Farming Method,growing_conditions|Growing Conditions' | split: ',' %}
+                  {% for field_pair in vine_fields %}
+                    {% assign parts = field_pair | split: '|' %}
+                    {% assign mf = product.metafields.custom[parts[0]] %}
+                    {% if mf != blank %}
+                      <div class="gh-mpc__kv-row"><dt>{{ parts[1] }}</dt><dd>{{ mf.value | default: mf }}</dd></div>
+                    {% endif %}
+                  {% endfor %}
+                </dl>
+              {% when 'tasting_notes' %}
+                <dl class="gh-mpc__kv">
+                  {% assign taste_fields = 'body|Body,mouthfeel|Mouthfeel,taste|Taste,aroma|Aroma' | split: ',' %}
+                  {% for field_pair in taste_fields %}
+                    {% assign parts = field_pair | split: '|' %}
+                    {% assign mf = product.metafields.custom[parts[0]] %}
+                    {% if mf != blank %}
+                      <div class="gh-mpc__kv-row"><dt>{{ parts[1] }}</dt><dd>{{ mf.value | default: mf }}</dd></div>
+                    {% endif %}
+                  {% endfor %}
+                </dl>
+              {% when 'winemaking' %}
+                <dl class="gh-mpc__kv">
+                  {% assign wine_make_fields = 'winemaker|Winemaker,sulfites_added|Sulfites Added,residual_sugar|Residual Sugar,acidity|Acidity,wine_ph|Wine PH,standard_drinks|Standard Drinks,botanicals|Botanicals,nutritional_information|Nutritional Information' | split: ',' %}
+                  {% for field_pair in wine_make_fields %}
+                    {% assign parts = field_pair | split: '|' %}
+                    {% assign mf = product.metafields.custom[parts[0]] %}
+                    {% if mf != blank %}
+                      <div class="gh-mpc__kv-row"><dt>{{ parts[1] }}</dt><dd>{{ mf.value | default: mf }}</dd></div>
+                    {% endif %}
+                  {% endfor %}
+                </dl>
+              {% when 'vintage_notes' %}
+                {% if product.metafields.custom.vintage_notes != blank %}
+                  {{ product.metafields.custom.vintage_notes | metafield_tag }}
+                {% endif %}
+              {% when 'reviews' %}
+                {% if product.metafields.custom.reviews != blank %}
+                  {{ product.metafields.custom.reviews | metafield_tag }}
+                {% endif %}
+              {% when 'awards' %}
+                {% if product.metafields.custom.awards != blank %}
+                  {{ product.metafields.custom.awards | metafield_tag }}
+                {% endif %}
+              {% when 'tasting_note_pdf' %}
+                {% if product.metafields.custom.tasting_note_pdf != blank %}
+                  <a href="{{ product.metafields.custom.tasting_note_pdf.value.url }}" class="gh-mpc__pdf-link" target="_blank" rel="noopener">
+                    {{ block.settings.pdf_link_label | default: 'Download Tasting Note PDF' }}
+                  </a>
+                {% endif %}
+            {% endcase %}
+            {% if block.settings.fallback_content != blank %}
+              <div class="gh-mpc__acc-fallback">{{ block.settings.fallback_content }}</div>
+            {% endif %}
+          {% else %}
+            {{ block.settings.static_content }}
+          {% endif %}
+        </div>
+      </details>
+    {% endif %}
+
+  {% when 'custom_liquid' %}
+    <div class="gh-mpc__custom" {{ block.shopify_attributes }}>
+      {{ block.settings.custom_liquid }}
+    </div>
+
+  {% when '@app' %}
+    <div class="gh-mpc__app-block" {{ block.shopify_attributes }}>
+      {% render block %}
+    </div>
+{% endcase %}

@@ -1,0 +1,449 @@
+{% comment %} Award winning wines · medals row + CTA links {% endcomment %}
+{% liquid
+  assign show = section.settings.section_enabled | default: true
+  assign link_style = section.settings.link_style | default: 'text'
+%}
+{% unless show %}
+  <div {{ section.shopify_attributes }} hidden></div>
+{% else %}
+  <section
+    id="GHAWW-{{ section.id }}"
+    class="gh-aww"
+    {{ section.shopify_attributes }}
+    style="
+      --gh-aww-bg: {{ section.settings.section_background }};
+      --gh-aww-pt: {{ section.settings.padding_top }}px;
+      --gh-aww-pb: {{ section.settings.padding_bottom }}px;
+      --gh-aww-cw: {{ section.settings.container_width }}px;
+      --gh-aww-heading: {{ section.settings.heading_color }};
+      --gh-aww-heading-m: {{ section.settings.heading_size_mobile }}px;
+      --gh-aww-heading-d: {{ section.settings.heading_size_desktop }}px;
+      --gh-aww-div-color: {{ section.settings.divider_color }};
+      --gh-aww-div-w: {{ section.settings.divider_width }}px;
+      --gh-aww-div-h: {{ section.settings.divider_thickness }}px;
+      --gh-aww-medal: {{ section.settings.medal_size }}px;
+      --gh-aww-medal-gap: {{ section.settings.medal_spacing }}px;
+      --gh-aww-text: {{ section.settings.text_color }};
+      --gh-aww-link: {{ section.settings.link_color }};
+      --gh-aww-link-h: {{ section.settings.link_hover_color }};
+    "
+    data-mobile-wrap="{% if section.settings.mobile_wrap %}true{% else %}false{% endif %}"
+  >
+    <div class="gh-aww__inner">
+      {% if section.settings.heading != blank %}
+        <h2 class="gh-aww__heading">{{ section.settings.heading }}</h2>
+      {% endif %}
+
+      {% if section.settings.show_divider %}
+        <div class="gh-aww__divider" role="presentation" aria-hidden="true"></div>
+      {% endif %}
+
+      {% if section.blocks.size > 0 %}
+        <ul class="gh-aww__medals" role="list">
+          {% for block in section.blocks %}
+            <li class="gh-aww__medal" {{ block.shopify_attributes }}>
+              {% if block.settings.image != blank %}
+                {% liquid
+                  assign medal_alt = block.settings.alt_text
+                  if medal_alt == blank
+                    assign medal_alt = 'Award medal'
+                  endif
+                %}
+                {% if block.settings.link != blank %}
+                  <a href="{{ block.settings.link }}" class="gh-aww__medal-link"{% if block.settings.open_new_tab %} target="_blank" rel="noopener noreferrer"{% endif %}>
+                {% endif %}
+                {{
+                  block.settings.image
+                  | image_url: width: 240
+                  | image_tag: loading: 'lazy', class: 'gh-aww__medal-img', widths: '80,120,160,240', alt: medal_alt
+                }}
+                {% if block.settings.link != blank %}
+                  </a>
+                {% endif %}
+              {% else %}
+                <span class="gh-aww__medal-placeholder" aria-hidden="true"></span>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      {% if section.settings.description != blank %}
+        <div class="gh-aww__desc rte">{{ section.settings.description }}</div>
+      {% endif %}
+
+      <div class="gh-aww__links">
+        {% if section.settings.link_1_label != blank and section.settings.link_1_url != blank %}
+          {% if link_style == 'text' %}
+            <a href="{{ section.settings.link_1_url }}" class="gh-aww__text-link">{{ section.settings.link_1_label }} <span aria-hidden="true">&rsaquo;</span></a>
+          {% elsif link_style == 'secondary' %}
+            {% render 'godshill-cta-btn',
+              label: section.settings.link_1_label,
+              url: section.settings.link_1_url,
+              style: 'secondary',
+              bg: section.settings.secondary_bg,
+              fg: section.settings.secondary_text,
+              border_c: section.settings.secondary_border,
+              h_bg: section.settings.secondary_hover_bg,
+              h_fg: section.settings.secondary_hover_text,
+              h_border: section.settings.secondary_hover_border
+            %}
+          {% else %}
+            {% render 'godshill-cta-btn',
+              label: section.settings.link_1_label,
+              url: section.settings.link_1_url,
+              style: 'primary',
+              bg: section.settings.primary_bg,
+              fg: section.settings.primary_text,
+              border_c: section.settings.primary_border,
+              h_bg: section.settings.primary_hover_bg,
+              h_fg: section.settings.primary_hover_text,
+              h_border: section.settings.primary_hover_border
+            %}
+          {% endif %}
+        {% endif %}
+
+        {% if section.settings.link_2_label != blank and section.settings.link_2_url != blank %}
+          {% if link_style == 'text' %}
+            <a href="{{ section.settings.link_2_url }}" class="gh-aww__text-link">{{ section.settings.link_2_label }} <span aria-hidden="true">&rsaquo;</span></a>
+          {% elsif link_style == 'secondary' %}
+            {% render 'godshill-cta-btn',
+              label: section.settings.link_2_label,
+              url: section.settings.link_2_url,
+              style: 'secondary',
+              bg: section.settings.secondary_bg,
+              fg: section.settings.secondary_text,
+              border_c: section.settings.secondary_border,
+              h_bg: section.settings.secondary_hover_bg,
+              h_fg: section.settings.secondary_hover_text,
+              h_border: section.settings.secondary_hover_border
+            %}
+          {% else %}
+            {% render 'godshill-cta-btn',
+              label: section.settings.link_2_label,
+              url: section.settings.link_2_url,
+              style: 'primary',
+              bg: section.settings.primary_bg,
+              fg: section.settings.primary_text,
+              border_c: section.settings.primary_border,
+              h_bg: section.settings.primary_hover_bg,
+              h_fg: section.settings.primary_hover_text,
+              h_border: section.settings.primary_hover_border
+            %}
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <style>
+    #GHAWW-{{ section.id }}.gh-aww {
+      background: var(--gh-aww-bg);
+      padding-block: var(--gh-aww-pt) var(--gh-aww-pb);
+      color: var(--gh-aww-text);
+      text-align: center;
+    }
+    #GHAWW-{{ section.id }} .gh-aww__inner {
+      width: min(100%, var(--gh-aww-cw));
+      margin-inline: auto;
+      padding-inline: clamp(16px, 3vw, 32px);
+    }
+    #GHAWW-{{ section.id }} .gh-aww__heading {
+      margin: 0 0 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(var(--gh-aww-heading-m), 2.5vw, var(--gh-aww-heading-d));
+      font-weight: 500;
+      color: var(--gh-aww-heading);
+    }
+    #GHAWW-{{ section.id }} .gh-aww__divider {
+      width: var(--gh-aww-div-w);
+      height: var(--gh-aww-div-h);
+      background: var(--gh-aww-div-color);
+      margin: 0 auto 28px;
+      border-radius: 1px;
+    }
+    #GHAWW-{{ section.id }} .gh-aww__medals {
+      list-style: none;
+      margin: 0 0 24px;
+      padding: 0;
+      display: flex;
+      flex-wrap: nowrap;
+      justify-content: center;
+      align-items: center;
+      gap: var(--gh-aww-medal-gap);
+      overflow-x: auto;
+      scrollbar-width: thin;
+    }
+    #GHAWW-{{ section.id }}[data-mobile-wrap='true'] .gh-aww__medals {
+      flex-wrap: wrap;
+      overflow-x: visible;
+    }
+    #GHAWW-{{ section.id }} .gh-aww__medal {
+      flex: 0 0 auto;
+    }
+    #GHAWW-{{ section.id }} .gh-aww__medal-link {
+      display: block;
+      line-height: 0;
+      transition: transform 0.2s ease;
+    }
+    #GHAWW-{{ section.id }} .gh-aww__medal-link:hover {
+      transform: translateY(-2px);
+    }
+    #GHAWW-{{ section.id }} .gh-aww__medal-img {
+      width: var(--gh-aww-medal);
+      height: var(--gh-aww-medal);
+      object-fit: contain;
+      display: block;
+    }
+    #GHAWW-{{ section.id }} .gh-aww__medal-placeholder {
+      display: block;
+      width: var(--gh-aww-medal);
+      height: var(--gh-aww-medal);
+      border-radius: 50%;
+      background: linear-gradient(145deg, #d4af37 0%, #a67b22 100%);
+      opacity: 0.55;
+    }
+    #GHAWW-{{ section.id }} .gh-aww__desc {
+      max-width: 62ch;
+      margin: 0 auto 22px;
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--gh-aww-text);
+    }
+    #GHAWW-{{ section.id }} .gh-aww__links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: clamp(16px, 4vw, 36px);
+    }
+    #GHAWW-{{ section.id }} .gh-aww__text-link {
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gh-aww-link);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    #GHAWW-{{ section.id }} .gh-aww__text-link:hover {
+      color: var(--gh-aww-link-h);
+    }
+    #GHAWW-{{ section.id }} .gh-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 22px;
+      text-transform: uppercase;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      transition: 0.22s ease;
+    }
+    #GHAWW-{{ section.id }} .gh-cta::after {
+      content: '\2192';
+    }
+    #GHAWW-{{ section.id }} .gh-cta:hover {
+      transform: translateY(-1px);
+      background-color: var(--gh-h-bg) !important;
+      color: var(--gh-h-fg) !important;
+      border-color: var(--gh-h-bd) !important;
+    }
+  </style>
+{% endunless %}
+
+{% schema %}
+{
+  "name": "Award winning wines",
+  "tag": "section",
+  "class": "gh-award-winning-wines",
+  "max_blocks": 16,
+  "settings": [
+    { "type": "checkbox", "id": "section_enabled", "label": "Show section", "default": true },
+    { "type": "color", "id": "section_background", "label": "Section background", "default": "#F9F7F2" },
+    {
+      "type": "range",
+      "id": "container_width",
+      "label": "Container max width",
+      "min": 960,
+      "max": 1440,
+      "step": 20,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    { "type": "header", "content": "Heading" },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "AWARD WINNING WINES"
+    },
+    { "type": "color", "id": "heading_color", "label": "Heading colour", "default": "#A67B22" },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading size mobile",
+      "min": 18,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Heading size desktop",
+      "min": 20,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 28
+    },
+    { "type": "checkbox", "id": "show_divider", "label": "Show divider under heading", "default": true },
+    { "type": "color", "id": "divider_color", "label": "Divider colour", "default": "#A67B22" },
+    {
+      "type": "range",
+      "id": "divider_width",
+      "label": "Divider width",
+      "min": 24,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "divider_thickness",
+      "label": "Divider thickness",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+    { "type": "header", "content": "Medals" },
+    {
+      "type": "range",
+      "id": "medal_size",
+      "label": "Medal size",
+      "min": 48,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "medal_spacing",
+      "label": "Medal spacing",
+      "min": 8,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    { "type": "checkbox", "id": "mobile_wrap", "label": "Wrap medals on mobile", "default": true },
+    { "type": "header", "content": "Description" },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Winner of DECANTER and IWC – International Wine Challenge 2012 – CWSA Double Gold Medal and many more.</p>"
+    },
+    { "type": "color", "id": "text_color", "label": "Text colour", "default": "#25211B" },
+    { "type": "header", "content": "Links" },
+    {
+      "type": "select",
+      "id": "link_style",
+      "label": "Link style",
+      "options": [
+        { "value": "text", "label": "Text link" },
+        { "value": "primary", "label": "Primary button" },
+        { "value": "secondary", "label": "Secondary button" }
+      ],
+      "default": "text"
+    },
+    {
+      "type": "text",
+      "id": "link_1_label",
+      "label": "Link 1 label",
+      "default": "VIEW TESTIMONIALS & REVIEWS"
+    },
+    { "type": "url", "id": "link_1_url", "label": "Link 1 URL" },
+    {
+      "type": "text",
+      "id": "link_2_label",
+      "label": "Link 2 label",
+      "default": "VIEW ACHIEVEMENTS & AWARDS"
+    },
+    { "type": "url", "id": "link_2_url", "label": "Link 2 URL" },
+    { "type": "color", "id": "link_color", "label": "Text link colour", "default": "#A67B22" },
+    { "type": "color", "id": "link_hover_color", "label": "Text link hover colour", "default": "#1A2414" },
+    { "type": "color", "id": "primary_bg", "label": "Primary button background", "default": "#1A2414" },
+    { "type": "color", "id": "primary_text", "label": "Primary button text", "default": "#FFFFFF" },
+    { "type": "color", "id": "primary_border", "label": "Primary button border", "default": "#1A2414" },
+    { "type": "color", "id": "primary_hover_bg", "label": "Primary hover background", "default": "#A67B22" },
+    { "type": "color", "id": "primary_hover_text", "label": "Primary hover text", "default": "#FFFFFF" },
+    { "type": "color", "id": "primary_hover_border", "label": "Primary hover border", "default": "#A67B22" },
+    { "type": "color", "id": "secondary_bg", "label": "Secondary fill accent", "default": "#A67B22" },
+    { "type": "color", "id": "secondary_text", "label": "Secondary text", "default": "#1A2414" },
+    { "type": "color", "id": "secondary_border", "label": "Secondary border", "default": "#1A2414" },
+    { "type": "color", "id": "secondary_hover_bg", "label": "Secondary hover background", "default": "#1A2414" },
+    { "type": "color", "id": "secondary_hover_text", "label": "Secondary hover text", "default": "#FFFFFF" },
+    { "type": "color", "id": "secondary_hover_border", "label": "Secondary hover border", "default": "#1A2414" }
+  ],
+  "blocks": [
+    {
+      "type": "medal",
+      "name": "Award medal",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Medal image" },
+        { "type": "text", "id": "alt_text", "label": "Alt text" },
+        { "type": "url", "id": "link", "label": "Optional link" },
+        { "type": "checkbox", "id": "open_new_tab", "label": "Open link in new tab", "default": false }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Award winning wines",
+      "category": "God's Hill",
+      "blocks": [
+        { "type": "medal" },
+        { "type": "medal" },
+        { "type": "medal" },
+        { "type": "medal" },
+        { "type": "medal" },
+        { "type": "medal" },
+        { "type": "medal" },
+        { "type": "medal" },
+        { "type": "medal" },
+        { "type": "medal" }
+      ]
+    }
+  ]
+}
+{% endschema %}

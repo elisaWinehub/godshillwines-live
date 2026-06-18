@@ -1,0 +1,1067 @@
+{% comment %}
+  God's Hill · Custom two-column product main section
+  Left: media gallery with zoom lightbox
+  Right: block-based product information + Horizon cart drawer integration
+{% endcomment %}
+{% liquid
+  assign show = section.settings.section_enabled | default: true
+  assign product = product
+  assign variant = product.selected_or_first_available_variant
+
+  assign can_add_to_cart = false
+  assign add_to_cart_text = 'products.product.unavailable' | t
+  if variant
+    if variant.available
+      assign can_add_to_cart = true
+      assign add_to_cart_text = 'products.product.add_to_cart' | t
+    elsif variant.inventory_management == 'shopify' and variant.inventory_quantity <= 0 and variant.inventory_policy == 'deny'
+      assign add_to_cart_text = 'products.product.sold_out' | t
+    endif
+  endif
+
+  assign form_block_types = 'purchase_options,quantity_selector,buy_buttons' | split: ','
+  assign form_start = nil
+  assign form_end = nil
+  for block in section.blocks
+    if form_block_types contains block.type
+      if form_start == nil
+        assign form_start = forloop.index0
+      endif
+      assign form_end = forloop.index0
+    endif
+  endfor
+
+  assign atc_start = nil
+  assign atc_end = nil
+  for block in section.blocks
+    if block.type == 'quantity_selector' or block.type == 'buy_buttons'
+      if atc_start == nil
+        assign atc_start = forloop.index0
+      endif
+      assign atc_end = forloop.index0
+    endif
+  endfor
+
+  assign accordion_start = nil
+  assign accordion_end = nil
+  for block in section.blocks
+    if block.type == 'accordion_item'
+      if accordion_start == nil
+        assign accordion_start = forloop.index0
+      endif
+      assign accordion_end = forloop.index0
+    endif
+  endfor
+
+  assign product_form_id = 'GHMPC-ProductForm-' | append: section.id
+  assign root_class = 'gh-mpc'
+  if section.settings.custom_css_class != blank
+    assign root_class = root_class | append: ' ' | append: section.settings.custom_css_class | strip
+  endif
+%}
+
+<script type="application/ld+json">
+  {{ product | structured_data }}
+</script>
+
+{% unless show %}
+  <div {{ section.shopify_attributes }} hidden></div>
+{% else %}
+  <section
+    id="GHMPC-{{ section.id }}"
+    class="{{ root_class }}"
+    {{ section.shopify_attributes }}
+    style="
+      --gh-mpc-bg: {{ section.settings.section_background }};
+      --gh-mpc-pt: {{ section.settings.padding_top }}px;
+      --gh-mpc-pb: {{ section.settings.padding_bottom }}px;
+      --gh-mpc-cw: {{ section.settings.container_width }}px;
+      --gh-mpc-gap: {{ section.settings.column_gap }}px;
+      --gh-mpc-panel: {{ section.settings.media_panel_background }};
+      --gh-mpc-gold: {{ section.settings.accent_color }};
+      --gh-mpc-text: {{ section.settings.text_color }};
+      --gh-mpc-heading: {{ section.settings.heading_color }};
+      --gh-mpc-muted: {{ section.settings.muted_text_color }};
+      --gh-mpc-btn-bg: {{ section.settings.button_background }};
+      --gh-mpc-btn-text: {{ section.settings.button_text_color }};
+      --gh-mpc-btn-h-bg: {{ section.settings.button_hover_background }};
+      --gh-mpc-acc-heading: {{ section.settings.accordion_heading_color }};
+      --gh-mpc-acc-text: {{ section.settings.accordion_text_color }};
+      --gh-mpc-acc-div: {{ section.settings.accordion_divider_color }};
+    "
+    data-mpc-section
+  >
+    <div class="gh-mpc__inner">
+      <div class="gh-mpc__grid">
+        {%- comment -%} ── Media column ── {%- endcomment -%}
+        <div class="gh-mpc__media">
+          <div class="gh-mpc__media-panel" data-mpc-gallery>
+            {% if product.media.size > 0 %}
+              {% assign featured_media = variant.featured_media | default: product.featured_media %}
+              {% assign main_img_id = 'GHMPC-main-img-' | append: section.id %}
+              <button
+                type="button"
+                class="gh-mpc__zoom-trigger"
+                data-mpc-zoom-open
+                aria-label="Zoom product image"
+              >
+                <span class="svg-wrapper gh-mpc__zoom-icon" aria-hidden="true">
+                  {{- 'icon-search.svg' | inline_asset_content -}}
+                </span>
+              </button>
+              <div class="gh-mpc__main-image-wrap">
+                {{
+                  featured_media
+                  | image_url: width: 1200
+                  | image_tag:
+                    loading: 'eager',
+                    class: 'gh-mpc__main-image',
+                    id: main_img_id,
+                    widths: '600,900,1200',
+                    sizes: '(min-width: 990px) 50vw, 100vw',
+                    alt: featured_media.alt | default: product.title
+                }}
+              </div>
+              {% if product.media.size > 1 %}
+                <ul class="gh-mpc__thumbs" role="list">
+                  {% for media in product.media %}
+                    <li>
+                      <button
+                        type="button"
+                        class="gh-mpc__thumb{% if media.id == featured_media.id %} is-active{% endif %}"
+                        data-mpc-thumb
+                        data-media-id="{{ media.id }}"
+                        data-src="{{ media | image_url: width: 1600 }}"
+                        data-alt="{{ media.alt | default: product.title | escape }}"
+                        aria-label="View image {{ forloop.index }}"
+                      >
+                        {{
+                          media
+                          | image_url: width: 120
+                          | image_tag: loading: 'lazy', widths: '80,120', alt: ''
+                        }}
+                      </button>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            {% else %}
+              <div class="gh-mpc__main-image-wrap gh-mpc__main-image-wrap--placeholder">
+                {{ 'product-apparel-2' | placeholder_svg_tag: 'gh-mpc__placeholder' }}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+        {%- comment -%} ── Info column (blocks) ── {%- endcomment -%}
+        <div class="gh-mpc__info">
+          {% if form_start != blank %}
+            {%- comment -%} Blocks before the product form {%- endcomment -%}
+            {% for block in section.blocks %}
+              {% if forloop.index0 >= form_start %}{% break %}{% endif %}
+              {% render 'gh-mpc-info-block',
+                block: block,
+                section: section,
+                product: product,
+                variant: variant,
+                can_add_to_cart: can_add_to_cart,
+                add_to_cart_text: add_to_cart_text
+              %}
+            {% endfor %}
+
+            {%- comment -%} Product form — form/endform must stay contiguous (no if/endif between) {%- endcomment -%}
+            <product-form-component
+              data-section-id="{{ section.id }}"
+              data-product-id="{{ product.id }}"
+              data-product-url="{{ product.url }}"
+              on:submit="/handleSubmit"
+              data-quantity-default="{% if variant.quantity_rule.min %}{{ variant.quantity_rule.min }}{% else %}1{% endif %}"
+              data-quantity-error-max="{{ 'products.product.quantity_error_max' | t }}"
+              class="gh-mpc__product-form"
+            >
+              <div class="visually-hidden" aria-live="assertive" role="status" aria-atomic="true" ref="liveRegion"></div>
+              {% form 'product', product, id: product_form_id, data-type: 'add-to-cart-form', class: 'gh-mpc__shopify-form' %}
+                <input type="hidden" name="id" ref="variantId" value="{{ variant.id }}">
+                {% for block in section.blocks %}
+                  {% assign block_idx = forloop.index0 %}
+                  {% if block_idx >= form_start and block_idx <= form_end %}
+                    {% if block_idx == atc_start %}
+                      <div class="gh-mpc__atc-row">
+                    {% endif %}
+                    {% render 'gh-mpc-info-block',
+                      block: block,
+                      section: section,
+                      product: product,
+                      variant: variant,
+                      can_add_to_cart: can_add_to_cart,
+                      add_to_cart_text: add_to_cart_text
+                    %}
+                    {% if block_idx == atc_end %}
+                      </div>
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+              {% endform %}
+            </product-form-component>
+
+            {%- comment -%} Blocks after the product form {%- endcomment -%}
+            {% for block in section.blocks %}
+              {% assign block_idx = forloop.index0 %}
+              {% if block_idx > form_end %}
+                {% if block_idx == accordion_start %}
+                  <div class="gh-mpc__accordion" data-mpc-accordion>
+                {% endif %}
+                {% render 'gh-mpc-info-block',
+                  block: block,
+                  section: section,
+                  product: product,
+                  variant: variant,
+                  can_add_to_cart: can_add_to_cart,
+                  add_to_cart_text: add_to_cart_text
+                %}
+                {% if block_idx == accordion_end %}
+                  </div>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            {%- comment -%} No form blocks — render all blocks in order {%- endcomment -%}
+            {% for block in section.blocks %}
+              {% assign block_idx = forloop.index0 %}
+              {% if block_idx == atc_start %}
+                <div class="gh-mpc__atc-row">
+              {% endif %}
+              {% if block_idx == accordion_start %}
+                <div class="gh-mpc__accordion" data-mpc-accordion>
+              {% endif %}
+              {% render 'gh-mpc-info-block',
+                block: block,
+                section: section,
+                product: product,
+                variant: variant,
+                can_add_to_cart: can_add_to_cart,
+                add_to_cart_text: add_to_cart_text
+              %}
+              {% if block_idx == atc_end %}
+                </div>
+              {% endif %}
+              {% if block_idx == accordion_end %}
+                </div>
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    {%- comment -%} Image zoom lightbox (portaled to body via JS for correct z-index) {%- endcomment -%}
+    <div
+      id="GHMPC-lightbox-{{ section.id }}"
+      class="gh-mpc__lightbox"
+      data-mpc-lightbox
+      data-mpc-lightbox-root
+      hidden
+      aria-hidden="true"
+      style="--gh-mpc-lightbox-panel: {{ section.settings.media_panel_background }};"
+    >
+      <div class="gh-mpc__lightbox-backdrop" data-mpc-lightbox-close></div>
+      <div class="gh-mpc__lightbox-dialog" role="dialog" aria-modal="true" aria-label="Product image zoom">
+        <button type="button" class="gh-mpc__lightbox-close" data-mpc-lightbox-close aria-label="Close zoom">&times;</button>
+        <div class="gh-mpc__lightbox-panel">
+          <img class="gh-mpc__lightbox-img" data-mpc-lightbox-img src="" alt="" width="900" height="900">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    #GHMPC-{{ section.id }}.gh-mpc {
+      background: var(--gh-mpc-bg);
+      padding-block: var(--gh-mpc-pt) var(--gh-mpc-pb);
+      color: var(--gh-mpc-text);
+      margin-top: 0;
+      position: relative;
+      --sticky-header-offset: var(--header-height, 80px);
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__inner {
+      width: min(100%, var(--gh-mpc-cw));
+      margin-inline: auto;
+      padding-inline: clamp(16px, 3vw, 32px);
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__grid {
+      display: grid;
+      gap: var(--gh-mpc-gap);
+      align-items: start;
+    }
+    @media (min-width: 990px) {
+      #GHMPC-{{ section.id }} .gh-mpc__grid {
+        grid-template-columns: 1fr 1fr;
+        align-items: stretch;
+      }
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__media-panel {
+      position: relative;
+      background: var(--gh-mpc-panel);
+      border-radius: 4px;
+      padding: clamp(20px, 4vw, 40px);
+      min-height: 320px;
+    }
+    @media (min-width: 990px) {
+      #GHMPC-{{ section.id }} .gh-mpc__media-panel {
+        position: sticky;
+        top: calc(var(--sticky-header-offset, var(--header-height, 80px)) + 16px);
+        z-index: var(--layer-flat, 2);
+        max-height: calc(100vh - var(--sticky-header-offset, var(--header-height, 80px)) - 32px);
+        overflow-y: auto;
+        scrollbar-width: thin;
+      }
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__main-image-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 280px;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__main-image {
+      max-width: 100%;
+      max-height: min(70vh, 560px);
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      cursor: zoom-in;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__zoom-trigger {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid #E0D8CC;
+      background: #fff;
+      color: var(--gh-mpc-text);
+      cursor: pointer;
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      padding: 0;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__zoom-icon {
+      width: 16px;
+      height: 16px;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__zoom-icon > svg {
+      width: 16px;
+      height: 16px;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__thumbs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+      padding: 0;
+      list-style: none;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__thumb {
+      border: 2px solid transparent;
+      padding: 4px;
+      background: #fff;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__thumb.is-active { border-color: var(--gh-mpc-gold); }
+    #GHMPC-{{ section.id }} .gh-mpc__thumb img { width: 64px; height: 64px; object-fit: contain; display: block; }
+    #GHMPC-{{ section.id }} .gh-mpc__breadcrumbs {
+      font-size: 0.8125rem;
+      color: var(--gh-mpc-muted);
+      margin-bottom: 16px;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__crumb-link {
+      color: var(--gh-mpc-muted);
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.2s ease, opacity 0.2s ease;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__crumb-link:hover,
+    #GHMPC-{{ section.id }} .gh-mpc__crumb-link:focus-visible {
+      color: var(--gh-mpc-gold);
+      opacity: 0.85;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__crumb-current {
+      color: var(--gh-mpc-text);
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__crumb-sep { margin-inline: 6px; opacity: 0.6; }
+    #GHMPC-{{ section.id }} .gh-mpc__vendor {
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      color: var(--gh-mpc-gold);
+      margin: 0 0 8px;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__vendor-link {
+      color: inherit;
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.2s ease, opacity 0.2s ease;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__vendor-link:hover,
+    #GHMPC-{{ section.id }} .gh-mpc__vendor-link:focus-visible {
+      color: var(--gh-mpc-gold);
+      opacity: 0.85;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__title {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 400;
+      line-height: 1.15;
+      color: var(--gh-mpc-heading);
+      margin: 0 0 12px;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__rating {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: -4px 0 14px;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__stars {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      line-height: 1;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__star {
+      font-size: 1rem;
+      color: #D4CEC4;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__star.is-filled {
+      color: var(--gh-mpc-gold);
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__rating-meta {
+      font-size: 0.8125rem;
+      color: var(--gh-mpc-muted);
+      letter-spacing: 0.01em;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__price-wrap { margin-bottom: 16px; font-size: 1.125rem; }
+    #GHMPC-{{ section.id }} product-price.gh-mpc__price {
+      display: inline-flex !important;
+      align-items: baseline;
+      flex-wrap: wrap;
+      column-gap: 0.45em;
+      row-gap: 0.2em;
+      justify-content: flex-start;
+      width: fit-content;
+      max-width: 100%;
+    }
+    #GHMPC-{{ section.id }} product-price.gh-mpc__price [ref="priceContainer"] {
+      display: inline-flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+      column-gap: 0.45em;
+      row-gap: 0.2em;
+    }
+    #GHMPC-{{ section.id }} product-price.gh-mpc__price .price__regular:not(.price__hidden),
+    #GHMPC-{{ section.id }} product-price.gh-mpc__price .price__sale:not(.price__hidden) {
+      display: inline-flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      column-gap: 0.45em;
+      row-gap: 0.2em;
+    }
+    #GHMPC-{{ section.id }} product-price.gh-mpc__price .price-item__group {
+      white-space: nowrap;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__price-savings {
+      flex-basis: 100%;
+      font-size: 0.8125rem;
+      font-weight: 400;
+      color: #B42318;
+      letter-spacing: 0.02em;
+      line-height: 1.3;
+    }
+    #GHMPC-{{ section.id }} product-price.gh-mpc__price .price__hidden {
+      display: none;
+    }
+    #GHMPC-{{ section.id }} product-price.gh-mpc__price > div:first-of-type {
+      display: inline-flex;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__currency {
+      display: inline;
+      color: var(--gh-mpc-muted);
+      font-size: 0.9375rem;
+      white-space: nowrap;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__description {
+      margin-bottom: 24px;
+      line-height: 1.65;
+      color: var(--gh-mpc-text);
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__purchase {
+      border: 1px solid var(--gh-mpc-gold);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__purchase-title {
+      margin: 0;
+      padding: 10px 16px;
+      font-size: 0.6875rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: #F3EDE3;
+      color: var(--gh-mpc-gold);
+      border-bottom: 1px solid #E8DFD0;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__purchase-option,
+    #GHMPC-{{ section.id }} .gh-mpc__purchase-plan {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 16px;
+      cursor: pointer;
+      border-bottom: 1px solid #F0EBE3;
+      margin: 0;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__purchase-option.is-selected,
+    #GHMPC-{{ section.id }} .gh-mpc__purchase-plan:has(input:checked) {
+      background: #F3EDE3;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__purchase-option input,
+    #GHMPC-{{ section.id }} .gh-mpc__purchase-plan input { accent-color: var(--gh-mpc-gold); }
+    #GHMPC-{{ section.id }} .gh-mpc__purchase-label { flex: 1; font-size: 0.9375rem; }
+    #GHMPC-{{ section.id }} .gh-mpc__purchase-price { font-size: 0.9375rem; white-space: nowrap; }
+    #GHMPC-{{ section.id }} .gh-mpc__purchase-plans { padding-left: 12px; border-top: 1px solid #F0EBE3; }
+    #GHMPC-{{ section.id }} .gh-mpc__purchase-plan { font-size: 0.875rem; padding-left: 28px; }
+    #GHMPC-{{ section.id }} .gh-mpc__atc-row {
+      display: flex;
+      align-items: stretch;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__quantity { flex: 0 0 auto; }
+    #GHMPC-{{ section.id }} .gh-mpc__buy { flex: 1 1 auto; min-width: 0; }
+    #GHMPC-{{ section.id }} .gh-mpc__qty-selector.quantity-selector {
+      height: 100%;
+      min-height: 48px;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__atc-btn {
+      width: 100%;
+      min-height: 48px;
+      background: var(--gh-mpc-btn-bg) !important;
+      color: var(--gh-mpc-btn-text) !important;
+      border: none !important;
+      border-radius: 2px !important;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 0.8125rem;
+      font-weight: 400;
+      position: relative;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__atc-btn .add-to-cart-text__content,
+    #GHMPC-{{ section.id }} .gh-mpc__atc-btn .add-to-cart-text__content span {
+      font-weight: 400;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__atc-btn[data-loading='true'] .add-to-cart-text,
+    #GHMPC-{{ section.id }} .gh-mpc__atc-btn[data-loading='true'] .add-to-cart__added {
+      opacity: 0;
+      visibility: hidden;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__atc-btn .add-to-cart__loading {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__atc-btn .add-to-cart__loading[hidden] {
+      display: none;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__atc-btn .add-to-cart__loading-spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgb(255 255 255 / 0.35);
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: gh-mpc-atc-spin 0.65s linear infinite;
+    }
+    @keyframes gh-mpc-atc-spin {
+      to { transform: rotate(360deg); }
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__atc-btn:hover:not(:disabled) {
+      background: var(--gh-mpc-btn-h-bg) !important;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__pickup { margin-bottom: 24px; font-size: 0.875rem; }
+    #GHMPC-{{ section.id }} .gh-mpc__pickup-row { display: flex; gap: 10px; align-items: flex-start; }
+    #GHMPC-{{ section.id }} .gh-mpc__pickup-icon { color: #2d6a4f; font-weight: 700; }
+    #GHMPC-{{ section.id }} .gh-mpc__pickup-sub { color: var(--gh-mpc-muted); margin: 2px 0; font-size: 0.8125rem; }
+    #GHMPC-{{ section.id }} .gh-mpc__pickup-link { color: var(--gh-mpc-gold); text-decoration: underline; font-size: 0.8125rem; margin-top: 4px; }
+    #GHMPC-{{ section.id }} .gh-mpc__accordion { border-top: 1px solid var(--gh-mpc-acc-div); margin-top: 8px; }
+    #GHMPC-{{ section.id }} .gh-mpc__acc-item { border-bottom: 1px solid var(--gh-mpc-acc-div); }
+    #GHMPC-{{ section.id }} .gh-mpc__acc-summary {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 0;
+      cursor: pointer;
+      font-size: 0.8125rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gh-mpc-acc-heading);
+      font-weight: 600;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__acc-summary::-webkit-details-marker { display: none; }
+    #GHMPC-{{ section.id }} .gh-mpc__acc-chevron {
+      width: 8px; height: 8px;
+      border-right: 1.5px solid currentColor;
+      border-bottom: 1.5px solid currentColor;
+      transform: rotate(45deg);
+      transition: transform 0.25s ease;
+      flex-shrink: 0;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__acc-item[open] .gh-mpc__acc-chevron { transform: rotate(-135deg); }
+    #GHMPC-{{ section.id }} .gh-mpc__acc-body {
+      padding-bottom: 16px;
+      color: var(--gh-mpc-acc-text);
+      line-height: 1.65;
+      overflow-wrap: anywhere;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__kv { margin: 0; }
+    #GHMPC-{{ section.id }} .gh-mpc__kv-row {
+      display: grid;
+      grid-template-columns: minmax(120px, 40%) 1fr;
+      gap: 8px 16px;
+      padding: 6px 0;
+      border-bottom: 1px solid #F0EBE3;
+    }
+    #GHMPC-{{ section.id }} .gh-mpc__kv-row dt { font-weight: 600; margin: 0; }
+    #GHMPC-{{ section.id }} .gh-mpc__kv-row dd { margin: 0; color: var(--gh-mpc-muted); }
+    #GHMPC-lightbox-{{ section.id }}.gh-mpc__lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 10001;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(56px, 10vh, 120px) clamp(16px, 4vw, 32px);
+      box-sizing: border-box;
+    }
+    #GHMPC-lightbox-{{ section.id }}.gh-mpc__lightbox[hidden] {
+      display: none !important;
+    }
+    #GHMPC-lightbox-{{ section.id }} .gh-mpc__lightbox-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: rgba(0, 0, 0, 0.88);
+      cursor: pointer;
+    }
+    #GHMPC-lightbox-{{ section.id }} .gh-mpc__lightbox-dialog {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      width: min(100%, 920px);
+      max-height: 100%;
+      margin: auto;
+    }
+    #GHMPC-lightbox-{{ section.id }} .gh-mpc__lightbox-panel {
+      background: var(--gh-mpc-lightbox-panel, #F3EDE3);
+      padding: clamp(28px, 5vw, 56px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      max-height: calc(100vh - clamp(112px, 20vh, 240px));
+    }
+    #GHMPC-lightbox-{{ section.id }} .gh-mpc__lightbox-img {
+      max-width: 100%;
+      max-height: min(72vh, 680px);
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      display: block;
+    }
+    #GHMPC-lightbox-{{ section.id }} .gh-mpc__lightbox-close {
+      position: absolute;
+      top: -44px;
+      right: 0;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 2rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px 8px;
+    }
+    #GHMPC-lightbox-{{ section.id }} .gh-mpc__lightbox-close:hover {
+      opacity: 0.85;
+    }
+    body.gh-mpc-lightbox-open {
+      overflow: hidden;
+    }
+    #GHMPC-{{ section.id }} .variant-picker { margin-bottom: 20px; }
+    @media (max-width: 749px) {
+      #GHMPC-{{ section.id }} .gh-mpc__atc-row { flex-direction: column; }
+      #GHMPC-{{ section.id }} .gh-mpc__kv-row { grid-template-columns: 1fr; }
+    }
+  </style>
+
+  <script>
+    (function () {
+      var root = document.getElementById('GHMPC-{{ section.id }}');
+      if (!root) return;
+
+      /* Gallery thumbnails + zoom */
+      var mainImg = document.getElementById('GHMPC-main-img-{{ section.id }}');
+      var lightbox = document.getElementById('GHMPC-lightbox-{{ section.id }}');
+      var lightboxImg = lightbox ? lightbox.querySelector('[data-mpc-lightbox-img]') : null;
+
+      function mountLightbox() {
+        if (!lightbox || lightbox.parentElement === document.body) return;
+        document.body.appendChild(lightbox);
+      }
+
+      function openLightbox(src, alt) {
+        if (!lightbox || !lightboxImg) return;
+        mountLightbox();
+        lightboxImg.src = src;
+        lightboxImg.alt = alt || '';
+        lightbox.hidden = false;
+        lightbox.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('gh-mpc-lightbox-open');
+      }
+      function closeLightbox() {
+        if (!lightbox) return;
+        lightbox.hidden = true;
+        lightbox.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('gh-mpc-lightbox-open');
+      }
+
+      if (lightbox) {
+        lightbox.querySelectorAll('[data-mpc-lightbox-close]').forEach(function (el) {
+          el.addEventListener('click', closeLightbox);
+        });
+      }
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && lightbox && !lightbox.hidden) closeLightbox();
+      });
+
+      if (mainImg) {
+        mainImg.addEventListener('click', function () {
+          openLightbox(mainImg.currentSrc || mainImg.src, mainImg.alt);
+        });
+      }
+      root.querySelector('[data-mpc-zoom-open]')?.addEventListener('click', function () {
+        if (mainImg) openLightbox(mainImg.currentSrc || mainImg.src, mainImg.alt);
+      });
+
+      root.querySelectorAll('[data-mpc-thumb]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (!mainImg) return;
+          mainImg.src = btn.dataset.src;
+          mainImg.alt = btn.dataset.alt || '';
+          root.querySelectorAll('[data-mpc-thumb]').forEach(function (t) { t.classList.remove('is-active'); });
+          btn.classList.add('is-active');
+        });
+      });
+
+      /* Purchase options UI */
+      root.querySelectorAll('[data-mpc-purchase-radio]').forEach(function (radio) {
+        radio.addEventListener('change', function () {
+          root.querySelectorAll('[data-mpc-purchase-option]').forEach(function (opt) {
+            opt.classList.toggle('is-selected', opt.querySelector('input') === radio || opt.contains(radio));
+          });
+          var plans = root.querySelector('[data-mpc-purchase-plans]');
+          if (plans) plans.hidden = radio.value !== 'subscribe';
+        });
+      });
+
+      /* Accordion — one open at a time optional; allow multiple via native details */
+      root.querySelectorAll('[data-mpc-acc-item]').forEach(function (item) {
+        item.addEventListener('toggle', function () {
+          if (!item.open) return;
+          root.querySelectorAll('[data-mpc-acc-item]').forEach(function (other) {
+            if (other !== item) other.open = false;
+          });
+        });
+      });
+
+      /* Add to cart loading + cart drawer */
+      var productForm = root.querySelector('product-form-component');
+      var atcLoadingTimeout;
+
+      function getAtcButton() {
+        return productForm ? productForm.querySelector('.gh-mpc__atc-btn') : null;
+      }
+
+      function setAtcLoading(isLoading) {
+        var btn = getAtcButton();
+        if (!btn) return;
+        var loadingEl = btn.querySelector('.add-to-cart__loading');
+
+        if (isLoading) {
+          btn.dataset.loading = 'true';
+          btn.setAttribute('aria-busy', 'true');
+          btn.disabled = true;
+          if (loadingEl) loadingEl.hidden = false;
+          clearTimeout(atcLoadingTimeout);
+          atcLoadingTimeout = setTimeout(function () {
+            setAtcLoading(false);
+          }, 15000);
+        } else {
+          clearTimeout(atcLoadingTimeout);
+          delete btn.dataset.loading;
+          btn.removeAttribute('aria-busy');
+          btn.disabled = false;
+          if (loadingEl) loadingEl.hidden = true;
+        }
+      }
+
+      function openCartDrawer() {
+        var drawer = document.querySelector('cart-drawer-component');
+        if (drawer && typeof drawer.open === 'function') {
+          drawer.open();
+        }
+      }
+
+      if (productForm) {
+        productForm.addEventListener('submit', function () {
+          setAtcLoading(true);
+        });
+
+        productForm.addEventListener('cart:update', function (event) {
+          setAtcLoading(false);
+          if (!event.detail?.data?.didError) {
+            openCartDrawer();
+          }
+        });
+
+        productForm.addEventListener('cart:error', function () {
+          setAtcLoading(false);
+        });
+      }
+    })();
+  </script>
+{% endunless %}
+
+{% schema %}
+{
+  "name": "Main Product Custom",
+  "tag": "section",
+  "class": "gh-main-product-section",
+  "blocks": [
+    {
+      "type": "breadcrumbs",
+      "name": "Breadcrumbs",
+      "limit": 1,
+      "settings": [
+        { "type": "checkbox", "id": "show_home", "label": "Show home link", "default": true },
+        { "type": "text", "id": "home_label", "label": "Home label", "default": "Home" },
+        { "type": "checkbox", "id": "show_all_products", "label": "Show all products collection", "default": false },
+        { "type": "collection", "id": "all_products_collection", "label": "All products collection" },
+        { "type": "text", "id": "all_products_label", "label": "All products label" },
+        { "type": "checkbox", "id": "show_collection", "label": "Show product collection", "default": true }
+      ]
+    },
+    {
+      "type": "vendor",
+      "name": "Vendor / eyebrow",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "text", "label": "Text override", "info": "Leave blank to use product vendor" },
+        { "type": "url", "id": "link", "label": "Vendor link", "info": "Leave blank to link to the product vendor collection" }
+      ]
+    },
+    { "type": "title", "name": "Product title", "limit": 1 },
+    {
+      "type": "rating",
+      "name": "Star rating",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "rating_value", "label": "Rating value", "default": "4.5", "info": "Static for now — e.g. 4.5" },
+        { "type": "range", "id": "filled_stars", "label": "Filled stars", "min": 0, "max": 5, "step": 1, "default": 4 },
+        { "type": "checkbox", "id": "show_review_count", "label": "Show review count", "default": true },
+        { "type": "text", "id": "review_count", "label": "Review count", "default": "12" },
+        { "type": "text", "id": "review_count_label", "label": "Review count label", "default": "reviews" }
+      ]
+    },
+    {
+      "type": "price",
+      "name": "Price",
+      "limit": 1,
+      "settings": [
+        { "type": "checkbox", "id": "show_sale_price_first", "label": "Show sale price first", "default": true },
+        { "type": "checkbox", "id": "show_unit_price", "label": "Show unit price", "default": false },
+        { "type": "checkbox", "id": "show_currency_code", "label": "Show AUD suffix", "default": true }
+      ]
+    },
+    {
+      "type": "description",
+      "name": "Short description",
+      "limit": 1,
+      "settings": [
+        { "type": "richtext", "id": "text", "label": "Custom description", "info": "Leave blank to use product description" },
+        { "type": "range", "id": "truncate_words", "label": "Truncate words (0 = full)", "min": 0, "max": 80, "step": 5, "default": 0 }
+      ]
+    },
+    {
+      "type": "variant_picker",
+      "name": "Variant picker",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "variant_style",
+          "label": "Style",
+          "options": [
+            { "value": "dropdowns", "label": "Dropdowns" },
+            { "value": "buttons", "label": "Buttons" }
+          ],
+          "default": "buttons"
+        },
+        { "type": "checkbox", "id": "show_swatches", "label": "Show swatches", "default": true },
+        { "type": "text_alignment", "id": "alignment", "label": "Alignment", "default": "left" }
+      ]
+    },
+    {
+      "type": "purchase_options",
+      "name": "Purchase options",
+      "limit": 1,
+      "settings": [
+        { "type": "checkbox", "id": "show_purchase_options", "label": "Show purchase options", "default": true },
+        { "type": "text", "id": "box_title", "label": "Box title", "default": "CHOOSE YOUR PURCHASE OPTION" },
+        { "type": "text", "id": "one_time_label", "label": "One-time label", "default": "One-time purchase" },
+        { "type": "text", "id": "subscribe_label", "label": "Subscribe label", "default": "Subscribe & Save" },
+        { "type": "text", "id": "plan_1_label", "label": "Plan 1 label", "default": "Every 1 month – 20% off" },
+        { "type": "text", "id": "plan_1_price", "label": "Plan 1 price display", "default": "$32.00" },
+        { "type": "text", "id": "plan_2_label", "label": "Plan 2 label", "default": "Every 2 months – 15% off" },
+        { "type": "text", "id": "plan_2_price", "label": "Plan 2 price display", "default": "$34.00" },
+        { "type": "text", "id": "plan_3_label", "label": "Plan 3 label", "default": "Every 3 months – 10% off" },
+        { "type": "text", "id": "plan_3_price", "label": "Plan 3 price display", "default": "$36.00" },
+        { "type": "color", "id": "selected_background", "label": "Selected row background", "default": "#F3EDE3" },
+        { "type": "color", "id": "border_color", "label": "Border colour", "default": "#B29B33" },
+        { "type": "color", "id": "accent_color", "label": "Accent colour", "default": "#B29B33" }
+      ]
+    },
+    { "type": "quantity_selector", "name": "Quantity selector", "limit": 1 },
+    {
+      "type": "buy_buttons",
+      "name": "Buy buttons",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "button_label", "label": "Add to cart label", "default": "ADD TO CART" }
+      ]
+    },
+    {
+      "type": "pickup_availability",
+      "name": "Pickup availability",
+      "limit": 1,
+      "settings": [
+        { "type": "checkbox", "id": "show_pickup", "label": "Show pickup availability", "default": true },
+        { "type": "text", "id": "pickup_available_text", "label": "Pickup available text", "default": "Pickup available at Cellar Door" },
+        { "type": "text", "id": "pickup_ready_text", "label": "Ready text", "default": "Usually ready in 24 hours" },
+        { "type": "text", "id": "view_store_label", "label": "View store link", "default": "View store information" }
+      ]
+    },
+    {
+      "type": "accordion_item",
+      "name": "Accordion item",
+      "settings": [
+        { "type": "checkbox", "id": "show_item", "label": "Show item", "default": true },
+        { "type": "text", "id": "title", "label": "Title", "default": "Details" },
+        {
+          "type": "select",
+          "id": "content_mode",
+          "label": "Content source",
+          "options": [
+            { "value": "static", "label": "Static content" },
+            { "value": "metafields", "label": "Product metafields" }
+          ],
+          "default": "static"
+        },
+        {
+          "type": "select",
+          "id": "metafield_group",
+          "label": "Metafield group",
+          "options": [
+            { "value": "wine_details", "label": "Wine details" },
+            { "value": "vineyard", "label": "Vineyard" },
+            { "value": "tasting_notes", "label": "Tasting notes" },
+            { "value": "winemaking", "label": "Winemaking" },
+            { "value": "vintage_notes", "label": "Vintage notes" },
+            { "value": "tasting_note_pdf", "label": "Tasting note PDF" },
+            { "value": "reviews", "label": "Reviews" },
+            { "value": "awards", "label": "Awards" }
+          ],
+          "default": "wine_details"
+        },
+        { "type": "richtext", "id": "static_content", "label": "Static content" },
+        { "type": "richtext", "id": "fallback_content", "label": "Fallback when metafields empty" },
+        { "type": "text", "id": "pdf_link_label", "label": "PDF link label", "default": "Download Tasting Note PDF" }
+      ]
+    },
+    {
+      "type": "custom_liquid",
+      "name": "Custom liquid",
+      "settings": [
+        { "type": "liquid", "id": "custom_liquid", "label": "Custom liquid" }
+      ]
+    },
+    { "type": "@app" }
+  ],
+  "settings": [
+    { "type": "checkbox", "id": "section_enabled", "label": "Enable section", "default": true },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "color", "id": "section_background", "label": "Section background", "default": "#FFFFFF" },
+    { "type": "range", "id": "container_width", "label": "Container max width", "min": 960, "max": 1440, "step": 20, "unit": "px", "default": 1200 },
+    { "type": "range", "id": "padding_top", "label": "Padding top", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 48 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding bottom", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 48 },
+    { "type": "range", "id": "column_gap", "label": "Column gap", "min": 24, "max": 80, "step": 4, "unit": "px", "default": 48 },
+    { "type": "color", "id": "media_panel_background", "label": "Image panel background", "default": "#F3EDE3" },
+    { "type": "color", "id": "accent_color", "label": "Accent colour", "default": "#B29B33" },
+    { "type": "color", "id": "heading_color", "label": "Heading colour", "default": "#1F1A14" },
+    { "type": "color", "id": "text_color", "label": "Text colour", "default": "#333333" },
+    { "type": "color", "id": "muted_text_color", "label": "Muted text colour", "default": "#6B6560" },
+    { "type": "color", "id": "button_background", "label": "Button background", "default": "#B29B33" },
+    { "type": "color", "id": "button_text_color", "label": "Button text", "default": "#FFFFFF" },
+    { "type": "color", "id": "button_hover_background", "label": "Button hover background", "default": "#96782A" },
+    { "type": "header", "content": "Accordion styling" },
+    { "type": "color", "id": "accordion_heading_color", "label": "Accordion heading", "default": "#1F1A14" },
+    { "type": "color", "id": "accordion_text_color", "label": "Accordion text", "default": "#333333" },
+    { "type": "color", "id": "accordion_divider_color", "label": "Accordion divider", "default": "#E0D8CC" },
+    { "type": "text", "id": "custom_css_class", "label": "Custom CSS class" }
+  ],
+  "presets": [
+    {
+      "name": "Main Product Custom",
+      "category": "God's Hill",
+      "blocks": [
+        { "type": "breadcrumbs" },
+        { "type": "vendor", "settings": { "text": "GOD'S HILL WINES" } },
+        { "type": "title" },
+        { "type": "rating" },
+        { "type": "price" },
+        { "type": "description" },
+        { "type": "variant_picker" },
+        { "type": "purchase_options" },
+        { "type": "quantity_selector" },
+        { "type": "buy_buttons" },
+        { "type": "pickup_availability" },
+        { "type": "accordion_item", "settings": { "title": "WINE DETAILS", "metafield_group": "wine_details", "content_mode": "static", "static_content": "<p>Vintage, colour, alcohol and region details will appear here once product metafields are connected.</p>" } },
+        { "type": "accordion_item", "settings": { "title": "VINEYARD", "metafield_group": "vineyard", "content_mode": "static", "static_content": "<p>Vineyard information will appear here.</p>" } },
+        { "type": "accordion_item", "settings": { "title": "TASTING NOTES", "metafield_group": "tasting_notes", "content_mode": "static", "static_content": "<p>Tasting notes will appear here.</p>" } },
+        { "type": "accordion_item", "settings": { "title": "WINEMAKING", "metafield_group": "winemaking", "content_mode": "static", "static_content": "<p>Winemaking details will appear here.</p>" } },
+        { "type": "accordion_item", "settings": { "title": "TASTING NOTE PDF", "metafield_group": "tasting_note_pdf", "content_mode": "static", "static_content": "<p>PDF download will appear when a tasting note file metafield is added.</p>" } },
+        { "type": "accordion_item", "settings": { "title": "REVIEWS (0)", "metafield_group": "reviews", "content_mode": "static", "static_content": "<p>Reviews will appear here or via your review app.</p>" } },
+        { "type": "accordion_item", "settings": { "title": "AWARDS", "metafield_group": "awards", "content_mode": "static", "static_content": "<p>Award information will appear here.</p>" } }
+      ]
+    }
+  ],
+  "enabled_on": {
+    "templates": ["product"]
+  }
+}
+{% endschema %}

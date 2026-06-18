@@ -1,0 +1,538 @@
+{% comment %} Feature cards grid · blocks for repeatable promos {% endcomment %}
+{% liquid
+  assign show_section = section.settings.section_enabled | default: true
+%}
+{% unless show_section %}
+  <div {{ section.shopify_attributes }} hidden></div>
+{% else %}
+  <section
+    id="GHFeat-{{ section.id }}"
+    class="gh-feat {{ section.settings.custom_css_class | strip }}"
+    {{ section.shopify_attributes }}
+    style="
+      background: {{ section.settings.section_background_color }};
+      --pt: {{ section.settings.padding_top }}px;
+      --pb: {{ section.settings.padding_bottom }}px;
+      --cw: {{ section.settings.container_width }}px;
+      --gap: {{ section.settings.card_gap }}px;
+      --d: {{ section.settings.cols_desktop }};
+      --t: {{ section.settings.cols_tablet }};
+      --m: {{ section.settings.cols_mobile }};
+    "
+  >
+    {% if section.settings.background_image != blank %}
+      {% assign tint = section.settings.bg_overlay_opacity | divided_by: 100.0 %}
+      <div class="gh-feat__backdrop" aria-hidden="true">
+        {{
+          section.settings.background_image
+          | image_url: width: 2200
+          | image_tag: loading: 'lazy', class: 'gh-feat__backdrop-img', widths: '900,1400'
+        }}
+        <div
+          class="gh-feat__backdrop-mask"
+          style="opacity:{{ tint }};background:{{ section.settings.bg_overlay_color }};"
+        ></div>
+      </div>
+    {% endif %}
+
+    <div class="gh-feat__inner">
+      {% if section.settings.subheading != blank %}
+        <p class="gh-feat__lead">{{ section.settings.subheading }}</p>
+      {% endif %}
+      {% if section.settings.heading != blank %}
+        <h2 class="gh-feat__h">{{ section.settings.heading }}</h2>
+      {% endif %}
+
+      {% if section.blocks.size == 0 %}
+        <p class="gh-feat__empty">Add Feature card blocks.</p>
+      {% else %}
+        <div class="gh-feat__grid">
+          {% for block in section.blocks %}
+            {% case block.type %}
+              {% when 'card' %}
+                {% liquid
+                  assign txt_first = false
+                  if block.settings.desktop_image_position != 'start'
+                    assign txt_first = true
+                  endif
+                %}
+                <article class="gh-feat__card" {{ block.shopify_attributes }}>
+                  <div
+                    class="gh-feat__card-grid"
+                    data-txt-first="{% if txt_first %}true{% else %}false{% endif %}"
+                    data-stack-txt-mobile="{% if block.settings.mobile_text_first %}true{% else %}false{% endif %}"
+                  >
+                    <div class="gh-feat__card-copy">
+                      {% if block.settings.eyebrow != blank %}
+                        <p class="gh-feat__eyeb">{{ block.settings.eyebrow }}</p>
+                      {% endif %}
+                      {% if block.settings.heading != blank %}
+                        <h3 class="gh-feat__title">{{ block.settings.heading }}</h3>
+                      {% endif %}
+                      {% if block.settings.description != blank %}
+                        <div class="gh-feat__desc rte">{{ block.settings.description }}</div>
+                      {% endif %}
+                      {% if block.settings.cta_style == 'secondary' %}
+                        {% render 'godshill-cta-btn',
+                          label: block.settings.cta_label,
+                          url: block.settings.cta_link,
+                          style: 'secondary',
+                          bg: block.settings.secondary_fill,
+                          fg: block.settings.secondary_fg,
+                          border_c: block.settings.secondary_border,
+                          h_bg: block.settings.secondary_hover_bg,
+                          h_fg: block.settings.secondary_hover_fg,
+                          h_border: block.settings.secondary_hover_border
+                        %}
+                      {% else %}
+                        {% render 'godshill-cta-btn',
+                          label: block.settings.cta_label,
+                          url: block.settings.cta_link,
+                          style: 'primary',
+                          bg: block.settings.primary_bg,
+                          fg: block.settings.primary_fg,
+                          border_c: block.settings.primary_border,
+                          h_bg: block.settings.primary_hover_bg,
+                          h_fg: block.settings.primary_hover_fg,
+                          h_border: block.settings.primary_hover_border
+                        %}
+                      {% endif %}
+                    </div>
+
+                    <div class="gh-feat__photo-wrap">
+                      {% if block.settings.image != blank %}
+                        {{
+                          block.settings.image
+                          | image_url: width: 820
+                          | image_tag: loading: 'lazy', class: 'gh-feat__photo', widths: '220,440,760'
+                        }}
+                      {% else %}
+                        <div class="gh-feat__photo gh-feat__photo--ph"></div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </article>
+
+              {% when '@app' %}
+                <div class="gh-feat__app" {{ block.shopify_attributes }}>
+                  {% render block %}
+                </div>
+            {% endcase %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% comment %} Footer CTA section-level optional {% endcomment %}
+      {% if section.settings.section_cta_label != blank %}
+        {% if section.settings.section_cta_style == 'secondary' %}
+          {% render 'godshill-cta-btn',
+            label: section.settings.section_cta_label,
+            url: section.settings.section_cta_link,
+            style: 'secondary',
+            bg: section.settings.sc_sec_fill,
+            fg: section.settings.sc_sec_fg,
+            border_c: section.settings.sc_sec_border,
+            h_bg: section.settings.sc_sec_h_bg,
+            h_fg: section.settings.sc_sec_h_fg,
+            h_border: section.settings.sc_sec_h_border
+          %}
+        {% else %}
+          {% render 'godshill-cta-btn',
+            label: section.settings.section_cta_label,
+            url: section.settings.section_cta_link,
+            style: 'primary',
+            bg: section.settings.sc_pri_bg,
+            fg: section.settings.sc_pri_fg,
+            border_c: section.settings.sc_pri_border,
+            h_bg: section.settings.sc_pri_h_bg,
+            h_fg: section.settings.sc_pri_h_fg,
+            h_border: section.settings.sc_pri_h_border
+          %}
+        {% endif %}
+      {% endif %}
+    </div>
+  </section>
+
+  <style>
+    #GHFeat-{{ section.id }}.gh-feat {
+      position: relative;
+      padding-block: var(--pt) var(--pb);
+      color: #25211b;
+    }
+    #GHFeat-{{ section.id }} .gh-feat__backdrop {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    #GHFeat-{{ section.id }} .gh-feat__backdrop-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    #GHFeat-{{ section.id }} .gh-feat__backdrop-mask {
+      position: absolute;
+      inset: 0;
+    }
+    #GHFeat-{{ section.id }} .gh-feat__inner {
+      position: relative;
+      z-index: 1;
+      width: min(100%, var(--cw));
+      margin-inline: auto;
+      padding-inline: clamp(12px, 3vw, 24px);
+    }
+    #GHFeat-{{ section.id }} .gh-feat__grid {
+      display: grid;
+      grid-template-columns: repeat(var(--m, 1), minmax(0, 1fr));
+      gap: var(--gap);
+    }
+    @media screen and (min-width: 750px) {
+      #GHFeat-{{ section.id }} .gh-feat__grid {
+        grid-template-columns: repeat(var(--t, 1), minmax(0, 1fr));
+      }
+    }
+    @media screen and (min-width: 990px) {
+      #GHFeat-{{ section.id }} .gh-feat__grid {
+        grid-template-columns: repeat(var(--d, 2), minmax(0, 1fr));
+      }
+    }
+    #GHFeat-{{ section.id }} .gh-feat__card {
+      padding: clamp(26px, 4vw, 34px);
+      background: rgba(255, 255, 255, {{ section.settings.card_bg_opacity | divided_by: 100.0 }});
+      border-radius: 0;
+      box-shadow: 0 {{ section.settings.card_shadow_opacity }}px 40px rgb(0 0 0 / 0.12);
+      color: {{ section.settings.card_text_color }};
+    }
+    #GHFeat-{{ section.id }} .gh-feat__card-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(180px, 220px);
+      gap: clamp(18px, 3vw, 28px);
+      align-items: center;
+    }
+    #GHFeat-{{ section.id }} .gh-feat__card-grid[data-txt-first='true'] .gh-feat__card-copy {
+      order: 1;
+    }
+    #GHFeat-{{ section.id }} .gh-feat__card-grid[data-txt-first='true'] .gh-feat__photo-wrap {
+      order: 2;
+    }
+    #GHFeat-{{ section.id }} .gh-feat__photo-wrap {
+      order: 2;
+      width: 100%;
+    }
+    #GHFeat-{{ section.id }} .gh-feat__photo {
+      width: 100%;
+      height: 210px;
+      object-fit: cover;
+      box-shadow: 0 12px 25px rgb(0 0 0 / 0.13);
+    }
+    #GHFeat-{{ section.id }} .gh-feat__photo--ph {
+      background: linear-gradient(135deg, #efebe4, #928272);
+      height: 210px;
+    }
+    #GHFeat-{{ section.id }} .gh-feat__eyeb {
+      margin: 0 0 10px;
+      text-transform: uppercase;
+      color: {{ section.settings.eyebrow_color }};
+      font-size: 12px;
+      letter-spacing: 0.09em;
+      font-weight: 700;
+    }
+    #GHFeat-{{ section.id }} .gh-feat__title {
+      margin: 0 0 14px;
+      font-family: Georgia, serif;
+      font-size: clamp(24px, 3vw, 34px);
+      color: inherit;
+      line-height: 1.12;
+      font-weight: 500;
+    }
+    #GHFeat-{{ section.id }} .gh-feat__desc {
+      margin-bottom: 16px;
+      font-size: 14px;
+      line-height: 1.62;
+      color: {{ section.settings.meta_color }};
+    }
+    #GHFeat-{{ section.id }} .gh-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      padding: 12px 20px;
+      text-transform: uppercase;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      transition: 0.22s ease;
+    }
+    #GHFeat-{{ section.id }} .gh-cta::after {
+      content: '\2192';
+    }
+    #GHFeat-{{ section.id }} .gh-cta:hover {
+      transform: translateY(-1px);
+      background-color: var(--gh-h-bg) !important;
+      color: var(--gh-h-fg) !important;
+      border-color: var(--gh-h-bd) !important;
+    }
+    @media screen and (max-width: 749px) {
+      #GHFeat-{{ section.id }} .gh-feat__card-grid {
+        grid-template-columns: 1fr;
+      }
+      #GHFeat-{{ section.id }}
+        .gh-feat__card-grid[data-stack-txt-mobile='false']
+        .gh-feat__card-copy {
+        order: 2 !important;
+      }
+      #GHFeat-{{ section.id }}
+        .gh-feat__card-grid[data-stack-txt-mobile='false']
+        .gh-feat__photo-wrap {
+        order: 1 !important;
+      }
+      #GHFeat-{{ section.id }} .gh-feat__photo {
+        height: 230px;
+      }
+    }
+  </style>
+{% endunless %}
+
+{% schema %}
+{
+  "name": "Godshill Feature Cards",
+  "tag": "section",
+  "class": "godshill-feature-cards",
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Feature card",
+      "limit": 6,
+      "settings": [
+        { "type": "text", "id": "eyebrow", "label": "Eyebrow", "info": "Optional; leave blank to hide." },
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Card title" },
+        { "type": "richtext", "id": "description", "label": "Description", "default": "<p>Copy about this experience.</p>" },
+        { "type": "image_picker", "id": "image", "label": "Featured image (square-ish)" },
+
+        {
+          "type": "select",
+          "id": "desktop_image_position",
+          "label": "Desktop · image sits",
+          "options": [{ "value": "end", "label": "End (Right column)" }, { "value": "start", "label": "Start (Left column)" }],
+          "default": "end"
+        },
+        {
+          "type": "checkbox",
+          "id": "mobile_text_first",
+          "label": "Mobile · show text above image",
+          "default": true
+        },
+
+        {
+          "type": "select",
+          "id": "cta_style",
+          "label": "Button style",
+          "options": [{ "value": "primary", "label": "Primary" }, { "value": "secondary", "label": "Secondary Outline" }],
+          "default": "secondary"
+        },
+        { "type": "text", "id": "cta_label", "label": "Button label", "default": "View details" },
+        { "type": "url", "id": "cta_link", "label": "Button link" },
+
+        { "type": "color", "id": "primary_bg", "label": "Primary btn bg", "default": "#A67B22" },
+        { "type": "color", "id": "primary_fg", "label": "Primary btn fg", "default": "#FFFFFF" },
+        { "type": "color", "id": "primary_border", "label": "Primary border", "default": "#A67B22" },
+        { "type": "color", "id": "primary_hover_bg", "label": "Primary hover bg", "default": "#846118" },
+        { "type": "color", "id": "primary_hover_fg", "label": "Primary hover fg", "default": "#FFFFFF" },
+        { "type": "color", "id": "primary_hover_border", "label": "Primary hover border", "default": "#846118" },
+
+        {
+          "type": "paragraph",
+          "content": "Secondary buttons default to outlined gold styling."
+        },
+        { "type": "color", "id": "secondary_fill", "label": "Secondary hover bg", "default": "#A67B22" },
+        { "type": "color", "id": "secondary_fg", "label": "Secondary label colour", "default": "#A67B22" },
+        { "type": "color", "id": "secondary_border", "label": "Secondary border", "default": "#A67B22" },
+        {
+          "type": "color",
+          "id": "secondary_hover_bg",
+          "label": "Secondary hover background",
+          "default": "#A67B22"
+        },
+        {
+          "type": "color",
+          "id": "secondary_hover_fg",
+          "label": "Secondary hover text",
+          "default": "#FFFFFF"
+        },
+        {
+          "type": "color",
+          "id": "secondary_hover_border",
+          "label": "Secondary hover border",
+          "default": "#846118"
+        }
+      ]
+    },
+    { "type": "@app" }
+  ],
+  "settings": [
+    { "type": "checkbox", "id": "section_enabled", "label": "Show section", "default": true },
+    { "type": "color", "id": "section_background_color", "label": "Section background", "default": "#FBF8F2" },
+    { "type": "image_picker", "id": "background_image", "label": "Optional background image behind cards" },
+    { "type": "color", "id": "bg_overlay_color", "label": "Background tint", "default": "#102219" },
+    { "type": "range", "id": "bg_overlay_opacity", "min": 0, "max": 90, "step": 2, "unit": "%", "label": "Background tint opacity", "default": 0 },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 140, "step": 4, "unit": "px", "label": "Top padding", "default": 80 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 140, "step": 4, "unit": "px", "label": "Bottom padding", "default": 80 },
+    {
+      "type": "range",
+      "id": "container_width",
+      "min": 980,
+      "max": 1500,
+      "step": 10,
+      "unit": "px",
+      "label": "Content width",
+      "default": 1180
+    },
+    {
+      "type": "range",
+      "id": "cols_desktop",
+      "label": "Columns · desktop ≥990px",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "cols_tablet",
+      "label": "Columns · tablet 750–989px",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "cols_mobile",
+      "label": "Columns · mobile",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Grid gap between cards",
+      "min": 16,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 54
+    },
+    {
+      "type": "range",
+      "id": "card_bg_opacity",
+      "label": "Card white tint opacity fill",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_opacity",
+      "label": "Card shadow softness",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "unit": "%",
+      "default": 13
+    },
+    {
+      "type": "paragraph",
+      "content": "@app blocks render full-width spanning one grid slot — place after cards if experimenting."
+    },
+    { "type": "text", "id": "subheading", "label": "Optional headline eyebrow", "info": "Leave blank to hide the section lead line." },
+    { "type": "text", "id": "heading", "label": "Section heading", "info": "Leave blank to hide the section title." },
+    { "type": "color", "id": "eyebrow_color", "label": "Eyebrow color", "default": "#A67B22" },
+    {
+      "type": "color",
+      "id": "card_text_color",
+      "label": "Heading color on card",
+      "default": "#25211B"
+    },
+    {
+      "type": "color",
+      "id": "meta_color",
+      "label": "Body/description color",
+      "default": "#6F6A61"
+    },
+
+    { "type": "header", "content": "Footer CTA · optional global button" },
+    { "type": "text", "id": "section_cta_label", "label": "Footer button label", "info": "Leave blank to hide the optional button below the grid." },
+    { "type": "url", "id": "section_cta_link", "label": "Footer button link" },
+    {
+      "type": "select",
+      "id": "section_cta_style",
+      "label": "Footer button style",
+      "options": [{ "value": "primary", "label": "Primary" }, { "value": "secondary", "label": "Secondary" }],
+      "default": "secondary"
+    },
+    { "type": "color", "id": "sc_pri_bg", "label": "[Footer Primary] BG", "default": "#A67B22" },
+    { "type": "color", "id": "sc_pri_fg", "label": "[Footer Primary] Text", "default": "#FFFFFF" },
+    { "type": "color", "id": "sc_pri_border", "label": "[Footer Primary] Border", "default": "#A67B22" },
+    { "type": "color", "id": "sc_pri_h_bg", "label": "[Footer Primary] Hover bg", "default": "#846118" },
+    { "type": "color", "id": "sc_pri_h_fg", "label": "[Footer Primary] Hover text", "default": "#FFFFFF" },
+    { "type": "color", "id": "sc_pri_h_border", "label": "[Footer Primary] Hover border", "default": "#846118" },
+
+    { "type": "color", "id": "sc_sec_fill", "label": "[Footer Secondary] Hover fill", "default": "#A67B22" },
+    { "type": "color", "id": "sc_sec_fg", "label": "[Footer Secondary] Label", "default": "#A67B22" },
+    { "type": "color", "id": "sc_sec_border", "label": "[Footer Secondary] Border", "default": "#A67B22" },
+    {
+      "type": "color",
+      "id": "sc_sec_h_bg",
+      "label": "[Footer Secondary] Hover BG",
+      "default": "#A67B22"
+    },
+    {
+      "type": "color",
+      "id": "sc_sec_h_fg",
+      "label": "[Footer Secondary] Hover text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "sc_sec_h_border",
+      "label": "[Footer Secondary] Hover border",
+      "default": "#846118"
+    },
+
+    { "type": "text", "id": "custom_css_class", "label": "Extra CSS classes" }
+  ],
+  "presets": [
+    {
+      "name": "Godshill Feature Cards",
+      "category": "God's Hill",
+      "blocks": [
+        {
+          "type": "card",
+          "settings": {
+            "eyebrow": "Authentic Italian Focus",
+            "heading": "Ennia Cucina @ God's Hill",
+            "description": "<p>Enjoy authentic Italian cuisine matched with estate wines.</p>",
+            "cta_style": "secondary",
+            "cta_label": "View Menu"
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "eyebrow": "Barossa Valley Accommodation",
+            "heading": "Villa Scalia",
+            "description": "<p>Old-world charm paired with vineyard views.</p>",
+            "cta_style": "secondary",
+            "cta_label": "Make a Booking"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

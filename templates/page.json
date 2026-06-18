@@ -1,0 +1,75 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */{
+  "sections": {
+    "godshill_page_hero": {
+      "type": "godshill-page-hero",
+      "blocks": {
+        "ph_eyebrow": {
+          "type": "eyebrow",
+          "settings": {
+            "text": "God's Hill Wines",
+            "alignment": "center",
+            "text_color": "#c49a52"
+          }
+        },
+        "ph_heading": {
+          "type": "heading",
+          "settings": {
+            "use_auto_title": true,
+            "alignment": "center",
+            "text_color": "#ffffff"
+          }
+        },
+        "ph_divider": {
+          "type": "divider",
+          "settings": {
+            "alignment": "center",
+            "line_color": "#a67b22",
+            "line_width_px": 48,
+            "line_thickness_px": 2
+          }
+        },
+        "ph_text": {
+          "type": "text",
+          "settings": {
+            "alignment": "center",
+            "text_color": "#f0ebe4"
+          }
+        }
+      },
+      "block_order": ["ph_eyebrow", "ph_heading", "ph_divider", "ph_text"],
+      "settings": {}
+    },
+    "main": {
+      "type": "main-page",
+      "blocks": {
+        "page-content": {
+          "type": "page-content",
+          "settings": {},
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "page-content"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "gap": 32,
+        "color_scheme": "",
+        "padding-block-start": 40,
+        "padding-block-end": 80
+      }
+    }
+  },
+  "order": [
+    "godshill_page_hero",
+    "main"
+  ]
+}

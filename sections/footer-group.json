@@ -1,0 +1,91 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "footer",
+  "name": "Footer",
+  "sections": {
+    "custom_footer_QdrYxY": {
+      "type": "custom-footer",
+      "blocks": {
+        "brand_U6Uk4B": {
+          "type": "brand",
+          "settings": {
+            "logo": "shopify://shop_images/gods-hill-wines-logo-white.png",
+            "logo_width": 120,
+            "show_logo_fallback": true,
+            "tagline": "<p>Family owned. Barossa made.<br/>Shared with the world.</p>",
+            "facebook_url": "",
+            "instagram_url": "",
+            "tripadvisor_url": ""
+          }
+        },
+        "menu_links_g7hHgT": {
+          "type": "menu_links",
+          "settings": {
+            "heading": "Quick Links",
+            "menu": "main-menu"
+          }
+        },
+        "contact_xremzY": {
+          "type": "contact",
+          "settings": {
+            "heading": "Cellar Door",
+            "body": "<p>7A Morphett Rd, Lyndoch <br/>SA 5351, Australia</p><p>+61412836004</p><p><a href=\"mailto:wine@godshill.com.au\">wine@godshill.com.au</a></p><p>Open Thu - Sun, 11am - 5pm</p>"
+          }
+        },
+        "newsletter_rTW6pT": {
+          "type": "newsletter",
+          "settings": {
+            "heading": "Stay In The Loop",
+            "intro": "<p>Subscribe to hear about releases, events & offers.</p>",
+            "show_static_newsletter": true,
+            "newsletter_placeholder": "Enter your email",
+            "newsletter_button_label": "→",
+            "enable_custom_newsletter_embed": false,
+            "newsletter_embed_html": ""
+          }
+        }
+      },
+      "block_order": [
+        "brand_U6Uk4B",
+        "menu_links_g7hHgT",
+        "contact_xremzY",
+        "newsletter_rTW6pT"
+      ],
+      "name": "God's Hill custom footer",
+      "settings": {
+        "section_enabled": true,
+        "columns_desktop": 4,
+        "column_gap": 48,
+        "footer_max_width": 1240,
+        "logo_max_width": 100,
+        "padding_top": 56,
+        "padding_bottom": 40,
+        "bg_color": "#0d2117",
+        "text_color": "#d7d0c3",
+        "heading_color": "#a67b22",
+        "link_color": "#d7d0c3",
+        "accent_color": "#a67b22",
+        "bottom_bar_bg": "#080f0c",
+        "bottom_text_color": "#d7d0c3",
+        "bottom_left_html": "<p>© 2026 God’s Hill Wines</p>",
+        "privacy_policy_url": "",
+        "privacy_label": "Privacy Policy",
+        "terms_conditions_url": "",
+        "terms_label": "Terms & Conditions",
+        "site_credit_html": "<p>Website by Winehub</p>",
+        "custom_css": ""
+      }
+    }
+  },
+  "order": [
+    "custom_footer_QdrYxY"
+  ]
+}

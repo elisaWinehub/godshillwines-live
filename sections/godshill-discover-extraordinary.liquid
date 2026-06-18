@@ -1,0 +1,500 @@
+{% comment %} Vineyard banner · floating tinted card {% endcomment %}
+{% liquid
+  assign show_section = section.settings.section_enabled | default: true
+  assign op = section.settings.bg_overlay_opacity | divided_by: 100.0
+  assign alpha = section.settings.card_background_opacity | divided_by: 100.0
+  assign card_rgb = section.settings.card_background | color_modify: 'alpha', alpha
+%}
+{% unless show_section %}
+  <div {{ section.shopify_attributes }} hidden></div>
+{% else %}
+  <section
+    id="GHDisco-{{ section.id }}"
+    class="gh-ban {{ section.settings.custom_css_class | strip }}"
+    {{ section.shopify_attributes }}
+    data-parallax-active="{% if section.settings.enable_parallax and section.settings.background_image != blank %}true{% else %}false{% endif %}"
+    data-parallax-speed="{{ section.settings.parallax_speed }}"
+    data-parallax-disable-mobile="{% if section.settings.disable_parallax_mobile %}true{% else %}false{% endif %}"
+    style="
+      --ban-pt: {{ section.settings.padding_top }}px;
+      --ban-pb: {{ section.settings.padding_bottom }}px;
+      --ban-minh: {{ section.settings.banner_min_height }}px;
+      --ban-align: {{ section.settings.card_horizontal }};
+      --ban-pad-inline: clamp(14px,{{ section.settings.card_inset }}vw, {{ section.settings.card_inset_max }}px);
+      --card-max: {{ section.settings.card_max_width }}px;
+      --card-pad: {{ section.settings.card_padding }}px;
+      --card-bg: {{ card_rgb }};
+      --line-c: {{ section.settings.accent_line_color }};
+      --h-c: {{ section.settings.heading_color }};
+      --h-fs: {{ section.settings.heading_size }}px;
+      --h-fw: {{ section.settings.heading_weight }};
+      --h-ls: {{ section.settings.heading_ls | divided_by: 100.0 }}em;
+      --b-c: {{ section.settings.body_color }};
+      --b-fs: {{ section.settings.body_size }}px;
+      --b-fw: {{ section.settings.body_weight }};
+    "
+  >
+    <div class="gh-ban__bg">
+      {% if section.settings.enable_parallax and section.settings.background_image != blank %}
+        <div
+          class="godshill-parallax-bg"
+          data-godshill-parallax-layer
+          aria-hidden="true"
+          style="background-image: url('{{ section.settings.background_image | image_url: width: 2800 }}');"
+        ></div>
+      {% elsif section.settings.background_image != blank %}
+        {{
+          section.settings.background_image
+          | image_url: width: 2800
+          | image_tag: loading: 'lazy', class: 'gh-ban__img', widths: '900,1600,2400'
+        }}
+      {% else %}
+        <div class="gh-ban__img gh-ban__img--grad" role="presentation"></div>
+      {% endif %}
+      <div
+        class="gh-ban__tint"
+        style="opacity: {{ op }}; background: {{ section.settings.bg_overlay_color }};"
+      ></div>
+    </div>
+
+    <div class="gh-ban__wrap">
+      <div class="gh-ban__card">
+        <span class="gh-ban__line" aria-hidden="true"></span>
+        {% if section.settings.subheading != blank %}
+          <p class="gh-ban__eyebrow">{{ section.settings.subheading }}</p>
+        {% endif %}
+        {% if section.settings.heading != blank %}
+          <h2 class="gh-ban__title">{{ section.settings.heading }}</h2>
+        {% endif %}
+        {% if section.settings.body_richtext != blank %}
+          <div class="gh-ban__body rte">{{ section.settings.body_richtext }}</div>
+        {% endif %}
+        {% if section.settings.cta_style == 'secondary' %}
+          {% render 'godshill-cta-btn',
+            label: section.settings.cta_label,
+            url: section.settings.cta_link,
+            style: 'secondary',
+            bg: section.settings.sec_bg,
+            fg: section.settings.sec_text,
+            border_c: section.settings.sec_border,
+            h_bg: section.settings.sec_h_bg,
+            h_fg: section.settings.sec_h_text,
+            h_border: section.settings.sec_h_border
+          %}
+        {% else %}
+          {% render 'godshill-cta-btn',
+            label: section.settings.cta_label,
+            url: section.settings.cta_link,
+            style: 'primary',
+            bg: section.settings.pri_bg,
+            fg: section.settings.pri_text,
+            border_c: section.settings.pri_border,
+            h_bg: section.settings.pri_h_bg,
+            h_fg: section.settings.pri_h_text,
+            h_border: section.settings.pri_h_border
+          %}
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <style>
+    #GHDisco-{{ section.id }}.gh-ban {
+      position: relative;
+      overflow: hidden;
+      padding-block: var(--ban-pt) var(--ban-pb);
+      color: #fff;
+      min-height: var(--ban-minh);
+      display: flex;
+      align-items: center;
+    }
+    #GHDisco-{{ section.id }} .gh-ban__bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+    #GHDisco-{{ section.id }} .godshill-parallax-bg {
+      position: absolute;
+      inset: -10%;
+      z-index: 0;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      will-change: transform;
+      pointer-events: none;
+    }
+    #GHDisco-{{ section.id }} .gh-ban__img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    #GHDisco-{{ section.id }} .gh-ban__img--grad {
+      background: linear-gradient(135deg, #6f8b34 0%, #c99d41 45%, #4d6829 46%, #253d1e 100%);
+    }
+    #GHDisco-{{ section.id }} .gh-ban__tint {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+    #GHDisco-{{ section.id }} .gh-ban__wrap {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1400px;
+      margin-inline: auto;
+      display: flex;
+      justify-content: var(--ban-align);
+      align-items: center;
+      padding-inline: var(--ban-pad-inline);
+    }
+    #GHDisco-{{ section.id }} .gh-ban__card {
+      width: min(100%, var(--card-max));
+      background: var(--card-bg);
+      padding: var(--card-pad);
+      box-shadow: 0 24px 50px rgb(8 26 21 / 0.22);
+      text-align: left;
+      color: #fff;
+    }
+    #GHDisco-{{ section.id }} .gh-ban__line {
+      display: block;
+      width: 42px;
+      height: 2px;
+      background: var(--line-c);
+      margin-bottom: 18px;
+    }
+    #GHDisco-{{ section.id }} .gh-ban__eyebrow {
+      font-size: 12px;
+      margin: 0 0 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #edc87a;
+    }
+    #GHDisco-{{ section.id }} .gh-ban__title {
+      margin: 0 0 16px;
+      font-family: Georgia, serif;
+      font-weight: var(--h-fw);
+      font-size: clamp(32px, 4vw, var(--h-fs));
+      line-height: 1.05;
+      color: var(--h-c);
+      letter-spacing: var(--h-ls);
+    }
+    #GHDisco-{{ section.id }} .gh-ban__body {
+      margin: 0 0 20px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: var(--b-fs);
+      color: var(--b-c);
+      font-weight: var(--b-fw);
+      line-height: 1.6;
+    }
+    #GHDisco-{{ section.id }} .gh-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 22px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: 0.22s ease;
+    }
+    #GHDisco-{{ section.id }} .gh-cta::after {
+      content: '\2192';
+    }
+    #GHDisco-{{ section.id }} .gh-cta:hover {
+      transform: translateY(-1px);
+      background-color: var(--gh-h-bg) !important;
+      color: var(--gh-h-fg) !important;
+      border-color: var(--gh-h-bd) !important;
+    }
+    @media screen and (max-width: 749px) {
+      #GHDisco-{{ section.id }}.gh-ban {
+        align-items: flex-start;
+        padding-block: calc(var(--ban-pt) + 22px);
+      }
+    }
+  </style>
+
+  {% if section.settings.enable_parallax and section.settings.background_image != blank %}
+    <script>
+      (function () {
+        var rootId = 'GHDisco-{{ section.id }}';
+        var root = document.getElementById(rootId);
+        if (!root || root.getAttribute('data-parallax-active') !== 'true') return;
+        var layer = root.querySelector('[data-godshill-parallax-layer]');
+        if (!layer) return;
+
+        var speed = parseInt(root.getAttribute('data-parallax-speed'), 10);
+        if (isNaN(speed) || speed < 1) speed = 3;
+        if (speed > 10) speed = 10;
+        var speedFactor = speed / 10;
+        var disableMobile = root.getAttribute('data-parallax-disable-mobile') === 'true';
+        var mqMobile = window.matchMedia('(max-width: 749px)');
+
+        function parallaxOff() {
+          return disableMobile && mqMobile.matches;
+        }
+
+        var ticking = false;
+
+        function applyParallax() {
+          if (parallaxOff()) {
+            layer.style.transform = 'translate3d(0, 0, 0)';
+            return;
+          }
+          var rect = root.getBoundingClientRect();
+          var centerDist = rect.top + rect.height * 0.5 - (window.innerHeight || document.documentElement.clientHeight || 1) * 0.5;
+          var y = -(centerDist * 0.08 * speedFactor);
+          layer.style.transform = 'translate3d(0, ' + y.toFixed(2) + 'px, 0)';
+        }
+
+        function onScroll() {
+          if (!ticking) {
+            ticking = true;
+            requestAnimationFrame(function () {
+              ticking = false;
+              applyParallax();
+            });
+          }
+        }
+
+        function bind() {
+          window.addEventListener('scroll', onScroll, { passive: true });
+          window.addEventListener('resize', onScroll, { passive: true });
+          if (typeof mqMobile.addEventListener === 'function') {
+            mqMobile.addEventListener('change', onScroll);
+          } else if (mqMobile.addListener) {
+            mqMobile.addListener(onScroll);
+          }
+          onScroll();
+        }
+
+        function unbind() {
+          window.removeEventListener('scroll', onScroll);
+          window.removeEventListener('resize', onScroll);
+          if (typeof mqMobile.removeEventListener === 'function') {
+            mqMobile.removeEventListener('change', onScroll);
+          } else if (mqMobile.removeListener) {
+            mqMobile.removeListener(onScroll);
+          }
+          layer.style.transform = '';
+          layer.style.willChange = 'auto';
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', bind, { once: true });
+        } else {
+          bind();
+        }
+
+        document.addEventListener('shopify:section:unload', function onUnload(e) {
+          try {
+            if (e.detail && String(e.detail.sectionId) === '{{ section.id }}') {
+              unbind();
+              document.removeEventListener('shopify:section:unload', onUnload);
+            }
+          } catch (_) {}
+        });
+      })();
+    </script>
+  {% endif %}
+{% endunless %}
+
+{% schema %}
+{
+  "name": "Godshill Discover",
+  "tag": "section",
+  "class": "godshill-discover",
+  "settings": [
+    { "type": "checkbox", "id": "section_enabled", "label": "Show section", "default": true },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 140, "step": 4, "unit": "px", "label": "Top padding", "default": 0 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 140, "step": 4, "unit": "px", "label": "Bottom padding", "default": 0 },
+    {
+      "type": "range",
+      "id": "banner_min_height",
+      "min": 360,
+      "max": 800,
+      "step": 5,
+      "unit": "px",
+      "label": "Banner minimum height",
+      "default": 515
+    },
+    { "type": "image_picker", "id": "background_image", "label": "Background image" },
+    { "type": "color", "id": "bg_overlay_color", "label": "Background overlay color", "default": "#1f4022" },
+    { "type": "range", "id": "bg_overlay_opacity", "min": 0, "max": 90, "step": 2, "unit": "%", "label": "Background overlay opacity", "default": 24 },
+    { "type": "header", "content": "Background parallax" },
+    {
+      "type": "checkbox",
+      "id": "enable_parallax",
+      "label": "Enable parallax background",
+      "info": "Requires a background image. Uses scroll-based movement (no background-attachment: fixed).",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "parallax_speed",
+      "label": "Parallax speed",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 3,
+      "info": "1 = subtle … 10 = strong (maps to 0.1–1.0 internally)."
+    },
+    {
+      "type": "checkbox",
+      "id": "disable_parallax_mobile",
+      "label": "Disable parallax on mobile",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "card_horizontal",
+      "label": "Card horizontal placement",
+      "options": [
+        { "value": "flex-start", "label": "Left align" },
+        { "value": "center", "label": "Center" },
+        { "value": "flex-end", "label": "Right align" }
+      ],
+      "default": "flex-start"
+    },
+    {
+      "type": "range",
+      "id": "card_inset",
+      "min": 0,
+      "max": 14,
+      "step": 1,
+      "label": "Card horizontal gutter vw",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "card_inset_max",
+      "label": "Card inset max",
+      "min": 0,
+      "max": 500,
+      "step": 5,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "card_max_width",
+      "min": 360,
+      "max": 880,
+      "step": 10,
+      "unit": "px",
+      "label": "Card max-width",
+      "default": 560
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "min": 24,
+      "max": 80,
+      "step": 1,
+      "unit": "px",
+      "label": "Card padding",
+      "default": 48
+    },
+    { "type": "color", "id": "card_background", "label": "Card background tint", "default": "#0d2119" },
+    {
+      "type": "range",
+      "id": "card_background_opacity",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Card tint opacity",
+      "default": 90
+    },
+    { "type": "color", "id": "accent_line_color", "label": "Gold accent line color", "default": "#A67B22" },
+    { "type": "text", "id": "subheading", "label": "Eyebrow (optional)", "info": "Leave blank to hide the gold line label above the heading." },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Discover Extraordinary" },
+    {
+      "type": "richtext",
+      "id": "body_richtext",
+      "label": "Body",
+      "default": "<p>At God’s Hill Wines, every bottle is a reflection of the land, the climate and the dedication that comes from true craftsmanship.</p>"
+    },
+
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 28,
+      "max": 64,
+      "step": 1,
+      "unit": "px",
+      "default": 46
+    },
+    {
+      "type": "range",
+      "id": "heading_weight",
+      "min": 400,
+      "max": 800,
+      "step": 100,
+      "label": "Heading weight",
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "heading_ls",
+      "min": 0,
+      "max": 28,
+      "step": 1,
+      "label": "Heading letter-spacing ÷100",
+      "default": 0
+    },
+    { "type": "color", "id": "heading_color", "label": "Heading color", "default": "#FFFFFF" },
+    { "type": "color", "id": "body_color", "label": "Body color", "default": "#E1DDD4" },
+    {
+      "type": "range",
+      "id": "body_size",
+      "label": "Body size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "body_weight",
+      "min": 400,
+      "max": 700,
+      "step": 100,
+      "label": "Body weight",
+      "default": 400
+    },
+
+    {
+      "type": "select",
+      "id": "cta_style",
+      "label": "Button style",
+      "options": [{ "value": "primary", "label": "Primary" }, { "value": "secondary", "label": "Secondary" }],
+      "default": "primary"
+    },
+    { "type": "text", "id": "cta_label", "label": "Button label", "default": "Explore Our Wines" },
+    { "type": "url", "id": "cta_link", "label": "Button link" },
+    { "type": "color", "id": "pri_bg", "label": "Primary bg", "default": "#A67B22" },
+    { "type": "color", "id": "pri_text", "label": "Primary text", "default": "#FFFFFF" },
+    { "type": "color", "id": "pri_border", "label": "Primary border", "default": "#A67B22" },
+    { "type": "color", "id": "pri_h_bg", "label": "Primary hover bg", "default": "#846118" },
+    { "type": "color", "id": "pri_h_text", "label": "Primary hover text", "default": "#FFFFFF" },
+    { "type": "color", "id": "pri_h_border", "label": "Primary hover border", "default": "#846118" },
+
+    { "type": "color", "id": "sec_bg", "label": "Secondary hover fill", "default": "#A67B22" },
+    { "type": "color", "id": "sec_text", "label": "Secondary label ", "default": "#F7F3E8" },
+    { "type": "color", "id": "sec_border", "label": "Secondary border ", "default": "#A67B22" },
+    { "type": "color", "id": "sec_h_bg", "label": "Secondary hover bg ", "default": "#A67B22" },
+    { "type": "color", "id": "sec_h_text", "label": "Secondary hover text ", "default": "#102219" },
+    { "type": "color", "id": "sec_h_border", "label": "Secondary hover border ", "default": "#A67B22" },
+
+    { "type": "text", "id": "custom_css_class", "label": "Additional CSS classes" }
+  ],
+  "presets": [{ "name": "Godshill Discover", "category": "God's Hill" }]
+}
+{% endschema %}

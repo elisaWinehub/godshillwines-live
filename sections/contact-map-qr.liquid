@@ -1,0 +1,253 @@
+{% comment %} Contact · QR code card + Google Map embed {% endcomment %}
+{% liquid
+  assign show = section.settings.section_enabled | default: true
+  assign map_col_pct = section.settings.column_ratio_qr | default: 30
+  assign map_col_pct_css = map_col_pct | append: '%'
+  assign map_col_fr_css = 100 | minus: map_col_pct | append: '%'
+  assign has_map_embed = false
+  if section.settings.map_embed_html != blank
+    assign has_map_embed = true
+  endif
+
+  assign root_class = 'gh-cmq'
+  if section.settings.custom_css_class != blank
+    assign root_class = root_class | append: ' ' | append: section.settings.custom_css_class | strip
+  endif
+%}
+{% unless show %}
+  <div {{ section.shopify_attributes }} hidden></div>
+{% else %}
+  <section
+    id="GHCMQ-{{ section.id }}"
+    class="{{ root_class }}"
+    {{ section.shopify_attributes }}
+    style="
+      --gh-cmq-bg: {{ section.settings.section_background }};
+      --gh-cmq-pt: {{ section.settings.padding_top }}px;
+      --gh-cmq-pb: {{ section.settings.padding_bottom }}px;
+      --gh-cmq-cw: {{ section.settings.container_width }}px;
+      --gh-cmq-gap: {{ section.settings.column_gap }}px;
+      --gh-cmq-qr-bg: {{ section.settings.qr_card_background }};
+      --gh-cmq-heading: {{ section.settings.heading_color }};
+      --gh-cmq-text: {{ section.settings.text_color }};
+      --gh-cmq-qr-w: {{ map_col_pct_css }};
+      --gh-cmq-map-w: {{ map_col_fr_css }};
+      --gh-cmq-map-h-d: {{ section.settings.map_height_desktop }}px;
+      --gh-cmq-map-h-m: {{ section.settings.map_height_mobile }}px;
+    "
+  >
+    <div class="gh-cmq__inner">
+      <div class="gh-cmq__grid">
+        <aside class="gh-cmq__qr-card">
+          {% if section.settings.qr_heading != blank %}
+            <h2 class="gh-cmq__heading">{{ section.settings.qr_heading }}</h2>
+          {% endif %}
+          {% if section.settings.qr_text != blank %}
+            <p class="gh-cmq__text">{{ section.settings.qr_text }}</p>
+          {% endif %}
+          {% if section.settings.qr_image != blank %}
+            {{
+              section.settings.qr_image
+              | image_url: width: 400
+              | image_tag: loading: 'lazy', class: 'gh-cmq__qr-img', widths: '200,300,400', alt: 'QR code for directions'
+            }}
+          {% else %}
+            <div class="gh-cmq__qr-placeholder" role="presentation" aria-hidden="true"></div>
+          {% endif %}
+        </aside>
+
+        <div class="gh-cmq__map-wrap">
+          {% if has_map_embed %}
+            <div class="gh-cmq__map-embed" data-cmq-map>
+              {{ section.settings.map_embed_html }}
+            </div>
+          {% elsif section.settings.map_fallback_image != blank %}
+            {{
+              section.settings.map_fallback_image
+              | image_url: width: 1600
+              | image_tag: loading: 'lazy', class: 'gh-cmq__map-fallback', widths: '800,1200,1600', alt: 'Map location'
+            }}
+          {% else %}
+            <div class="gh-cmq__map-placeholder" role="presentation" aria-hidden="true">
+              <p>Paste Google Maps embed HTML in section settings.</p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    #GHCMQ-{{ section.id }}.gh-cmq {
+      background: var(--gh-cmq-bg);
+      padding-block: var(--gh-cmq-pt) var(--gh-cmq-pb);
+    }
+    #GHCMQ-{{ section.id }} .gh-cmq__inner {
+      width: min(100%, var(--gh-cmq-cw));
+      margin-inline: auto;
+      padding-inline: clamp(16px, 3vw, 32px);
+    }
+    #GHCMQ-{{ section.id }} .gh-cmq__grid {
+      display: grid;
+      grid-template-columns: minmax(240px, var(--gh-cmq-qr-w)) minmax(0, var(--gh-cmq-map-w));
+      gap: var(--gh-cmq-gap);
+      align-items: stretch;
+    }
+    #GHCMQ-{{ section.id }} .gh-cmq__qr-card {
+      background: var(--gh-cmq-qr-bg);
+      padding: clamp(24px, 3vw, 36px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      min-height: var(--gh-cmq-map-h-d);
+    }
+    #GHCMQ-{{ section.id }} .gh-cmq__heading {
+      margin: 0 0 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(16px, 2vw, 20px);
+      font-weight: 500;
+      color: var(--gh-cmq-heading);
+    }
+    #GHCMQ-{{ section.id }} .gh-cmq__text {
+      margin: 0 0 20px;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--gh-cmq-text);
+      max-width: 28ch;
+    }
+    #GHCMQ-{{ section.id }} .gh-cmq__qr-img {
+      width: min(100%, 180px);
+      height: auto;
+      display: block;
+    }
+    #GHCMQ-{{ section.id }} .gh-cmq__qr-placeholder {
+      width: 160px;
+      height: 160px;
+      background: repeating-linear-gradient(45deg, #ddd 0 8px, #fff 8px 16px);
+      border: 1px solid #ccc;
+    }
+    #GHCMQ-{{ section.id }} .gh-cmq__map-wrap {
+      position: relative;
+      min-height: var(--gh-cmq-map-h-d);
+      overflow: hidden;
+      background: #e8e2d8;
+    }
+    #GHCMQ-{{ section.id }} .gh-cmq__map-embed {
+      width: 100%;
+      height: 100%;
+      min-height: inherit;
+    }
+    #GHCMQ-{{ section.id }} .gh-cmq__map-embed :is(iframe, embed, object) {
+      width: 100% !important;
+      height: var(--gh-cmq-map-h-d) !important;
+      min-height: var(--gh-cmq-map-h-d);
+      border: 0;
+      display: block;
+    }
+    #GHCMQ-{{ section.id }} .gh-cmq__map-fallback {
+      width: 100%;
+      height: 100%;
+      min-height: var(--gh-cmq-map-h-d);
+      object-fit: cover;
+      display: block;
+    }
+    #GHCMQ-{{ section.id }} .gh-cmq__map-placeholder {
+      display: grid;
+      place-items: center;
+      min-height: var(--gh-cmq-map-h-d);
+      color: #6b6560;
+      font-size: 14px;
+      padding: 24px;
+      text-align: center;
+    }
+    @media screen and (max-width: 989px) {
+      #GHCMQ-{{ section.id }} .gh-cmq__grid {
+        grid-template-columns: 1fr;
+      }
+      #GHCMQ-{{ section.id }} .gh-cmq__qr-card {
+        min-height: auto;
+      }
+      #GHCMQ-{{ section.id }} .gh-cmq__map-wrap,
+      #GHCMQ-{{ section.id }} .gh-cmq__map-embed :is(iframe, embed, object),
+      #GHCMQ-{{ section.id }} .gh-cmq__map-fallback,
+      #GHCMQ-{{ section.id }} .gh-cmq__map-placeholder {
+        min-height: var(--gh-cmq-map-h-m);
+      }
+      #GHCMQ-{{ section.id }} .gh-cmq__map-embed :is(iframe, embed, object) {
+        height: var(--gh-cmq-map-h-m) !important;
+      }
+    }
+  </style>
+{% endunless %}
+
+{% schema %}
+{
+  "name": "Contact map qr",
+  "tag": "section",
+  "class": "gh-contact-map-qr",
+  "settings": [
+    { "type": "checkbox", "id": "section_enabled", "label": "Show section", "default": true },
+    { "type": "color", "id": "section_background", "label": "Section background", "default": "#FFFFFF" },
+    { "type": "range", "id": "container_width", "label": "Container max width", "min": 960, "max": 1440, "step": 20, "unit": "px", "default": 1200 },
+    { "type": "range", "id": "padding_top", "label": "Padding top", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 64 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding bottom", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 80 },
+    { "type": "range", "id": "column_gap", "label": "Column gap", "min": 16, "max": 48, "step": 4, "unit": "px", "default": 24 },
+    {
+      "type": "range",
+      "id": "column_ratio_qr",
+      "label": "QR column width (%)",
+      "min": 25,
+      "max": 45,
+      "step": 5,
+      "unit": "%",
+      "default": 30
+    },
+    { "type": "header", "content": "QR card" },
+    { "type": "color", "id": "qr_card_background", "label": "QR card background", "default": "#F3EDE3" },
+    { "type": "text", "id": "qr_heading", "label": "QR heading", "default": "SCAN TO FIND US" },
+    {
+      "type": "textarea",
+      "id": "qr_text",
+      "label": "QR description",
+      "default": "Open camera on your phone and scan the QR code for directions to our Cellar Door."
+    },
+    { "type": "color", "id": "heading_color", "label": "Heading colour", "default": "#B29B33" },
+    { "type": "color", "id": "text_color", "label": "Text colour", "default": "#333333" },
+    { "type": "image_picker", "id": "qr_image", "label": "QR code image" },
+    { "type": "header", "content": "Map" },
+    {
+      "type": "html",
+      "id": "map_embed_html",
+      "label": "Google Map embed HTML",
+      "info": "Paste the full iframe embed code from Google Maps."
+    },
+    { "type": "image_picker", "id": "map_fallback_image", "label": "Map fallback image" },
+    {
+      "type": "range",
+      "id": "map_height_desktop",
+      "label": "Map height desktop",
+      "min": 320,
+      "max": 600,
+      "step": 20,
+      "unit": "px",
+      "default": 420
+    },
+    {
+      "type": "range",
+      "id": "map_height_mobile",
+      "label": "Map height mobile",
+      "min": 240,
+      "max": 480,
+      "step": 20,
+      "unit": "px",
+      "default": 320
+    },
+    { "type": "text", "id": "custom_css_class", "label": "Custom CSS class" }
+  ],
+  "presets": [{ "name": "Contact map qr", "category": "God's Hill" }]
+}
+{% endschema %}

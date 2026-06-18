@@ -1,0 +1,693 @@
+{% comment %} Two-column content + video/image media {% endcomment %}
+{% liquid
+  assign show = section.settings.section_enabled | default: true
+  assign host_video = section.settings.shopify_video
+  assign raw_url = section.settings.video_url | strip
+  assign yt = ''
+  assign vmid = ''
+
+  if raw_url contains 'youtube.com/watch?v='
+    assign yt = raw_url | split: 'v=' | last | split: '&' | first
+  elsif raw_url contains 'youtu.be/'
+    assign yt = raw_url | split: 'youtu.be/' | last | split: '?' | first
+  elsif raw_url contains 'youtube.com/embed/'
+    assign yt = raw_url | split: 'embed/' | last | split: '?' | first
+  endif
+
+  if raw_url contains 'vimeo.com/'
+    assign vmid = raw_url | split: '.com/' | last | split: '/' | last | split: '?' | first
+  endif
+
+  assign has_video = false
+  if yt != blank or vmid != blank or host_video != blank
+    assign has_video = true
+  endif
+
+  assign media_first_desktop = false
+  if section.settings.column_order == 'media_left'
+    assign media_first_desktop = true
+  endif
+
+  assign media_first_mobile = false
+  if section.settings.mobile_order == 'media_first'
+    assign media_first_mobile = true
+  endif
+
+  assign poster = section.settings.image
+  if poster == blank and host_video != blank and host_video.preview_image != blank
+    assign poster = host_video.preview_image
+  endif
+
+  assign aspect_ratio_css = '16 / 9'
+  case section.settings.media_aspect_ratio
+    when 'square'
+      assign aspect_ratio_css = '1 / 1'
+    when 'portrait'
+      assign aspect_ratio_css = '4 / 5'
+    when 'wide'
+      assign aspect_ratio_css = '21 / 9'
+  endcase
+
+  assign photo_grid = false
+  if section.settings.media_mode == 'photo_grid'
+    assign photo_grid = true
+  endif
+
+  assign show_play_overlay = false
+  if section.settings.enable_play_button
+    if yt != blank or vmid != blank
+      assign show_play_overlay = true
+    elsif section.settings.show_play_on_placeholder and photo_grid == false
+      assign show_play_overlay = true
+    endif
+  endif
+%}
+{% unless show %}
+  <div {{ section.shopify_attributes }} hidden></div>
+{% else %}
+  <section
+    id="GHTCCM-{{ section.id }}"
+    class="gh-tccm"
+    {{ section.shopify_attributes }}
+    style="
+      --gh-tccm-bg: {{ section.settings.section_background }};
+      --gh-tccm-pt: {{ section.settings.padding_top }}px;
+      --gh-tccm-pb: {{ section.settings.padding_bottom }}px;
+      --gh-tccm-cw: {{ section.settings.container_width }}px;
+      --gh-tccm-gap: {{ section.settings.column_gap }}px;
+      --gh-tccm-text: {{ section.settings.text_color }};
+      --gh-tccm-eyebrow: {{ section.settings.eyebrow_color }};
+      --gh-tccm-heading-m: {{ section.settings.heading_size_mobile }}px;
+      --gh-tccm-heading-d: {{ section.settings.heading_size_desktop }}px;
+      --gh-tccm-body: {{ section.settings.body_size }}px;
+      --gh-tccm-media-radius: {{ section.settings.media_border_radius }}px;
+      --gh-tccm-aspect: {{ aspect_ratio_css }};
+      --gh-tccm-play-size: {{ section.settings.play_button_size }}px;
+      --gh-tccm-play-bg: {{ section.settings.play_button_background }};
+      --gh-tccm-play-color: {{ section.settings.play_button_color }};
+      --gh-tccm-overlay-o: {{ section.settings.media_overlay_opacity | divided_by: 100.0 }};
+      --gh-tccm-grid-gap: {{ section.settings.grid_gap }}px;
+      --gh-tccm-grid-cols-d: {{ section.settings.grid_columns_desktop }};
+      --gh-tccm-grid-cols-m: {{ section.settings.grid_columns_mobile }};
+    "
+    data-media-first-desktop="{% if media_first_desktop %}true{% else %}false{% endif %}"
+    data-media-first-mobile="{% if media_first_mobile %}true{% else %}false{% endif %}"
+  >
+    <div class="gh-tccm__inner">
+      <div class="gh-tccm__grid">
+        <div class="gh-tccm__content">
+          {% if section.settings.eyebrow != blank %}
+            <p class="gh-tccm__eyebrow">{{ section.settings.eyebrow }}</p>
+          {% endif %}
+          {% if section.settings.heading != blank %}
+            <h2 class="gh-tccm__heading">{{ section.settings.heading | escape | newline_to_br }}</h2>
+          {% endif %}
+          {% if section.settings.body != blank %}
+            <div class="gh-tccm__body rte">{{ section.settings.body }}</div>
+          {% endif %}
+          {% if section.settings.button_style == 'secondary' %}
+            {% render 'godshill-cta-btn',
+              label: section.settings.button_label,
+              url: section.settings.button_link,
+              style: 'secondary',
+              bg: section.settings.secondary_bg,
+              fg: section.settings.secondary_text,
+              border_c: section.settings.secondary_border,
+              h_bg: section.settings.secondary_hover_bg,
+              h_fg: section.settings.secondary_hover_text,
+              h_border: section.settings.secondary_hover_border
+            %}
+          {% else %}
+            {% render 'godshill-cta-btn',
+              label: section.settings.button_label,
+              url: section.settings.button_link,
+              style: 'primary',
+              bg: section.settings.primary_bg,
+              fg: section.settings.primary_text,
+              border_c: section.settings.primary_border,
+              h_bg: section.settings.primary_hover_bg,
+              h_fg: section.settings.primary_hover_text,
+              h_border: section.settings.primary_hover_border
+            %}
+          {% endif %}
+        </div>
+
+        <div class="gh-tccm__media">
+          {% if photo_grid %}
+            <div class="gh-tccm__photo-grid">
+              {% if section.blocks.size > 0 %}
+                {% for block in section.blocks %}
+                  {% if block.type == 'photo' %}
+                    <div class="gh-tccm__photo-cell" {{ block.shopify_attributes }}>
+                      {% if block.settings.image != blank %}
+                        {{
+                          block.settings.image
+                          | image_url: width: 900
+                          | image_tag: loading: 'lazy', class: 'gh-tccm__photo-img', widths: '300,450,600,900', alt: block.settings.alt_text | default: section.settings.heading
+                        }}
+                      {% else %}
+                        <div class="gh-tccm__photo-placeholder" role="presentation" aria-hidden="true"></div>
+                      {% endif %}
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              {% else %}
+                {% for i in (1..4) %}
+                  <div class="gh-tccm__photo-cell">
+                    <div class="gh-tccm__photo-placeholder" role="presentation" aria-hidden="true"></div>
+                  </div>
+                {% endfor %}
+              {% endif %}
+            </div>
+          {% else %}
+          <div class="gh-tccm__media-frame">
+            {% if yt != blank %}
+              <iframe
+                class="gh-tccm__iframe"
+                src=""
+                loading="lazy"
+                data-src="https://www.youtube-nocookie.com/embed/{{ yt }}?autoplay=0&controls=1&rel=0&playsinline=1"
+                title="{{ section.settings.heading | default: 'Video' | escape }}"
+              ></iframe>
+            {% elsif vmid != blank %}
+              <iframe
+                class="gh-tccm__iframe"
+                loading="lazy"
+                src=""
+                data-src="https://player.vimeo.com/video/{{ vmid }}?title=0&byline=0&portrait=0"
+                title="{{ section.settings.heading | default: 'Video' | escape }}"
+              ></iframe>
+            {% elsif host_video != blank %}
+              <div class="gh-tccm__hosted">
+                {{ host_video | video_tag: autoplay: false, muted: section.settings.shopify_video_muted, controls: section.settings.shopify_video_controls, loop: section.settings.shopify_video_loop, class: 'gh-tccm__hosted-video' }}
+              </div>
+            {% elsif poster != blank %}
+              {{
+                poster
+                | image_url: width: 1600
+                | image_tag: loading: 'lazy', class: 'gh-tccm__poster-img', widths: '600,980,1400,1600'
+              }}
+            {% else %}
+              <div class="gh-tccm__placeholder" role="presentation" aria-hidden="true"></div>
+            {% endif %}
+
+            {% if show_play_overlay %}
+              {% if yt != blank or vmid != blank %}
+              <button type="button" class="gh-tccm__play-layer" data-tccm-play aria-label="Play video">
+                {% if poster != blank %}
+                  {{
+                    poster
+                    | image_url: width: 1600
+                    | image_tag: loading: 'lazy', class: 'gh-tccm__play-poster', widths: '600,980,1400'
+                  }}
+                {% endif %}
+                <span class="gh-tccm__shade" aria-hidden="true"></span>
+                <span class="gh-tccm__play-btn" aria-hidden="true">
+                  <span class="gh-tccm__play-tri"></span>
+                </span>
+              </button>
+              {% else %}
+              <div class="gh-tccm__play-layer gh-tccm__play-layer--static" aria-hidden="true">
+                <span class="gh-tccm__shade" aria-hidden="true"></span>
+                <span class="gh-tccm__play-btn" aria-hidden="true">
+                  <span class="gh-tccm__play-tri"></span>
+                </span>
+              </div>
+              {% endif %}
+            {% endif %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    #GHTCCM-{{ section.id }}.gh-tccm {
+      background: var(--gh-tccm-bg);
+      padding-block: var(--gh-tccm-pt) var(--gh-tccm-pb);
+      color: var(--gh-tccm-text);
+    }
+    #GHTCCM-{{ section.id }} .gh-tccm__inner {
+      width: min(100%, var(--gh-tccm-cw));
+      margin-inline: auto;
+      padding-inline: clamp(16px, 3vw, 32px);
+    }
+    #GHTCCM-{{ section.id }} .gh-tccm__grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--gh-tccm-gap);
+      align-items: center;
+    }
+    #GHTCCM-{{ section.id }}[data-media-first-desktop='true'] .gh-tccm__content {
+      order: 2;
+    }
+    #GHTCCM-{{ section.id }}[data-media-first-desktop='true'] .gh-tccm__media {
+      order: 1;
+    }
+    #GHTCCM-{{ section.id }} .gh-tccm__eyebrow {
+      margin: 0 0 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gh-tccm-eyebrow);
+    }
+    #GHTCCM-{{ section.id }} .gh-tccm__heading {
+      margin: 0 0 16px;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(var(--gh-tccm-heading-m), 3vw, var(--gh-tccm-heading-d));
+      font-weight: 500;
+      line-height: 1.12;
+    }
+    #GHTCCM-{{ section.id }} .gh-tccm__body {
+      margin: 0 0 24px;
+      font-size: var(--gh-tccm-body);
+      line-height: 1.65;
+    }
+    #GHTCCM-{{ section.id }} .gh-tccm__body :is(p, ul, ol) {
+      margin: 0;
+    }
+    #GHTCCM-{{ section.id }} .gh-tccm__body :is(p + p, p + ul, p + ol) {
+      margin-top: 1em;
+    }
+    #GHTCCM-{{ section.id }} .gh-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 22px;
+      text-transform: uppercase;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      transition: 0.22s ease;
+    }
+    #GHTCCM-{{ section.id }} .gh-cta::after {
+      content: '\2192';
+    }
+    #GHTCCM-{{ section.id }} .gh-cta:hover {
+      transform: translateY(-1px);
+      background-color: var(--gh-h-bg) !important;
+      color: var(--gh-h-fg) !important;
+      border-color: var(--gh-h-bd) !important;
+    }
+    #GHTCCM-{{ section.id }} .gh-tccm__media-frame {
+      position: relative;
+      border-radius: var(--gh-tccm-media-radius);
+      overflow: hidden;
+      aspect-ratio: var(--gh-tccm-aspect, 16 / 9);
+      background: #1a2414;
+    }
+    #GHTCCM-{{ section.id }} .gh-tccm__iframe,
+    #GHTCCM-{{ section.id }} .gh-tccm__hosted,
+    #GHTCCM-{{ section.id }} .gh-tccm__hosted-video,
+    #GHTCCM-{{ section.id }} .gh-tccm__poster-img,
+    #GHTCCM-{{ section.id }} .gh-tccm__placeholder,
+    #GHTCCM-{{ section.id }} .gh-tccm__play-poster {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      object-fit: cover;
+    }
+    #GHTCCM-{{ section.id }} .gh-tccm__placeholder {
+      background: linear-gradient(145deg, #2a3528 0%, #1a2414 100%);
+    }
+    #GHTCCM-{{ section.id }} .gh-tccm__play-layer {
+      position: absolute;
+      inset: 0;
+      padding: 0;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      z-index: 2;
+    }
+    #GHTCCM-{{ section.id }} .gh-tccm__shade {
+      position: absolute;
+      inset: 0;
+      background: #000;
+      opacity: var(--gh-tccm-overlay-o);
+      pointer-events: none;
+    }
+    #GHTCCM-{{ section.id }} .gh-tccm__shade--light {
+      opacity: 0.08;
+    }
+    #GHTCCM-{{ section.id }} .gh-tccm__play-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: var(--gh-tccm-play-size);
+      height: var(--gh-tccm-play-size);
+      border-radius: 50%;
+      background: var(--gh-tccm-play-bg);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 8px 28px rgb(0 0 0 / 0.28);
+      transition: transform 0.25s ease;
+    }
+    #GHTCCM-{{ section.id }} .gh-tccm__play-layer:hover .gh-tccm__play-btn {
+      transform: translate(-50%, -50%) scale(1.05);
+    }
+    #GHTCCM-{{ section.id }} .gh-tccm__play-tri {
+      width: 0;
+      height: 0;
+      margin-left: 4px;
+      border-style: solid;
+      border-width: 10px 0 10px 16px;
+      border-color: transparent transparent transparent var(--gh-tccm-play-color);
+    }
+    #GHTCCM-{{ section.id }} .gh-tccm__media-frame[data-playing='true'] .gh-tccm__play-layer {
+      display: none;
+    }
+    #GHTCCM-{{ section.id }} .gh-tccm__media-frame[data-playing='true'] .gh-tccm__iframe {
+      z-index: 3;
+    }
+    #GHTCCM-{{ section.id }} .gh-tccm__play-layer--static {
+      pointer-events: none;
+    }
+    #GHTCCM-{{ section.id }} .gh-tccm__photo-grid {
+      display: grid;
+      grid-template-columns: repeat(var(--gh-tccm-grid-cols-m), minmax(0, 1fr));
+      gap: var(--gh-tccm-grid-gap);
+    }
+    @media screen and (min-width: 750px) {
+      #GHTCCM-{{ section.id }} .gh-tccm__photo-grid {
+        grid-template-columns: repeat(var(--gh-tccm-grid-cols-d), minmax(0, 1fr));
+      }
+    }
+    #GHTCCM-{{ section.id }} .gh-tccm__photo-cell {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      overflow: hidden;
+      border-radius: var(--gh-tccm-media-radius);
+      background: #e8e2d8;
+    }
+    #GHTCCM-{{ section.id }} .gh-tccm__photo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    #GHTCCM-{{ section.id }} .gh-tccm__photo-placeholder {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(145deg, #d8cfc0 0%, #b8aa96 100%);
+    }
+    @media screen and (max-width: 989px) {
+      #GHTCCM-{{ section.id }} .gh-tccm__grid {
+        grid-template-columns: 1fr;
+      }
+      #GHTCCM-{{ section.id }} .gh-tccm__content,
+      #GHTCCM-{{ section.id }} .gh-tccm__media {
+        order: unset;
+      }
+      #GHTCCM-{{ section.id }}[data-media-first-mobile='true'] .gh-tccm__content {
+        order: 2;
+      }
+      #GHTCCM-{{ section.id }}[data-media-first-mobile='true'] .gh-tccm__media {
+        order: 1;
+      }
+    }
+  </style>
+
+  {% if yt != blank or vmid != blank %}
+    <script>
+      (function () {
+        var root = document.getElementById('GHTCCM-{{ section.id }}');
+        if (!root) return;
+        var frame = root.querySelector('.gh-tccm__media-frame');
+        var iframe = root.querySelector('.gh-tccm__iframe');
+        var play = root.querySelector('[data-tccm-play]');
+        if (!play || !iframe) return;
+        play.addEventListener('click', function () {
+          if (iframe.dataset.src && !iframe.getAttribute('src')) {
+            iframe.setAttribute('src', iframe.dataset.src);
+          }
+          if (frame) frame.dataset.playing = 'true';
+        });
+      })();
+    </script>
+  {% endif %}
+{% endunless %}
+
+{% schema %}
+{
+  "name": "Two column content media",
+  "tag": "section",
+  "class": "gh-two-column-content-media",
+  "settings": [
+    { "type": "checkbox", "id": "section_enabled", "label": "Show section", "default": true },
+    { "type": "header", "content": "Layout" },
+    { "type": "color", "id": "section_background", "label": "Section background", "default": "#F9F7F2" },
+    {
+      "type": "range",
+      "id": "container_width",
+      "label": "Container max width",
+      "min": 960,
+      "max": 1440,
+      "step": 20,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Column gap",
+      "min": 16,
+      "max": 96,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "select",
+      "id": "column_order",
+      "label": "Desktop column order",
+      "options": [
+        { "value": "content_left", "label": "Content left, media right" },
+        { "value": "media_left", "label": "Media left, content right" }
+      ],
+      "default": "content_left"
+    },
+    {
+      "type": "select",
+      "id": "mobile_order",
+      "label": "Mobile order",
+      "options": [
+        { "value": "content_first", "label": "Content first" },
+        { "value": "media_first", "label": "Media first" }
+      ],
+      "default": "content_first"
+    },
+    { "type": "header", "content": "Content" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow (optional)" },
+    { "type": "color", "id": "eyebrow_color", "label": "Eyebrow colour", "default": "#A67B22" },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Built on Hard Work and Dedication"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading size mobile",
+      "min": 24,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Heading size desktop",
+      "min": 28,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Body text",
+      "default": "<p>The family's journey began in 1998 with just 25 acres of vines at Lyndoch in the Barossa Valley. Today, God's Hill Vineyard consists of some of the most renowned vineyards in the region.</p><p>We remain committed to producing exceptional wines while respecting the land and embracing sustainable vineyard practices for future generations.</p><p>Our wines reflect the true character of the Barossa — rich in history, bold in flavour and crafted with care.</p>"
+    },
+    {
+      "type": "range",
+      "id": "body_size",
+      "label": "Body font size",
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    { "type": "color", "id": "text_color", "label": "Text colour", "default": "#25211B" },
+    { "type": "header", "content": "Button" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "OUR VINEYARDS" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Button style",
+      "options": [
+        { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Secondary" }
+      ],
+      "default": "primary"
+    },
+    { "type": "color", "id": "primary_bg", "label": "Primary background", "default": "#1A2414" },
+    { "type": "color", "id": "primary_text", "label": "Primary text", "default": "#FFFFFF" },
+    { "type": "color", "id": "primary_border", "label": "Primary border", "default": "#1A2414" },
+    { "type": "color", "id": "primary_hover_bg", "label": "Primary hover background", "default": "#A67B22" },
+    { "type": "color", "id": "primary_hover_text", "label": "Primary hover text", "default": "#FFFFFF" },
+    { "type": "color", "id": "primary_hover_border", "label": "Primary hover border", "default": "#A67B22" },
+    { "type": "color", "id": "secondary_bg", "label": "Secondary fill accent", "default": "#A67B22" },
+    { "type": "color", "id": "secondary_text", "label": "Secondary text", "default": "#1A2414" },
+    { "type": "color", "id": "secondary_border", "label": "Secondary border", "default": "#1A2414" },
+    { "type": "color", "id": "secondary_hover_bg", "label": "Secondary hover background", "default": "#1A2414" },
+    { "type": "color", "id": "secondary_hover_text", "label": "Secondary hover text", "default": "#FFFFFF" },
+    { "type": "color", "id": "secondary_hover_border", "label": "Secondary hover border", "default": "#1A2414" },
+    { "type": "header", "content": "Media" },
+    {
+      "type": "select",
+      "id": "media_mode",
+      "label": "Media mode",
+      "options": [
+        { "value": "single", "label": "Single image or video" },
+        { "value": "photo_grid", "label": "Photo grid" }
+      ],
+      "default": "single"
+    },
+    { "type": "image_picker", "id": "image", "label": "Image / video poster" },
+    { "type": "video", "id": "shopify_video", "label": "Shopify-hosted video" },
+    {
+      "type": "textarea",
+      "id": "video_url",
+      "label": "External video URL",
+      "info": "YouTube or Vimeo URL. Used when Shopify video is empty."
+    },
+    { "type": "checkbox", "id": "shopify_video_muted", "label": "Shopify video muted", "default": false },
+    { "type": "checkbox", "id": "shopify_video_loop", "label": "Shopify video loop", "default": false },
+    { "type": "checkbox", "id": "shopify_video_controls", "label": "Shopify video controls", "default": true },
+    { "type": "checkbox", "id": "enable_play_button", "label": "Show play button on external video", "default": true },
+    {
+      "type": "checkbox",
+      "id": "show_play_on_placeholder",
+      "label": "Show play button on image placeholder",
+      "default": false,
+      "info": "Decorative play overlay when no video URL is set."
+    },
+    { "type": "color", "id": "play_button_background", "label": "Play button background", "default": "#A67B22" },
+    { "type": "color", "id": "play_button_color", "label": "Play icon colour", "default": "#FFFFFF" },
+    {
+      "type": "range",
+      "id": "play_button_size",
+      "label": "Play button size",
+      "min": 48,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "media_overlay_opacity",
+      "label": "Video overlay opacity",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "%",
+      "default": 36
+    },
+    {
+      "type": "select",
+      "id": "media_aspect_ratio",
+      "label": "Media aspect ratio",
+      "options": [
+        { "value": "landscape", "label": "16:9 landscape" },
+        { "value": "wide", "label": "21:9 wide" },
+        { "value": "square", "label": "1:1 square" },
+        { "value": "portrait", "label": "4:5 portrait" }
+      ],
+      "default": "landscape"
+    },
+    {
+      "type": "range",
+      "id": "media_border_radius",
+      "label": "Media border radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "Photo grid gap",
+      "min": 4,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "grid_columns_desktop",
+      "label": "Photo grid columns desktop",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "select",
+      "id": "grid_columns_mobile",
+      "label": "Photo grid columns mobile",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ],
+      "default": "2"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "photo",
+      "name": "Grid photo",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "alt_text", "label": "Alt text" }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [{ "name": "Two column content media", "category": "God's Hill" }]
+}
+{% endschema %}

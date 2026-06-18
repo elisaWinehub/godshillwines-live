@@ -1,0 +1,153 @@
+{% comment %}
+  To use in themes with header section groups, add this section to the Header group and disable the default header.
+{% endcomment %}
+{% render 'gh-tokens' %}
+{% assign nav_bg = section.settings.nav_bg_scrolled | default: '#1C2B1A' %}
+{% assign gold_color = section.settings.gold_color | default: '#B8913A' %}
+
+<header class="gh-header gh-header-{{ section.id }}" {{ section.shopify_attributes }}>
+  <div class="gh-header__gradient"></div>
+  <div class="gh-header__inner">
+    <a href="{{ routes.root_url }}" class="gh-header__brand">
+      {% if section.settings.logo %}
+        {{ section.settings.logo | image_url: width: 300 | image_tag: alt: section.settings.logo_text, loading: 'eager' }}
+      {% else %}
+        <span class="gh-header__logo-text">{{ section.settings.logo_text | default: "God's Hill Wines" }}</span>
+        <span class="gh-header__logo-subtext">{{ section.settings.logo_subtext | default: 'Barossa Valley · Australia' }}</span>
+      {% endif %}
+    </a>
+    <nav class="gh-header__nav" aria-label="Main navigation">
+      {% if section.settings.menu != blank %}
+        {% for link in linklists[section.settings.menu].links %}
+          <a href="{{ link.url }}">{{ link.title }}</a>
+        {% endfor %}
+      {% endif %}
+    </nav>
+    <a class="gh-header__cta" href="{{ section.settings.book_button_link | default: '/pages/book' }}">
+      {{ section.settings.book_button_label | default: 'Book Now' }}
+    </a>
+  </div>
+</header>
+
+<style>
+  .gh-header-{{ section.id }} {
+    position: fixed;
+    inset: 0 0 auto 0;
+    width: 100%;
+    z-index: 100;
+    transition: background-color 0.35s ease, backdrop-filter 0.35s ease, border-color 0.35s ease;
+    border-bottom: 1px solid transparent;
+  }
+  .gh-header-{{ section.id }} .gh-header__gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(20, 28, 18, 0.42), rgba(20, 28, 18, 0));
+    pointer-events: none;
+  }
+  .gh-header-{{ section.id }} .gh-header__inner {
+    position: relative;
+    max-width: 1280px;
+    height: 70px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 24px;
+  }
+  .gh-header-{{ section.id }} .gh-header__brand {
+    display: inline-flex;
+    flex-direction: column;
+    color: var(--gh-cream);
+    text-decoration: none;
+    min-width: 190px;
+  }
+  .gh-header-{{ section.id }} .gh-header__brand img {
+    max-height: 42px;
+    width: auto;
+  }
+  .gh-header-{{ section.id }} .gh-header__logo-text {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 20px;
+    line-height: 1.1;
+  }
+  .gh-header-{{ section.id }} .gh-header__logo-subtext {
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-size: 9px;
+    opacity: 0.85;
+    margin-top: 4px;
+  }
+  .gh-header-{{ section.id }} .gh-header__nav {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+  }
+  .gh-header-{{ section.id }} .gh-header__nav a {
+    color: var(--gh-cream);
+    font: 500 11px/1 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    text-decoration: none;
+  }
+  .gh-header-{{ section.id }} .gh-header__cta {
+    text-decoration: none;
+    background: {{ gold_color }};
+    color: var(--gh-cream);
+    border: 1px solid {{ gold_color }};
+    padding: 10px 16px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font: 600 10px/1 'Inter', sans-serif;
+  }
+  .gh-header-{{ section.id }}.gh-header--scrolled {
+    background: {{ nav_bg }};
+    backdrop-filter: blur(10px);
+    border-bottom-color: rgba(184, 145, 58, 0.2);
+  }
+  .gh-header-{{ section.id }}.gh-header--scrolled .gh-header__gradient {
+    opacity: 0;
+  }
+  @media (max-width: 900px) {
+    .gh-header-{{ section.id }} .gh-header__inner {
+      grid-template-columns: 1fr auto;
+      padding: 0 20px;
+      gap: 16px;
+    }
+    .gh-header-{{ section.id }} .gh-header__nav {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  (() => {
+    const header = document.querySelector('.gh-header-{{ section.id }}');
+    if (!header) return;
+    const toggle = () => {
+      header.classList.toggle('gh-header--scrolled', window.scrollY > 60);
+    };
+    toggle();
+    window.addEventListener('scroll', toggle, { passive: true });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "GH — Header",
+  "settings": [
+    { "type": "image_picker", "id": "logo", "label": "Logo image" },
+    { "type": "text", "id": "logo_text", "label": "Logo text fallback", "default": "God's Hill Wines" },
+    { "type": "text", "id": "logo_subtext", "label": "Logo subline", "default": "Barossa Valley · Australia" },
+    { "type": "link_list", "id": "menu", "label": "Navigation menu", "default": "main-menu" },
+    { "type": "text", "id": "book_button_label", "label": "Book Now button label", "default": "Book Now" },
+    { "type": "url", "id": "book_button_link", "label": "Book Now button URL" },
+    { "type": "color", "id": "nav_bg_scrolled", "label": "Nav background (scrolled)", "default": "#1C2B1A" },
+    { "type": "color", "id": "gold_color", "label": "Accent / button colour", "default": "#B8913A" }
+  ],
+  "presets": [{ "name": "GH — Header" }]
+}
+{% endschema %}

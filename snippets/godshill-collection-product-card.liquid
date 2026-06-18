@@ -1,0 +1,211 @@
+{%- doc -%}
+  Winery-style collection card — scoped markup for main-collection-product-grid only.
+  @param product {product}
+  @param section {section}
+{%- enddoc -%}
+{% liquid
+  assign card_id = section.id | append: '-' | append: product.id
+  assign v = product.selected_or_first_available_variant
+  assign show_badges = section.settings.show_badges
+  assign show_vendor = section.settings.show_vendor
+  assign show_qty = section.settings.show_quantity_selector
+  assign btn_bg = section.settings.cart_button_background
+  assign btn_fg = section.settings.cart_button_text
+  assign btn_hover = section.settings.cart_button_hover
+  assign new_days = section.settings.new_badge_days | default: 28
+  assign new_seconds = new_days | times: 86400
+  assign now_ts = 'now' | date: '%s' | plus: 0
+  assign created_ts = product.created_at | date: '%s' | plus: 0
+  assign age_secs = now_ts | minus: created_ts
+  assign is_new = false
+  if age_secs >= 0 and age_secs <= new_seconds
+    assign is_new = true
+  endif
+  assign is_bestseller = false
+  assign custom_tag_badge = blank
+  for tag in product.tags
+    assign t = tag | downcase | strip
+    if t == 'best-seller' or t == 'bestseller'
+      assign is_bestseller = true
+    endif
+    assign tag_lc = tag | strip
+    assign tag_lc_prefix = tag_lc | slice: 0, 6 | downcase
+    if tag_lc_prefix == 'badge:'
+      assign badge_raw = tag | strip
+      if badge_raw.size > 6
+        assign pref6 = badge_raw | slice: 0, 6 | downcase
+        if pref6 == 'badge:'
+          assign custom_tag_badge = badge_raw | slice: 6, 200 | strip
+        endif
+      endif
+    endif
+  endfor
+  assign on_sale = false
+  assign sale_percent = 0
+  if v.compare_at_price and v.compare_at_price > v.price
+    assign on_sale = true
+    assign price_diff = v.compare_at_price | minus: v.price
+    assign sale_percent = price_diff | times: 100.0 | divided_by: v.compare_at_price | round
+  endif
+  assign aspect_key = section.settings.card_image_aspect | default: 'ratio_4_5'
+  assign ratio_css = '4 / 5'
+  case aspect_key
+    when 'adapt'
+      assign ratio_css = 'auto'
+    when 'ratio_square'
+      assign ratio_css = '1 / 1'
+    when 'ratio_4_5'
+      assign ratio_css = '4 / 5'
+    when 'ratio_3_4'
+      assign ratio_css = '3 / 4'
+    when 'ratio_landscape'
+      assign ratio_css = '4 / 3'
+  endcase
+  assign show_atc_form = false
+  if product.available and product.variants.size == 1 and v.available
+    assign show_atc_form = true
+  endif
+%}
+<article id="{{ card_id }}" class="mcp-card" role="listitem">
+  <div class="mcp-card__media-wrap" style="--mcp-card-aspect: {{ ratio_css }};">
+    <a href="{{ product.url }}" class="mcp-card__media-link" tabindex="-1" aria-hidden="true">
+      <div class="mcp-card__media">
+        {% if product.featured_media %}
+          {{
+            product.featured_media
+            | image_url: width: 1100
+            | image_tag:
+              loading: 'lazy',
+              class: 'mcp-card__img',
+              sizes: '(min-width: 990px) 280px, 45vw',
+              widths: '360,540,720,900,1080'
+          }}
+        {% else %}
+          <div class="mcp-card__img-placeholder" role="presentation"></div>
+        {% endif %}
+      </div>
+    </a>
+    {% if show_badges %}
+      <div class="mcp-card__badges" aria-hidden="true">
+        {% unless product.available %}
+          <span class="mcp-badge mcp-badge--sold">{{ 'products.product.sold_out' | t }}</span>
+        {% endunless %}
+        {% if on_sale and product.available %}
+          <span class="mcp-badge mcp-badge--sale">-{{ sale_percent }}%</span>
+        {% endif %}
+        {% if is_new and product.available %}
+          <span class="mcp-badge mcp-badge--new">{{ section.settings.badge_new_label | default: 'New' }}</span>
+        {% endif %}
+        {% if is_bestseller and product.available %}
+          <span class="mcp-badge mcp-badge--bestseller">{{ section.settings.badge_bestseller_label | default: 'Best seller' }}</span>
+        {% endif %}
+        {% if custom_tag_badge != blank and product.available %}
+          <span class="mcp-badge mcp-badge--custom">{{ custom_tag_badge }}</span>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="mcp-card__body">
+    {% if show_vendor and product.vendor != blank %}
+      <p class="mcp-card__vendor">{{ product.vendor }}</p>
+    {% endif %}
+    <h3 class="mcp-card__title">
+      <a href="{{ product.url }}">{{ product.title }}</a>
+    </h3>
+
+    <div class="mcp-card__price">
+      {% render 'price', product_resource: product, show_sale_price_first: true %}
+    </div>
+
+    {% if show_atc_form %}
+      {% assign mcp_form_dom_id = 'mcp-form-' | append: card_id %}
+      <product-form-component
+        data-section-id="{{ section.id }}"
+        data-product-id="{{ product.id }}"
+        data-product-url="{{ product.url }}"
+        on:submit="/handleSubmit"
+        data-quantity-default="{% if v.quantity_rule.min %}{{ v.quantity_rule.min }}{% else %}1{% endif %}"
+        class="mcp-card__product-form"
+      >
+        <div class="visually-hidden" aria-live="assertive" role="status" aria-atomic="true" ref="liveRegion"></div>
+        {% form 'product', product, class: 'mcp-card-form', id: mcp_form_dom_id, novalidate: 'novalidate', data-type: 'add-to-cart-form' %}
+          <input type="hidden" name="id" ref="variantId" value="{{ v.id }}">
+          <div class="mcp-card__actions {% unless show_qty %}mcp-card__actions--no-qty{% endunless %}">
+            {% if show_qty %}
+              <label class="visually-hidden" for="qty-{{ card_id }}">{{ 'products.product.quantity' | t }}</label>
+              <div class="mcp-qty-stepper">
+                <button
+                  type="button"
+                  class="mcp-qty-btn mcp-qty-btn--minus"
+                  data-mcp-qty-minus
+                  aria-label="{{ 'accessibility.decrease_quantity' | t }}"
+                >
+                  <span class="svg-wrapper icon-minus" aria-hidden="true">
+                    {{- 'icon-minus.svg' | inline_asset_content -}}
+                  </span>
+                </button>
+                <input
+                  id="qty-{{ card_id }}"
+                  class="mcp-qty"
+                  type="number"
+                  name="quantity"
+                  value="{% if v.quantity_rule.min %}{{ v.quantity_rule.min }}{% else %}1{% endif %}"
+                  min="{{ v.quantity_rule.min | default: 1 }}"
+                  {% if v.quantity_rule.max != blank %}
+                    max="{{ v.quantity_rule.max }}"
+                  {% endif %}
+                  step="{{ v.quantity_rule.increment | default: 1 }}"
+                >
+                <button
+                  type="button"
+                  class="mcp-qty-btn mcp-qty-btn--plus"
+                  data-mcp-qty-plus
+                  aria-label="{{ 'accessibility.increase_quantity' | t }}"
+                >
+                  <span class="svg-wrapper icon-plus" aria-hidden="true">
+                    {{- 'icon-plus.svg' | inline_asset_content -}}
+                  </span>
+                </button>
+              </div>
+            {% else %}
+              <input type="hidden" name="quantity" value="{{ v.quantity_rule.min | default: 1 }}">
+            {% endif %}
+            <button
+              type="submit"
+              class="mcp-atc-btn"
+              name="add"
+              data-mcp-atc-btn
+              style="background: {{ btn_bg }}; color: {{ btn_fg }}; --mcp-atc-hover: {{ btn_hover }};"
+              {% unless product.available and v.available %}
+                disabled aria-disabled="true"
+              {% endunless %}
+            >
+              {% if product.available %}
+                <span class="svg-wrapper add-to-cart-icon" aria-hidden="true">
+                  {{- 'icon-add-to-cart.svg' | inline_asset_content -}}
+                </span>
+                <span class="mcp-atc-btn__text">{{ 'products.product.add_to_cart' | t }}</span>
+                <span class="mcp-atc-btn__loading" hidden aria-hidden="true">
+                  <span class="mcp-atc-btn__loading-spinner"></span>
+                </span>
+              {% else %}
+                <span class="mcp-atc-btn__text">{{ 'products.product.sold_out' | t }}</span>
+              {% endif %}
+            </button>
+          </div>
+        {% endform %}
+      </product-form-component>
+    {% elsif product.available %}
+      <div class="mcp-card__actions">
+        <a class="mcp-atc-btn mcp-atc-btn--link" href="{{ product.url }}">{{ section.settings.choose_options_label | default: 'Choose options' }}</a>
+      </div>
+    {% else %}
+      <div class="mcp-card__actions">
+        <button type="button" class="mcp-atc-btn" disabled style="background: {{ btn_bg }}; color: {{ btn_fg }}; opacity: 0.55;">
+          {{ 'products.product.sold_out' | t }}
+        </button>
+      </div>
+    {% endif %}
+  </div>
+</article>

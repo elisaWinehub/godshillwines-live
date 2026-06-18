@@ -1,0 +1,151 @@
+{% render 'gh-tokens' %}
+
+<section class="gh-instagram gh-instagram-{{ section.id }}" {{ section.shopify_attributes }}>
+  <div class="gh-instagram__inner">
+    <div class="gh-instagram__heading">
+      <p>{{ section.settings.eyebrow | default: 'From the vineyard' }}</p>
+      <h2>{{ section.settings.heading | default: 'Instagram' }}</h2>
+    </div>
+    <div class="gh-instagram__grid">
+      {% for block in section.blocks %}
+        {% assign href = block.settings.link | default: '#' %}
+        <a href="{{ href }}" class="gh-instagram__item" {{ block.shopify_attributes }}>
+          {% if block.settings.image %}
+            {{ block.settings.image | image_url: width: 700 | image_tag: class: 'gh-instagram__image', loading: 'lazy', alt: block.settings.alt }}
+          {% endif %}
+          <span class="gh-instagram__overlay" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3.5A4.5 4.5 0 1 1 7.5 12 4.5 4.5 0 0 1 12 7.5Zm0 2A2.5 2.5 0 1 0 14.5 12 2.5 2.5 0 0 0 12 9.5Zm5.25-2.9a1.1 1.1 0 1 1-1.1 1.1 1.1 1.1 0 0 1 1.1-1.1Z"/></svg>
+          </span>
+        </a>
+      {% endfor %}
+    </div>
+    <a class="gh-instagram__cta" href="{{ section.settings.button_url | default: 'https://instagram.com/godshillwines' }}">
+      {{ section.settings.button_label | default: 'Follow us on Instagram →' }}
+    </a>
+  </div>
+</section>
+
+<style>
+  .gh-instagram-{{ section.id }} {
+    background: var(--gh-parchment);
+    padding: 80px 40px;
+  }
+  .gh-instagram-{{ section.id }} .gh-instagram__inner {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  .gh-instagram-{{ section.id }} .gh-instagram__heading {
+    text-align: center;
+    margin-bottom: 26px;
+  }
+  .gh-instagram-{{ section.id }} .gh-instagram__heading p {
+    margin: 0 0 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--gh-dust);
+    font: 500 10px/1.4 'Inter', sans-serif;
+  }
+  .gh-instagram-{{ section.id }} .gh-instagram__heading h2 {
+    margin: 0;
+    color: var(--gh-vine);
+    font: 400 clamp(32px, 4vw, 48px)/1.1 'EB Garamond', Georgia, serif;
+  }
+  .gh-instagram-{{ section.id }} .gh-instagram__grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .gh-instagram-{{ section.id }} .gh-instagram__item {
+    position: relative;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: #e8dfcf;
+  }
+  .gh-instagram-{{ section.id }} .gh-instagram__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+  }
+  .gh-instagram-{{ section.id }} .gh-instagram__overlay {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: rgba(17, 27, 16, 0.4);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    color: #fff;
+  }
+  .gh-instagram-{{ section.id }} .gh-instagram__overlay svg {
+    width: 28px;
+    height: 28px;
+    fill: currentColor;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .gh-instagram-{{ section.id }} .gh-instagram__item:hover .gh-instagram__image {
+      transform: scale(1.06);
+    }
+    .gh-instagram-{{ section.id }} .gh-instagram__item:hover .gh-instagram__overlay {
+      opacity: 1;
+    }
+  }
+  .gh-instagram-{{ section.id }} .gh-instagram__cta {
+    margin: 26px auto 0;
+    display: inline-flex;
+    text-decoration: none;
+    color: var(--gh-vine);
+    border: 1px solid rgba(28, 43, 26, 0.35);
+    border-radius: 2px;
+    padding: 12px 18px;
+    font: 600 11px/1 'Inter', sans-serif;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+  }
+  .gh-instagram-{{ section.id }} .gh-instagram__inner {
+    text-align: center;
+  }
+  @media (max-width: 900px) {
+    .gh-instagram-{{ section.id }} .gh-instagram__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 600px) {
+    .gh-instagram-{{ section.id }} {
+      padding: 60px 20px;
+    }
+    .gh-instagram-{{ section.id }} .gh-instagram__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "GH — Instagram",
+  "max_blocks": 6,
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "From the vineyard" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Instagram" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Follow us on Instagram →" },
+    { "type": "url", "id": "button_url", "label": "Button URL" }
+  ],
+  "blocks": [
+    {
+      "type": "photo",
+      "name": "Photo",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Photo" },
+        { "type": "text", "id": "alt", "label": "Alt text" },
+        { "type": "url", "id": "link", "label": "Photo link (optional)" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "GH — Instagram",
+      "blocks": [{ "type": "photo" }, { "type": "photo" }, { "type": "photo" }, { "type": "photo" }, { "type": "photo" }, { "type": "photo" }]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,157 @@
+{% render 'gh-tokens' %}
+{% assign section_height = section.settings.section_height | default: 480 %}
+{% assign gold_color = section.settings.gold_color | default: '#B8913A' %}
+
+<section class="gh-destination-tiles gh-destination-tiles-{{ section.id }}" {{ section.shopify_attributes }}>
+  {% for block in section.blocks %}
+    <a class="gh-destination-tiles__tile" href="{{ block.settings.link_url | default: '#' }}" {{ block.shopify_attributes }}>
+      <div class="gh-destination-tiles__media">
+        {% if block.settings.image %}
+          {{ block.settings.image | image_url: width: 1600 | image_tag: class: 'gh-destination-tiles__image', loading: 'lazy', alt: block.settings.title }}
+        {% endif %}
+        <div class="gh-destination-tiles__overlay"></div>
+      </div>
+      <div class="gh-destination-tiles__content">
+        <p class="gh-destination-tiles__category">{{ block.settings.category }}</p>
+        <h2>{{ block.settings.title }}</h2>
+        <p class="gh-destination-tiles__description">{{ block.settings.description }}</p>
+        <span class="gh-destination-tiles__cta">{{ block.settings.link_label }} <span aria-hidden="true">→</span></span>
+      </div>
+    </a>
+  {% endfor %}
+</section>
+
+<style>
+  .gh-destination-tiles-{{ section.id }} {
+    display: flex;
+    height: {{ section_height }}px;
+    gap: 3px;
+    background: var(--gh-vine);
+    padding: 0;
+  }
+  .gh-destination-tiles-{{ section.id }} .gh-destination-tiles__tile {
+    position: relative;
+    flex: 1;
+    color: var(--gh-cream);
+    text-decoration: none;
+    overflow: hidden;
+    min-width: 0;
+    transition: flex 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .gh-destination-tiles-{{ section.id }} .gh-destination-tiles__media,
+  .gh-destination-tiles-{{ section.id }} .gh-destination-tiles__image,
+  .gh-destination-tiles-{{ section.id }} .gh-destination-tiles__overlay {
+    position: absolute;
+    inset: 0;
+  }
+  .gh-destination-tiles-{{ section.id }} .gh-destination-tiles__media {
+    background: #243324;
+  }
+  .gh-destination-tiles-{{ section.id }} .gh-destination-tiles__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s ease;
+  }
+  .gh-destination-tiles-{{ section.id }} .gh-destination-tiles__overlay {
+    background: linear-gradient(to top, rgba(20, 28, 18, 0.88) 0%, rgba(20, 28, 18, 0.3) 55%, transparent 100%);
+  }
+  .gh-destination-tiles-{{ section.id }} .gh-destination-tiles__content {
+    position: absolute;
+    left: 28px;
+    right: 28px;
+    bottom: 28px;
+    z-index: 2;
+  }
+  .gh-destination-tiles-{{ section.id }} .gh-destination-tiles__category {
+    margin: 0 0 12px;
+    font: 500 10px/1.4 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--gh-dust);
+  }
+  .gh-destination-tiles-{{ section.id }} h2 {
+    margin: 0;
+    font: 400 clamp(30px, 2.6vw, 42px)/1.1 'EB Garamond', Georgia, serif;
+  }
+  .gh-destination-tiles-{{ section.id }} .gh-destination-tiles__description {
+    margin: 12px 0 0;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.45s ease, max-height 0.45s ease;
+    font: 400 13px/1.6 'Inter', sans-serif;
+    color: rgba(245, 239, 227, 0.8);
+  }
+  .gh-destination-tiles-{{ section.id }} .gh-destination-tiles__cta {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 14px;
+    color: {{ gold_color }};
+    font: 600 11px/1.2 'Inter', sans-serif;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .gh-destination-tiles-{{ section.id }} .gh-destination-tiles__tile:hover {
+      flex: 1.6;
+    }
+    .gh-destination-tiles-{{ section.id }} .gh-destination-tiles__tile:hover .gh-destination-tiles__image {
+      transform: scale(1.06);
+    }
+    .gh-destination-tiles-{{ section.id }} .gh-destination-tiles__tile:hover .gh-destination-tiles__description {
+      opacity: 1;
+      max-height: 120px;
+    }
+  }
+  @media (max-width: 768px) {
+    .gh-destination-tiles-{{ section.id }} {
+      flex-direction: column;
+      height: auto;
+      padding: 0;
+    }
+    .gh-destination-tiles-{{ section.id }} .gh-destination-tiles__tile {
+      height: 280px;
+      flex: none;
+    }
+    .gh-destination-tiles-{{ section.id }} .gh-destination-tiles__description {
+      opacity: 1;
+      max-height: 140px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "GH — Destination tiles",
+  "max_blocks": 3,
+  "settings": [
+    { "type": "range", "id": "section_height", "label": "Tiles height (px)", "min": 320, "max": 640, "step": 20, "default": 480, "unit": "px" },
+    { "type": "color", "id": "gold_color", "label": "Accent colour", "default": "#B8913A" }
+  ],
+  "blocks": [
+    {
+      "type": "tile",
+      "name": "Tile",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Tile background image" },
+        { "type": "text", "id": "category", "label": "Category label (small eyebrow)", "default": "Cellar door" },
+        { "type": "text", "id": "title", "label": "Tile heading", "default": "Our Wines" },
+        { "type": "textarea", "id": "description", "label": "Description (reveals on hover)", "default": "Shiraz, Cabernet, whites and more — small-batch wines that carry the deep character of Barossa's rich soil and warm summers." },
+        { "type": "text", "id": "link_label", "label": "CTA link text", "default": "Explore wines" },
+        { "type": "url", "id": "link_url", "label": "CTA link URL" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "GH — Destination tiles",
+      "blocks": [
+        { "type": "tile", "settings": { "category": "Cellar door", "title": "Our Wines", "description": "Shiraz, Cabernet, whites and more — small-batch wines that carry the deep character of Barossa's rich soil and warm summers.", "link_label": "Explore wines", "link_url": "/collections/all" } },
+        { "type": "tile", "settings": { "category": "Authentic Italian food", "title": "Ennia Cucina", "description": "A table in the vines. Handmade Italian food with local produce, matched perfectly with God's Hill wines.", "link_label": "View menu & book", "link_url": "/pages/restaurant" } },
+        { "type": "tile", "settings": { "category": "Barossa accommodation", "title": "Villa Scalzi", "description": "Wake up among the vines. Old-world Barossa comfort with modern ease, minutes from Lyndoch.", "link_label": "Make a booking", "link_url": "/pages/accommodation" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

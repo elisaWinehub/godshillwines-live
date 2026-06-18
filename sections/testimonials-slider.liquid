@@ -1,0 +1,808 @@
+{% comment %} Testimonials slider · center-focus carousel with read more per card {% endcomment %}
+{% liquid
+  assign show = section.settings.section_enabled | default: true
+  assign char_limit = section.settings.read_more_limit | default: 180
+  assign root_class = 'gh-ts'
+  if section.settings.custom_css_class != blank
+    assign root_class = root_class | append: ' ' | append: section.settings.custom_css_class | strip
+  endif
+%}
+{% unless show %}
+  <div {{ section.shopify_attributes }} hidden></div>
+{% else %}
+  <section
+    id="GHTS-{{ section.id }}"
+    class="{{ root_class }}"
+    {{ section.shopify_attributes }}
+    style="
+      --gh-ts-bg: {{ section.settings.section_background }};
+      --gh-ts-pt: {{ section.settings.padding_top }}px;
+      --gh-ts-pb: {{ section.settings.padding_bottom }}px;
+      --gh-ts-cw: {{ section.settings.container_width }}px;
+      --gh-ts-heading: {{ section.settings.heading_color }};
+      --gh-ts-heading-m: {{ section.settings.heading_size_mobile }}px;
+      --gh-ts-heading-d: {{ section.settings.heading_size_desktop }}px;
+      --gh-ts-card-bg: {{ section.settings.card_background }};
+      --gh-ts-card-text: {{ section.settings.card_text_color }};
+      --gh-ts-quote: {{ section.settings.quote_icon_color }};
+      --gh-ts-div: {{ section.settings.divider_color }};
+      --gh-ts-name: {{ section.settings.name_color }};
+      --gh-ts-role: {{ section.settings.role_color }};
+      --gh-ts-card-radius: {{ section.settings.card_border_radius }}px;
+      --gh-ts-center-scale: {{ section.settings.center_card_scale | divided_by: 100.0 }};
+      --gh-ts-side-opacity: {{ section.settings.side_card_opacity | divided_by: 100.0 }};
+      --gh-ts-visible-d: {{ section.settings.visible_desktop }};
+      --gh-ts-visible-t: {{ section.settings.visible_tablet }};
+      --gh-ts-visible-m: {{ section.settings.visible_mobile }};
+      --gh-ts-arrow: {{ section.settings.arrow_color }};
+      --gh-ts-arrow-h: {{ section.settings.arrow_hover_color }};
+      --gh-ts-dot-active: {{ section.settings.dot_active_color }};
+      --gh-ts-dot-inactive: {{ section.settings.dot_inactive_color }};
+      --gh-ts-readmore: {{ section.settings.read_more_link_color }};
+    "
+    data-ts-slider
+    data-autoplay="{% if section.settings.enable_autoplay %}true{% else %}false{% endif %}"
+    data-autoplay-speed="{{ section.settings.autoplay_speed | times: 1000 }}"
+    data-pause-hover="{% if section.settings.pause_on_hover %}true{% else %}false{% endif %}"
+    data-show-arrows="{% if section.settings.show_arrows %}true{% else %}false{% endif %}"
+    data-show-dots="{% if section.settings.show_dots %}true{% else %}false{% endif %}"
+    data-card-shadow="{% if section.settings.card_shadow %}true{% else %}false{% endif %}"
+    data-read-limit="{{ char_limit }}"
+    data-read-more="{{ section.settings.read_more_text | escape }}"
+    data-read-less="{{ section.settings.read_less_text | escape }}"
+  >
+    <div class="gh-ts__inner">
+      {% if section.settings.show_heading %}
+        <header class="gh-ts__header">
+          {% if section.settings.heading != blank %}
+            <h2 class="gh-ts__heading">{{ section.settings.heading }}</h2>
+          {% endif %}
+          {% if section.settings.subheading != blank %}
+            <p class="gh-ts__subheading">{{ section.settings.subheading }}</p>
+          {% endif %}
+          <div class="gh-ts__heading-divider" role="presentation" aria-hidden="true"></div>
+        </header>
+      {% endif %}
+
+      {% if section.blocks.size == 0 %}
+        <p class="gh-ts__empty">Add testimonial blocks in the theme editor.</p>
+      {% else %}
+        <div class="gh-ts__controls-wrap">
+          {% if section.settings.show_arrows %}
+            <button type="button" class="gh-ts__arrow gh-ts__arrow--prev" data-ts-prev aria-label="Previous testimonial">
+              <span aria-hidden="true">&lsaquo;</span>
+            </button>
+          {% endif %}
+
+          <div class="gh-ts__viewport" data-ts-viewport tabindex="0" aria-roledescription="carousel">
+            <div class="gh-ts__track" data-ts-track role="list">
+              {% for block in section.blocks %}
+                {% case block.type %}
+                  {% when 'testimonial' %}
+                    {% liquid
+                      assign quote_html = block.settings.quote
+                      assign quote_plain = quote_html | strip_html | strip
+                      assign use_readmore = false
+                      if section.settings.enable_read_more and quote_plain.size > char_limit
+                        assign use_readmore = true
+                      endif
+                    %}
+                    <article
+                      class="gh-ts__slide"
+                      data-ts-slide
+                      role="listitem"
+                      aria-roledescription="slide"
+                      {{ block.shopify_attributes }}
+                    >
+                      <div class="gh-ts__card">
+                        {% if section.settings.card_texture != blank %}
+                          <div class="gh-ts__card-texture" aria-hidden="true">
+                            {{
+                              section.settings.card_texture
+                              | image_url: width: 600
+                              | image_tag: loading: 'lazy', class: 'gh-ts__card-texture-img', widths: '300,600'
+                            }}
+                          </div>
+                        {% endif %}
+                        <span class="gh-ts__quote-mark" aria-hidden="true">&ldquo;</span>
+                        {% if block.settings.rating > 0 %}
+                          <div class="gh-ts__stars" aria-label="{{ block.settings.rating }} stars">
+                            {% for i in (1..block.settings.rating) %}
+                              <span aria-hidden="true">&#9733;</span>
+                            {% endfor %}
+                          </div>
+                        {% endif %}
+                        {% if quote_html != blank %}
+                          <div class="gh-ts__quote-wrap{% if use_readmore %} gh-ts__quote-wrap--truncated{% endif %}" data-ts-readmore>
+                            {% if use_readmore %}
+                              <div class="gh-ts__quote gh-ts__quote--excerpt rte">{{ quote_plain | truncate: char_limit, '…' }}</div>
+                              <div class="gh-ts__quote gh-ts__quote--full rte" hidden>{{ quote_html }}</div>
+                              <button type="button" class="gh-ts__readmore" data-ts-readmore-toggle>{{ section.settings.read_more_text }}</button>
+                            {% else %}
+                              <div class="gh-ts__quote rte">{{ quote_html }}</div>
+                            {% endif %}
+                          </div>
+                        {% endif %}
+                        <div class="gh-ts__card-divider" role="presentation" aria-hidden="true"></div>
+                        <div class="gh-ts__meta">
+                          {% if block.settings.avatar != blank %}
+                            {{
+                              block.settings.avatar
+                              | image_url: width: 80
+                              | image_tag: loading: 'lazy', class: 'gh-ts__avatar', widths: '40,80', alt: block.settings.name
+                            }}
+                          {% endif %}
+                          <div class="gh-ts__meta-text">
+                            {% if block.settings.name != blank %}
+                              <p class="gh-ts__name">{{ block.settings.name }}</p>
+                            {% endif %}
+                            {% if block.settings.role != blank %}
+                              <p class="gh-ts__role">{{ block.settings.role }}</p>
+                            {% endif %}
+                          </div>
+                        </div>
+                        {% if block.settings.link_label != blank and block.settings.link_url != blank %}
+                          <a href="{{ block.settings.link_url }}" class="gh-ts__card-link">{{ block.settings.link_label | escape }} &rsaquo;</a>
+                        {% endif %}
+                      </div>
+                    </article>
+                {% endcase %}
+              {% endfor %}
+            </div>
+          </div>
+
+          {% if section.settings.show_arrows %}
+            <button type="button" class="gh-ts__arrow gh-ts__arrow--next" data-ts-next aria-label="Next testimonial">
+              <span aria-hidden="true">&rsaquo;</span>
+            </button>
+          {% endif %}
+        </div>
+
+        {% if section.settings.show_dots %}
+          <div class="gh-ts__dots" data-ts-dots role="tablist" aria-label="Testimonial slides"></div>
+        {% endif %}
+      {% endif %}
+    </div>
+  </section>
+
+  <style>
+    #GHTS-{{ section.id }}.gh-ts {
+      background: var(--gh-ts-bg);
+      padding-block: var(--gh-ts-pt) var(--gh-ts-pb);
+      overflow: hidden;
+    }
+    #GHTS-{{ section.id }} .gh-ts__inner {
+      width: min(100%, var(--gh-ts-cw));
+      margin-inline: auto;
+      padding-inline: clamp(12px, 3vw, 24px);
+    }
+    #GHTS-{{ section.id }} .gh-ts__header {
+      text-align: center;
+      margin-bottom: clamp(28px, 4vw, 44px);
+    }
+    #GHTS-{{ section.id }} .gh-ts__heading {
+      margin: 0 0 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(var(--gh-ts-heading-m), 2.5vw, var(--gh-ts-heading-d));
+      font-weight: 500;
+      color: var(--gh-ts-heading);
+    }
+    #GHTS-{{ section.id }} .gh-ts__subheading {
+      margin: 0 0 12px;
+      color: var(--gh-ts-role);
+      font-size: 15px;
+    }
+    #GHTS-{{ section.id }} .gh-ts__heading-divider {
+      width: 48px;
+      height: 2px;
+      background: var(--gh-ts-heading);
+      margin-inline: auto;
+      opacity: 0.85;
+    }
+    #GHTS-{{ section.id }} .gh-ts__empty {
+      text-align: center;
+      opacity: 0.7;
+    }
+    #GHTS-{{ section.id }} .gh-ts__controls-wrap {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: clamp(8px, 2vw, 16px);
+    }
+    #GHTS-{{ section.id }}[data-show-arrows='false'] .gh-ts__controls-wrap {
+      grid-template-columns: 1fr;
+    }
+    #GHTS-{{ section.id }} .gh-ts__arrow {
+      width: 44px;
+      height: 44px;
+      border: none;
+      background: transparent;
+      color: var(--gh-ts-arrow);
+      font-size: 36px;
+      line-height: 1;
+      cursor: pointer;
+      transition: color 0.2s ease, transform 0.2s ease;
+      padding: 0;
+    }
+    #GHTS-{{ section.id }} .gh-ts__arrow:hover {
+      color: var(--gh-ts-arrow-h);
+      transform: scale(1.06);
+    }
+    #GHTS-{{ section.id }} .gh-ts__arrow:focus-visible {
+      outline: 2px solid var(--gh-ts-arrow);
+      outline-offset: 3px;
+    }
+    #GHTS-{{ section.id }} .gh-ts__viewport {
+      overflow: hidden;
+      width: 100%;
+      touch-action: pan-y;
+    }
+    #GHTS-{{ section.id }} .gh-ts__track {
+      display: flex;
+      gap: clamp(12px, 2vw, 20px);
+      will-change: transform;
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    #GHTS-{{ section.id }} .gh-ts__track.is-dragging {
+      transition: none;
+    }
+    #GHTS-{{ section.id }} .gh-ts__slide {
+      flex: 0 0 calc((100% - (var(--gh-ts-visible-m) - 1) * clamp(12px, 2vw, 20px)) / var(--gh-ts-visible-m));
+      opacity: var(--gh-ts-side-opacity);
+      transform: scale(0.92);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+    @media screen and (min-width: 750px) {
+      #GHTS-{{ section.id }} .gh-ts__slide {
+        flex-basis: calc((100% - (var(--gh-ts-visible-t) - 1) * clamp(12px, 2vw, 20px)) / var(--gh-ts-visible-t));
+      }
+    }
+    @media screen and (min-width: 990px) {
+      #GHTS-{{ section.id }} .gh-ts__slide {
+        flex-basis: calc((100% - (var(--gh-ts-visible-d) - 1) * clamp(12px, 2vw, 20px)) / var(--gh-ts-visible-d));
+      }
+    }
+    #GHTS-{{ section.id }} .gh-ts__slide.is-center {
+      opacity: 1;
+      transform: scale(var(--gh-ts-center-scale));
+    }
+    #GHTS-{{ section.id }} .gh-ts__slide.is-side {
+      opacity: calc(var(--gh-ts-side-opacity) + 0.15);
+      transform: scale(0.96);
+    }
+    #GHTS-{{ section.id }} .gh-ts__card {
+      position: relative;
+      background: var(--gh-ts-card-bg);
+      color: var(--gh-ts-card-text);
+      border-radius: var(--gh-ts-card-radius);
+      padding: clamp(24px, 3vw, 32px) clamp(20px, 3vw, 28px);
+      min-height: 100%;
+      overflow: hidden;
+    }
+    #GHTS-{{ section.id }}[data-card-shadow='true'] .gh-ts__card {
+      box-shadow: 0 12px 36px rgb(0 0 0 / 0.08);
+    }
+    #GHTS-{{ section.id }} .gh-ts__card-texture {
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 45%;
+      opacity: 0.12;
+      pointer-events: none;
+    }
+    #GHTS-{{ section.id }} .gh-ts__card-texture-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    #GHTS-{{ section.id }} .gh-ts__quote-mark {
+      display: block;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(40px, 5vw, 56px);
+      line-height: 0.9;
+      color: var(--gh-ts-quote);
+      margin-bottom: 8px;
+    }
+    #GHTS-{{ section.id }} .gh-ts__stars {
+      color: var(--gh-ts-quote);
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    #GHTS-{{ section.id }} .gh-ts__quote {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(14px, 1.6vw, 16px);
+      line-height: 1.55;
+      margin: 0 0 10px;
+    }
+    #GHTS-{{ section.id }} .gh-ts__readmore {
+      padding: 0;
+      border: none;
+      background: none;
+      font: inherit;
+      font-family: Georgia, 'Times New Roman', serif;
+      color: var(--gh-ts-readmore);
+      text-decoration: underline;
+      cursor: pointer;
+      margin-bottom: 8px;
+    }
+    #GHTS-{{ section.id }} .gh-ts__card-divider {
+      width: 36px;
+      height: 2px;
+      background: var(--gh-ts-div);
+      margin: 12px 0;
+    }
+    #GHTS-{{ section.id }} .gh-ts__meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    #GHTS-{{ section.id }} .gh-ts__avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    #GHTS-{{ section.id }} .gh-ts__name {
+      margin: 0;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--gh-ts-name);
+    }
+    #GHTS-{{ section.id }} .gh-ts__role {
+      margin: 2px 0 0;
+      font-size: 13px;
+      color: var(--gh-ts-role);
+    }
+    #GHTS-{{ section.id }} .gh-ts__card-link {
+      display: inline-block;
+      margin-top: 12px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 700;
+      color: var(--gh-ts-readmore);
+      text-decoration: none;
+    }
+    #GHTS-{{ section.id }} .gh-ts__dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 24px;
+    }
+    #GHTS-{{ section.id }} .gh-ts__dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: none;
+      padding: 0;
+      background: var(--gh-ts-dot-inactive);
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+    #GHTS-{{ section.id }} .gh-ts__dot.is-active {
+      background: var(--gh-ts-dot-active);
+      transform: scale(1.15);
+    }
+    #GHTS-{{ section.id }} .gh-ts__dot:focus-visible {
+      outline: 2px solid var(--gh-ts-dot-active);
+      outline-offset: 2px;
+    }
+  </style>
+
+  {% if section.blocks.size > 0 %}
+    <script>
+      (function () {
+        var root = document.getElementById('GHTS-{{ section.id }}');
+        if (!root) return;
+
+        var track = root.querySelector('[data-ts-track]');
+        var viewport = root.querySelector('[data-ts-viewport]');
+        var slides = track ? [...track.querySelectorAll('[data-ts-slide]')] : [];
+        var prevBtn = root.querySelector('[data-ts-prev]');
+        var nextBtn = root.querySelector('[data-ts-next]');
+        var dotsWrap = root.querySelector('[data-ts-dots]');
+        var count = slides.length;
+        var index = 0;
+        var autoplayTimer = null;
+        var pointerStartX = 0;
+        var dragging = false;
+
+        function readMoreLabel(expanded) {
+          return expanded ? root.dataset.readLess : root.dataset.readMore;
+        }
+
+        root.querySelectorAll('[data-ts-readmore-toggle]').forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var wrap = btn.closest('[data-ts-readmore]');
+            if (!wrap) return;
+            var expanded = wrap.classList.toggle('gh-ts__quote-wrap--expanded');
+            var excerpt = wrap.querySelector('.gh-ts__quote--excerpt');
+            var full = wrap.querySelector('.gh-ts__quote--full');
+            if (excerpt) excerpt.hidden = expanded;
+            if (full) full.hidden = !expanded;
+            btn.textContent = readMoreLabel(expanded);
+          });
+        });
+
+        function slideMetrics() {
+          if (!slides.length) return { step: 0, slideW: 0, gap: 0, viewportW: 0 };
+          var gap = parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap) || 0;
+          var slideW = slides[0].getBoundingClientRect().width;
+          return {
+            step: slideW + gap,
+            slideW: slideW,
+            gap: gap,
+            viewportW: viewport.getBoundingClientRect().width
+          };
+        }
+
+        function setClasses() {
+          slides.forEach(function (slide, i) {
+            slide.classList.remove('is-center', 'is-side', 'is-far');
+            var dist = Math.abs(i - index);
+            if (dist === 0) slide.classList.add('is-center');
+            else if (dist === 1) slide.classList.add('is-side');
+            else slide.classList.add('is-far');
+          });
+        }
+
+        function renderDots() {
+          if (!dotsWrap) return;
+          dotsWrap.innerHTML = '';
+          for (var i = 0; i < count; i++) {
+            var dot = document.createElement('button');
+            dot.type = 'button';
+            dot.className = 'gh-ts__dot' + (i === index ? ' is-active' : '');
+            dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+            dot.setAttribute('role', 'tab');
+            dot.setAttribute('aria-selected', i === index ? 'true' : 'false');
+            (function (n) {
+              dot.addEventListener('click', function () {
+                goTo(n);
+              });
+            })(i);
+            dotsWrap.appendChild(dot);
+          }
+        }
+
+        function update(animate) {
+          if (!track || !slides.length) return;
+          var m = slideMetrics();
+          var offset = m.viewportW / 2 - m.slideW / 2 - index * m.step;
+          track.style.transition = animate === false ? 'none' : '';
+          track.style.transform = 'translateX(' + offset + 'px)';
+          setClasses();
+          renderDots();
+          slides.forEach(function (slide, i) {
+            slide.setAttribute('aria-hidden', i === index ? 'false' : 'true');
+          });
+        }
+
+        function goTo(i, animate) {
+          index = (i + count) % count;
+          update(animate);
+        }
+
+        function next() {
+          goTo(index + 1);
+        }
+        function prev() {
+          goTo(index - 1);
+        }
+
+        function startAutoplay() {
+          stopAutoplay();
+          if (root.dataset.autoplay !== 'true' || count < 2) return;
+          var speed = parseInt(root.dataset.autoplaySpeed, 10) || 5000;
+          autoplayTimer = window.setInterval(next, speed);
+        }
+        function stopAutoplay() {
+          if (autoplayTimer) window.clearInterval(autoplayTimer);
+          autoplayTimer = null;
+        }
+
+        if (prevBtn) prevBtn.addEventListener('click', prev);
+        if (nextBtn) nextBtn.addEventListener('click', next);
+
+        if (viewport) {
+          viewport.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowLeft') prev();
+            if (e.key === 'ArrowRight') next();
+          });
+
+          viewport.addEventListener('pointerdown', function (e) {
+            dragging = true;
+            pointerStartX = e.clientX;
+            track.classList.add('is-dragging');
+            stopAutoplay();
+          });
+          window.addEventListener('pointerup', function (e) {
+            if (!dragging) return;
+            dragging = false;
+            track.classList.remove('is-dragging');
+            var delta = e.clientX - pointerStartX;
+            if (Math.abs(delta) > 40) {
+              if (delta < 0) next();
+              else prev();
+            } else {
+              update(true);
+            }
+            startAutoplay();
+          });
+        }
+
+        if (root.dataset.pauseHover === 'true') {
+          root.addEventListener('mouseenter', stopAutoplay);
+          root.addEventListener('mouseleave', startAutoplay);
+        }
+
+        var resizeTimer;
+        window.addEventListener('resize', function () {
+          window.clearTimeout(resizeTimer);
+          resizeTimer = window.setTimeout(function () {
+            update(false);
+          }, 120);
+        });
+
+        if (window.Shopify && Shopify.designMode) {
+          document.addEventListener('shopify:section:load', function (evt) {
+            if (evt.detail.sectionId === '{{ section.id }}') {
+              slides = track ? [...track.querySelectorAll('[data-ts-slide]')] : [];
+              count = slides.length;
+              update(false);
+              startAutoplay();
+            }
+          });
+        }
+
+        update(false);
+        startAutoplay();
+      })();
+    </script>
+  {% endif %}
+{% endunless %}
+
+{% schema %}
+{
+  "name": "Testimonials slider",
+  "tag": "section",
+  "class": "gh-testimonials-slider",
+  "max_blocks": 24,
+  "settings": [
+    { "type": "checkbox", "id": "section_enabled", "label": "Show section", "default": true },
+    { "type": "header", "content": "Heading" },
+    { "type": "checkbox", "id": "show_heading", "label": "Show heading", "default": true },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "WHAT OUR GUESTS SAY"
+    },
+    { "type": "text", "id": "subheading", "label": "Subheading (optional)" },
+    { "type": "color", "id": "heading_color", "label": "Heading colour", "default": "#B29B33" },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading size mobile",
+      "min": 18,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Heading size desktop",
+      "min": 20,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 28
+    },
+    { "type": "header", "content": "Layout" },
+    { "type": "color", "id": "section_background", "label": "Section background", "default": "#FFFFFF" },
+    {
+      "type": "range",
+      "id": "container_width",
+      "label": "Container max width",
+      "min": 960,
+      "max": 1440,
+      "step": 20,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    { "type": "text", "id": "custom_css_class", "label": "Custom CSS class" },
+    { "type": "header", "content": "Cards" },
+    { "type": "color", "id": "card_background", "label": "Card background", "default": "#FFFFFF" },
+    { "type": "color", "id": "card_text_color", "label": "Card text colour", "default": "#333333" },
+    { "type": "color", "id": "quote_icon_color", "label": "Quote icon colour", "default": "#B29B33" },
+    { "type": "color", "id": "divider_color", "label": "Divider colour", "default": "#B29B33" },
+    { "type": "color", "id": "name_color", "label": "Name colour", "default": "#1F1A14" },
+    { "type": "color", "id": "role_color", "label": "Role colour", "default": "#6B6560" },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card border radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 4
+    },
+    { "type": "checkbox", "id": "card_shadow", "label": "Enable card shadow", "default": true },
+    { "type": "image_picker", "id": "card_texture", "label": "Optional card background texture" },
+    {
+      "type": "range",
+      "id": "center_card_scale",
+      "label": "Center card scale (%)",
+      "min": 100,
+      "max": 115,
+      "step": 1,
+      "unit": "%",
+      "default": 106
+    },
+    {
+      "type": "range",
+      "id": "side_card_opacity",
+      "label": "Side card opacity (%)",
+      "min": 30,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "default": 55
+    },
+    {
+      "type": "range",
+      "id": "visible_desktop",
+      "label": "Visible cards desktop",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "visible_tablet",
+      "label": "Visible cards tablet",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "visible_mobile",
+      "label": "Visible cards mobile",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 1
+    },
+    { "type": "header", "content": "Navigation" },
+    { "type": "checkbox", "id": "show_arrows", "label": "Show arrows", "default": true },
+    { "type": "color", "id": "arrow_color", "label": "Arrow colour", "default": "#B29B33" },
+    { "type": "color", "id": "arrow_hover_color", "label": "Arrow hover colour", "default": "#1A2414" },
+    { "type": "checkbox", "id": "show_dots", "label": "Show pagination dots", "default": true },
+    { "type": "color", "id": "dot_active_color", "label": "Active dot colour", "default": "#B29B33" },
+    { "type": "color", "id": "dot_inactive_color", "label": "Inactive dot colour", "default": "#D8D2C8" },
+    { "type": "checkbox", "id": "enable_autoplay", "label": "Enable autoplay", "default": false },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "Autoplay speed (seconds)",
+      "min": 3,
+      "max": 12,
+      "step": 1,
+      "unit": "s",
+      "default": 6
+    },
+    { "type": "checkbox", "id": "pause_on_hover", "label": "Pause autoplay on hover", "default": true },
+    { "type": "header", "content": "Read more" },
+    { "type": "checkbox", "id": "enable_read_more", "label": "Enable read more on quotes", "default": true },
+    {
+      "type": "range",
+      "id": "read_more_limit",
+      "label": "Read more character limit",
+      "min": 80,
+      "max": 400,
+      "step": 20,
+      "default": 160
+    },
+    { "type": "text", "id": "read_more_text", "label": "Read more label", "default": "Read more" },
+    { "type": "text", "id": "read_less_text", "label": "Read less label", "default": "Read less" },
+    { "type": "color", "id": "read_more_link_color", "label": "Read more link colour", "default": "#B29B33" }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "quote",
+          "label": "Quote",
+          "default": "<p>Thank you so much for the most amazing food and function. We absolutely loved it and think every single person had an incredible time.</p>"
+        },
+        { "type": "text", "id": "name", "label": "Name", "default": "Guest name" },
+        { "type": "text", "id": "role", "label": "Role / subtitle", "default": "Guest" },
+        { "type": "image_picker", "id": "avatar", "label": "Optional avatar" },
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Optional star rating",
+          "min": 0,
+          "max": 5,
+          "step": 1,
+          "default": 0
+        },
+        { "type": "text", "id": "link_label", "label": "Optional link label" },
+        { "type": "url", "id": "link_url", "label": "Optional link URL" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonials slider",
+      "category": "God's Hill",
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "<p>Thank you soooooooooooo much for the most amazing food and function. We absolutely loved it and think every single person had an incredible time.</p>",
+            "name": "Lydia R. Porto",
+            "role": "Operations Lead"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "<p>Please excuse delay with this note of thanks. Your incredibly delicious and beautiful food was appreciated enormously. Everything was perfect!</p>",
+            "name": "Harry K. Baird",
+            "role": "Logistics Manager"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "<p>On behalf of Les and myself, I wanted to say a very, very big thank you for your mammoth effort on Sunday. We were blown away by the service.</p>",
+            "name": "Amira Q.",
+            "role": "Marketing Director"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "<p>We can't thank you enough for all the care, passion and professionalism that you both inject into everything you do.</p>",
+            "name": "Kenji S.",
+            "role": "Product Owner"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

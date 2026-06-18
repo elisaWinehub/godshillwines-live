@@ -1,0 +1,287 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "godshill_page_hero_Wn7dXY": {
+      "type": "godshill-page-hero",
+      "blocks": {
+        "heading_3XjHCD": {
+          "type": "heading",
+          "settings": {
+            "text": "",
+            "use_auto_title": true,
+            "alignment": "left",
+            "font_size_mobile": 32,
+            "font_size_desktop": 48,
+            "font_weight": "500",
+            "text_color": "#ffffff",
+            "max_width_pct": 100
+          }
+        }
+      },
+      "block_order": [
+        "heading_3XjHCD"
+      ],
+      "name": "Godshill page hero",
+      "settings": {
+        "section_enabled": true,
+        "viewport_height_pct": 50,
+        "content_max_width": 1200,
+        "vertical_align": "center",
+        "background_image": "shopify://shop_images/banner-bottles.png",
+        "overlay_color": "#1a2414",
+        "overlay_opacity": 42,
+        "color_scheme": "",
+        "accessibility_label": ""
+      }
+    },
+    "contact_cellar_door": {
+      "type": "contact-cellar-door-feature",
+      "settings": {
+        "section_enabled": true,
+        "section_background": "#ffffff",
+        "container_width": 1200,
+        "padding_top": 72,
+        "padding_bottom": 72,
+        "column_gap": 48,
+        "column_order": "content_left",
+        "eyebrow": "CELLAR DOOR",
+        "eyebrow_color": "#b29b33",
+        "heading": "Scalzi Estate Vineyard& Cantina Scalzi",
+        "heading_color": "#1f1a14",
+        "heading_size_mobile": 28,
+        "heading_size_desktop": 40,
+        "body": "<p>God's Hill \"Cantina Scalzi\" Cellar Door open from Thursday to Sunday from 11am to 5pm. Kitchen open 11am to 4pm We are closed Monday, Tuesday and Wednesday. Open on public holidays from 11am to 5pm.</p><p>Wine Sales can be purchased 7 days a week, please call before coming to collect. We also take other bookings during the week for wine tasting etc please call to book your event in. Call 0412 836 004.</p>",
+        "text_color": "#333333",
+        "show_flourish": true,
+        "flourish_color": "#b29b33",
+        "image": "shopify://shop_images/ChatGPT_Image_May_11_2026_01_21_48_PM.png",
+        "image_aspect_ratio": "landscape",
+        "image_object_position": "center",
+        "custom_css_class": ""
+      }
+    },
+    "contact_form_info": {
+      "type": "contact-form-info",
+      "blocks": {
+        "contact_1": {
+          "type": "contact_item",
+          "settings": {
+            "title": "CELLAR DOOR, GENERAL ENQUIRIES",
+            "icon": "auto",
+            "details": "<p>Phone: 0412 107 926</p>"
+          }
+        },
+        "contact_2": {
+          "type": "contact_item",
+          "settings": {
+            "title": "ENNIA CUCINA",
+            "icon": "auto",
+            "details": "<p>Phone: 0422 588 605</p>"
+          }
+        },
+        "contact_3": {
+          "type": "contact_item",
+          "settings": {
+            "title": "VINEYARD LOCATION",
+            "icon": "auto",
+            "details": "<p>Morphett Road<br>Lyndoch, Barossa Valley SA 5351</p>"
+          }
+        },
+        "contact_4": {
+          "type": "contact_item",
+          "settings": {
+            "title": "POSTAL",
+            "icon": "auto",
+            "details": "<p>PO Box 670 Lyndoch SA 5351</p>"
+          }
+        },
+        "contact_5": {
+          "type": "contact_item",
+          "settings": {
+            "title": "LOOKING FOR ACCOMMODATION?",
+            "icon": "auto",
+            "details": "<p>Villa Scalzi</p>"
+          }
+        }
+      },
+      "block_order": [
+        "contact_1",
+        "contact_2",
+        "contact_3",
+        "contact_4",
+        "contact_5"
+      ],
+      "settings": {
+        "section_enabled": true,
+        "section_background": "#f3ede3",
+        "container_width": 1200,
+        "padding_top": 64,
+        "padding_bottom": 64,
+        "column_gap": 32,
+        "left_panel_background": "#ffffff",
+        "right_panel_background": "#ffffff",
+        "panel_padding": 36,
+        "heading_color": "#b29b33",
+        "text_color": "#1f1a14",
+        "muted_text_color": "#6b6560",
+        "divider_color": "#e0d8cc",
+        "input_border_color": "#d8d2c8",
+        "form_mode": "static",
+        "enable_static_form": true,
+        "custom_form_embed": "",
+        "form_heading": "SEND US A MESSAGE",
+        "submit_label": "SEND MESSAGE",
+        "button_background": "#b29b33",
+        "button_text_color": "#ffffff",
+        "button_hover_background": "#96782a",
+        "button_hover_text_color": "#ffffff",
+        "show_placeholder_notice": false,
+        "placeholder_notice": "Form placeholder only — replace with your preferred Shopify form app embed.",
+        "info_heading": "OTHER WAYS TO REACH US",
+        "custom_css_class": ""
+      }
+    },
+    "contact_team": {
+      "type": "contact-team-grid",
+      "blocks": {
+        "team_1": {
+          "type": "team_card",
+          "settings": {
+            "title": "ASSISTING GENERAL MANAGER",
+            "content": "<p>Edward Scalzi<br>Mobile: 0412 107 926</p><p>OR</p><p>Felice Scalzi<br>Mobile: 0408 808 150</p><p><a href=\"mailto:sales@godshillwines.com\">sales@godshillwines.com</a></p>"
+          }
+        },
+        "team_2": {
+          "type": "team_card",
+          "settings": {
+            "title": "SALES & MARKETING",
+            "content": "<p>Carmine (Charlie) Scalzi</p><p><a href=\"mailto:sales@godshillwines.com\">sales@godshillwines.com</a></p><p>Mobile: 0412 836 004</p><p>Wechat: wxid_aastjjnoaOwsf2</p>"
+          }
+        },
+        "team_3": {
+          "type": "team_card",
+          "settings": {
+            "title": "CELLAR DOOR",
+            "content": "<p>Tristan Massara</p><p><a href=\"mailto:tristanmassara@godshillwines.com\">tristanmassara@godshillwines.com</a></p><p>Mobile: 0422 588 605</p>"
+          }
+        },
+        "team_4": {
+          "type": "team_card",
+          "settings": {
+            "title": "RESTAURANT",
+            "content": "<p>Edward Scalzi</p><p><a href=\"mailto:edward@scalziwines.com\">edward@scalziwines.com</a></p><p>Mobile: 0468 420 883</p>"
+          }
+        },
+        "team_5": {
+          "type": "team_card",
+          "settings": {
+            "title": "EXPORT / IMPORT",
+            "content": "<p>Charlie Scalzi</p><p><a href=\"mailto:charlie@godshillwines.com\">charlie@godshillwines.com</a></p><p>Mobile: 0412 836 004</p><p>International Exports</p><p>John Gallagher</p><p>Mobile: 0418 819 537</p><p>E: john.g@horizoninternational.com.au</p>"
+          }
+        },
+        "team_6": {
+          "type": "team_card",
+          "settings": {
+            "title": "SA SALES",
+            "content": "<p>Tristan Massara</p><p><a href=\"mailto:sales@scalziwines.com\">sales@scalziwines.com</a></p>"
+          }
+        },
+        "team_7": {
+          "type": "team_card",
+          "settings": {
+            "title": "OFFICE ADMIN/ACCOUNTS",
+            "content": "<p>Charlie Scalzi</p><p><a href=\"mailto:charlie@godshillwines.com\">charlie@godshillwines.com</a></p><p>Mobile: 0412 836 004</p>"
+          }
+        },
+        "team_8": {
+          "type": "team_card",
+          "settings": {
+            "title": "EUROPEAN DISTRIBUTOR",
+            "content": "<p>TERROIRS ITALIA</p><p>Claudio Serena</p><p>E: info@terroirsitalia.it</p><p>Phone: +39 366 8249494</p>"
+          }
+        },
+        "team_9": {
+          "type": "team_card",
+          "settings": {
+            "title": "NSW & VIC DISTRIBUTOR",
+            "content": "<p>Il Mercante | Antonio Brunetti</p><p><a href=\"mailto:antonio@ilmercante.com.au\">antonio@ilmercante.com.au</a></p>"
+          }
+        }
+      },
+      "block_order": [
+        "team_1",
+        "team_2",
+        "team_3",
+        "team_4",
+        "team_5",
+        "team_6",
+        "team_7",
+        "team_8",
+        "team_9"
+      ],
+      "settings": {
+        "section_enabled": true,
+        "section_background": "#ffffff",
+        "container_width": 1200,
+        "padding_top": 64,
+        "padding_bottom": 64,
+        "heading": "OUR TEAM",
+        "heading_color": "#b29b33",
+        "heading_size_mobile": 26,
+        "heading_size_desktop": 36,
+        "divider_color": "#b29b33",
+        "columns_desktop": 3,
+        "columns_tablet": 2,
+        "columns_mobile": 1,
+        "grid_gap": 20,
+        "card_background_1": "#ffffff",
+        "card_background_2": "#f3ede3",
+        "card_border_color": "#e8dfd0",
+        "card_hover_border_color": "#b29b33",
+        "card_padding": 28,
+        "card_title_color": "#1f1a14",
+        "text_color": "#333333",
+        "link_color": "#b29b33",
+        "enable_hover_effect": true,
+        "custom_css_class": ""
+      }
+    },
+    "contact_map_qr": {
+      "type": "contact-map-qr",
+      "settings": {
+        "section_enabled": true,
+        "section_background": "#ffffff",
+        "container_width": 1200,
+        "padding_top": 64,
+        "padding_bottom": 80,
+        "column_gap": 24,
+        "column_ratio_qr": 30,
+        "qr_card_background": "#f3ede3",
+        "qr_heading": "SCAN TO FIND US",
+        "qr_text": "Open camera on your phone and scan the QR code for directions to our Cellar Door.",
+        "heading_color": "#b29b33",
+        "text_color": "#333333",
+        "qr_image": "shopify://shop_images/aron-trading.png",
+        "map_embed_html": "<iframe src=\"https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d6567.577887436052!2d138.8797896!3d-34.6094981!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ab9e34ad27abc81%3A0x92cfc5d73adf5941!2sGod's%20Hill%20Wines%20-%20Authentic%20Italian%20Restaurant%2FCellar%20Door!5e0!3m2!1sen!2sph!4v1779771913265!5m2!1sen!2sph\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>",
+        "map_height_desktop": 420,
+        "map_height_mobile": 320,
+        "custom_css_class": ""
+      }
+    }
+  },
+  "order": [
+    "godshill_page_hero_Wn7dXY",
+    "contact_cellar_door",
+    "contact_form_info",
+    "contact_team",
+    "contact_map_qr"
+  ]
+}

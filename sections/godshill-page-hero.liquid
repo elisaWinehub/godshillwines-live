@@ -1,0 +1,774 @@
+{% comment %}
+  Reusable hero banner with reorderable content blocks.
+  Pairs with the custom header overlay on inner pages.
+{% endcomment %}
+{% liquid
+  assign op = section.settings.overlay_opacity | divided_by: 100.0
+  assign vh_pct = section.settings.viewport_height_pct | default: 50
+
+  assign hero_img = section.settings.background_image
+  if hero_img == blank
+    case template.name
+      when 'collection'
+        assign hero_img = collection.image
+      when 'product'
+        assign hero_img = product.featured_image
+      when 'article'
+        assign hero_img = article.image
+    endcase
+  endif
+
+  assign hero_label = section.settings.accessibility_label | strip
+  if hero_label == blank
+    case template.name
+      when 'page'
+        assign hero_label = page.title
+      when 'product'
+        assign hero_label = product.title
+      when 'collection'
+        assign hero_label = collection.title
+      when 'article'
+        assign hero_label = article.title
+      when 'blog'
+        assign hero_label = blog.title
+      else
+        assign hero_label = 'Page hero'
+    endcase
+  endif
+
+  assign heading_used = false
+%}
+
+{% unless section.settings.section_enabled %}
+  <div {{ section.shopify_attributes }} hidden></div>
+{% else %}
+  <div
+    id="GodshillPH-{{ section.id }}"
+    class="godshill-ph-root"
+    data-godshill-page-hero="true"
+    style="--gh-ph-h: {{ vh_pct }}svh; --gh-ph-content-max: {{ section.settings.content_max_width }}px;"
+    {{ section.shopify_attributes }}
+  >
+    <header class="godshill-mcp__hero godshill-ph__hero" aria-label="{{ hero_label | escape }}">
+      <div class="godshill-mcp__hero-media">
+        {% if hero_img != blank %}
+          {{
+            hero_img
+            | image_url: width: 2400
+            | image_tag:
+              loading: 'eager',
+              fetchpriority: 'high',
+              widths: '720,1100,1600,2000,2400',
+              sizes: '100vw',
+              class: 'godshill-mcp__hero-img'
+          }}
+        {% else %}
+          <div class="godshill-mcp__hero-placeholder" role="presentation" aria-hidden="true"></div>
+        {% endif %}
+        <div
+          class="godshill-mcp__hero-overlay"
+          style="background: {{ section.settings.overlay_color }}; opacity: {{ op }};"
+        ></div>
+
+        <div class="godshill-ph__inner color-{{ section.settings.color_scheme }} godshill-ph__inner--v-{{ section.settings.vertical_align }}">
+          <div class="godshill-ph__stack">
+            {% if section.blocks.size == 0 %}
+              <div class="godshill-ph__empty">
+                Add eyebrow, logo, heading, divider, or text blocks in the theme editor.
+              </div>
+            {% endif %}
+
+            {% for block in section.blocks %}
+              {% case block.type %}
+                {% when 'eyebrow' %}
+                  {% if block.settings.text != blank %}
+                    <p
+                      class="gh-ph-block gh-ph-block--eyebrow gh-ph-block--align-{{ block.settings.alignment }}"
+                      style="
+                        --gh-ph-size-m: {{ block.settings.font_size_mobile }}px;
+                        --gh-ph-size-d: {{ block.settings.font_size_desktop }}px;
+                        --gh-ph-fw: {{ block.settings.font_weight }};
+                        --gh-ph-color: {{ block.settings.text_color }};
+                        --gh-ph-max: {{ block.settings.max_width_pct }}%;
+                      "
+                      {{ block.shopify_attributes }}
+                    >
+                      {{ block.settings.text | escape }}
+                    </p>
+                  {% endif %}
+
+                {% when 'logo' %}
+                  {% if block.settings.image != blank %}
+                    <div
+                      class="gh-ph-block gh-ph-block--logo gh-ph-block--align-{{ block.settings.alignment }}"
+                      style="--gh-ph-logo-w: {{ block.settings.max_width_px }}px;"
+                      {{ block.shopify_attributes }}
+                    >
+                      {% if block.settings.link != blank %}
+                        <a href="{{ block.settings.link }}" class="gh-ph-block__logo-link">
+                      {% endif %}
+                      {{
+                        block.settings.image
+                        | image_url: width: 800
+                        | image_tag:
+                          loading: 'lazy',
+                          widths: '120,240,400,600,800',
+                          class: 'gh-ph-block__logo-img',
+                          alt: block.settings.image.alt | default: shop.name
+                      }}
+                      {% if block.settings.link != blank %}
+                        </a>
+                      {% endif %}
+                    </div>
+                  {% endif %}
+
+                {% when 'heading' %}
+                  {% liquid
+                    assign block_heading = block.settings.text | strip
+                    if block_heading == blank and block.settings.use_auto_title
+                      case template.name
+                        when 'page'
+                          assign block_heading = page.title
+                        when 'product'
+                          assign block_heading = product.title
+                        when 'collection'
+                          assign block_heading = collection.title
+                        when 'article'
+                          assign block_heading = article.title
+                        when 'blog'
+                          assign block_heading = blog.title
+                        when 'search'
+                          assign block_heading = 'Search'
+                        when 'list-collections'
+                          assign block_heading = 'Collections'
+                      endcase
+                    endif
+                  %}
+                  {% if block_heading != blank %}
+                    {% if heading_used == false %}
+                      {% assign heading_tag = 'h1' %}
+                      {% assign heading_used = true %}
+                    {% else %}
+                      {% assign heading_tag = 'h2' %}
+                    {% endif %}
+                    <{{ heading_tag }}
+                      class="gh-ph-block gh-ph-block--heading gh-ph-block--align-{{ block.settings.alignment }}"
+                      style="
+                        --gh-ph-size-m: {{ block.settings.font_size_mobile }}px;
+                        --gh-ph-size-d: {{ block.settings.font_size_desktop }}px;
+                        --gh-ph-fw: {{ block.settings.font_weight }};
+                        --gh-ph-color: {{ block.settings.text_color }};
+                        --gh-ph-max: {{ block.settings.max_width_pct }}%;
+                      "
+                      {{ block.shopify_attributes }}
+                    >
+                      {{ block_heading | escape }}
+                    </{{ heading_tag }}>
+                  {% endif %}
+
+                {% when 'divider' %}
+                  <div
+                    class="gh-ph-block gh-ph-block--divider gh-ph-block--align-{{ block.settings.alignment }}"
+                    style="
+                      --gh-ph-div-color: {{ block.settings.line_color }};
+                      --gh-ph-div-w: {{ block.settings.line_width_px }}px;
+                      --gh-ph-div-h: {{ block.settings.line_thickness_px }}px;
+                    "
+                    role="presentation"
+                    aria-hidden="true"
+                    {{ block.shopify_attributes }}
+                  >
+                    <span class="gh-ph-block__divider-line"></span>
+                  </div>
+
+                {% when 'text' %}
+                  {% if block.settings.text != blank %}
+                    <div
+                      class="gh-ph-block gh-ph-block--text rte gh-ph-block--align-{{ block.settings.alignment }}"
+                      style="
+                        --gh-ph-size-m: {{ block.settings.font_size_mobile }}px;
+                        --gh-ph-size-d: {{ block.settings.font_size_desktop }}px;
+                        --gh-ph-fw: {{ block.settings.font_weight }};
+                        --gh-ph-color: {{ block.settings.text_color }};
+                        --gh-ph-max: {{ block.settings.max_width_pct }}%;
+                      "
+                      {{ block.shopify_attributes }}
+                    >
+                      {{ block.settings.text }}
+                    </div>
+                  {% endif %}
+              {% endcase %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </header>
+  </div>
+
+  <style>
+    #shopify-section-{{ section.id }} {
+      box-sizing: border-box;
+      width: 100vw !important;
+      max-width: 100vw !important;
+      margin-left: calc(50% - 50vw) !important;
+      margin-right: calc(50% - 50vw) !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      overflow-x: clip;
+      position: relative;
+      z-index: 0;
+    }
+
+    #GodshillPH-{{ section.id }} .godshill-ph__hero {
+      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
+      width: 100vw;
+      max-width: 100vw;
+      margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
+      min-height: var(--gh-ph-h, 50svh);
+      height: var(--gh-ph-h, 50svh);
+      z-index: 1;
+    }
+
+    #GodshillPH-{{ section.id }} .godshill-mcp__hero-media {
+      position: relative;
+      min-height: 100%;
+      height: 100%;
+      display: grid;
+      place-items: stretch;
+    }
+
+    #GodshillPH-{{ section.id }} .godshill-mcp__hero-img,
+    #GodshillPH-{{ section.id }} .godshill-mcp__hero-placeholder {
+      width: 100%;
+      height: 100%;
+      min-height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    #GodshillPH-{{ section.id }} .godshill-mcp__hero-placeholder {
+      background: linear-gradient(145deg, #f3f2ef 0%, #dfd9cc 48%, #b8aa8e 100%);
+    }
+
+    #GodshillPH-{{ section.id }} .godshill-mcp__hero-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    #GodshillPH-{{ section.id }} .godshill-ph__inner {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      padding: clamp(24px, 6vw, 90px);
+      z-index: 1;
+    }
+
+    #GodshillPH-{{ section.id }} .godshill-ph__inner--v-center {
+      justify-content: center;
+    }
+    #GodshillPH-{{ section.id }} .godshill-ph__inner--v-top {
+      justify-content: flex-start;
+    }
+    #GodshillPH-{{ section.id }} .godshill-ph__inner--v-bottom {
+      justify-content: flex-end;
+    }
+
+    body:has([data-gh-custom-header][data-gh-overlay='true']) #GodshillPH-{{ section.id }} .godshill-ph__inner {
+      padding-top: calc(var(--header-height, 80px) + clamp(16px, 4vw, 48px));
+    }
+
+    #GodshillPH-{{ section.id }} .godshill-ph__stack {
+      width: min(100%, var(--gh-ph-content-max, 720px));
+      margin-inline: auto;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(10px, 2vw, 18px);
+    }
+
+    #GodshillPH-{{ section.id }} .godshill-ph__empty {
+      text-align: center;
+      font-size: 0.875rem;
+      opacity: 0.85;
+      color: inherit;
+    }
+
+    #GodshillPH-{{ section.id }} .gh-ph-block {
+      width: 100%;
+      max-width: min(var(--gh-ph-max, 100%), 100%);
+    }
+
+    #GodshillPH-{{ section.id }} .gh-ph-block--align-left {
+      align-self: flex-start;
+      text-align: left;
+    }
+    #GodshillPH-{{ section.id }} .gh-ph-block--align-center {
+      align-self: center;
+      text-align: center;
+    }
+    #GodshillPH-{{ section.id }} .gh-ph-block--align-right {
+      align-self: flex-end;
+      text-align: right;
+    }
+
+    #GodshillPH-{{ section.id }} .gh-ph-block--eyebrow {
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: clamp(var(--gh-ph-size-m, 11px), 1.6vw, var(--gh-ph-size-d, 12px));
+      font-weight: var(--gh-ph-fw, 700);
+      color: var(--gh-ph-color, currentColor);
+      line-height: 1.35;
+    }
+
+    #GodshillPH-{{ section.id }} .gh-ph-block--heading {
+      margin: 0;
+      font-family: Georgia, 'Times New Roman', serif;
+      letter-spacing: 0.03em;
+      text-wrap: balance;
+      font-size: clamp(var(--gh-ph-size-m, 32px), 4.5vw, var(--gh-ph-size-d, 48px));
+      font-weight: var(--gh-ph-fw, 500);
+      color: var(--gh-ph-color, currentColor);
+      line-height: 1.08;
+    }
+
+    #GodshillPH-{{ section.id }} .gh-ph-block--text {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(var(--gh-ph-size-m, 15px), 2vw, var(--gh-ph-size-d, 18px));
+      font-weight: var(--gh-ph-fw, 400);
+      color: var(--gh-ph-color, currentColor);
+      line-height: 1.55;
+    }
+
+    #GodshillPH-{{ section.id }} .gh-ph-block--text :is(p, ul, ol) {
+      margin: 0;
+    }
+    #GodshillPH-{{ section.id }} .gh-ph-block--text :is(p + p, p + ul, p + ol) {
+      margin-top: 0.75em;
+    }
+
+    #GodshillPH-{{ section.id }} .gh-ph-block--logo .gh-ph-block__logo-link {
+      display: inline-block;
+      line-height: 0;
+    }
+    #GodshillPH-{{ section.id }} .gh-ph-block__logo-img {
+      width: min(100%, var(--gh-ph-logo-w, 160px));
+      height: auto;
+      display: block;
+    }
+
+    #GodshillPH-{{ section.id }} .gh-ph-block--divider {
+      display: flex;
+      width: 100%;
+    }
+    #GodshillPH-{{ section.id }} .gh-ph-block--divider.gh-ph-block--align-left {
+      justify-content: flex-start;
+    }
+    #GodshillPH-{{ section.id }} .gh-ph-block--divider.gh-ph-block--align-center {
+      justify-content: center;
+    }
+    #GodshillPH-{{ section.id }} .gh-ph-block--divider.gh-ph-block--align-right {
+      justify-content: flex-end;
+    }
+    #GodshillPH-{{ section.id }} .gh-ph-block__divider-line {
+      display: block;
+      width: var(--gh-ph-div-w, 48px);
+      height: var(--gh-ph-div-h, 2px);
+      background: var(--gh-ph-div-color, #a67b22);
+      border-radius: 1px;
+    }
+  </style>
+{% endunless %}
+
+{% schema %}
+{
+  "name": "Godshill page hero",
+  "tag": "section",
+  "class": "godshill-page-hero-section",
+  "max_blocks": 16,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Drag blocks to reorder eyebrow, logo, heading, divider, and text. Works with the header overlay on inner pages."
+    },
+    { "type": "checkbox", "id": "section_enabled", "label": "Show section", "default": true },
+    {
+      "type": "range",
+      "id": "viewport_height_pct",
+      "label": "Hero height (% viewport)",
+      "min": 30,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content max width",
+      "min": 480,
+      "max": 1200,
+      "step": 20,
+      "unit": "px",
+      "default": 720
+    },
+    {
+      "type": "select",
+      "id": "vertical_align",
+      "label": "Content vertical position",
+      "options": [
+        { "value": "center", "label": "Center" },
+        { "value": "top", "label": "Top" },
+        { "value": "bottom", "label": "Bottom" }
+      ],
+      "default": "center"
+    },
+    { "type": "header", "content": "Background" },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image",
+      "info": "Falls back to collection, product, or article image when empty."
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#1a2414"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 90,
+      "step": 2,
+      "unit": "%",
+      "default": 42
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Fallback text scheme",
+      "default": "scheme-6"
+    },
+    {
+      "type": "text",
+      "id": "accessibility_label",
+      "label": "Accessibility label",
+      "info": "Optional. Defaults to the page or resource title."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "eyebrow",
+      "name": "Eyebrow",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Text", "default": "Our story" },
+        {
+          "type": "select",
+          "id": "alignment",
+          "label": "Alignment",
+          "options": [
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "range",
+          "id": "font_size_mobile",
+          "label": "Font size mobile",
+          "min": 9,
+          "max": 20,
+          "step": 1,
+          "unit": "px",
+          "default": 11
+        },
+        {
+          "type": "range",
+          "id": "font_size_desktop",
+          "label": "Font size desktop",
+          "min": 9,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "default": 12
+        },
+        {
+          "type": "select",
+          "id": "font_weight",
+          "label": "Font weight",
+          "options": [
+            { "value": "400", "label": "Regular" },
+            { "value": "500", "label": "Medium" },
+            { "value": "600", "label": "Semibold" },
+            { "value": "700", "label": "Bold" }
+          ],
+          "default": "700"
+        },
+        { "type": "color", "id": "text_color", "label": "Text colour", "default": "#c49a52" },
+        {
+          "type": "range",
+          "id": "max_width_pct",
+          "label": "Max width",
+          "min": 40,
+          "max": 100,
+          "step": 5,
+          "unit": "%",
+          "default": 100
+        }
+      ]
+    },
+    {
+      "type": "logo",
+      "name": "Logo / image",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "url", "id": "link", "label": "Optional link" },
+        {
+          "type": "range",
+          "id": "max_width_px",
+          "label": "Max width",
+          "min": 60,
+          "max": 360,
+          "step": 4,
+          "unit": "px",
+          "default": 160
+        },
+        {
+          "type": "select",
+          "id": "alignment",
+          "label": "Alignment",
+          "options": [
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "center"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "name": "Heading",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Heading",
+          "info": "Leave blank and enable auto title to use the page or resource title."
+        },
+        {
+          "type": "checkbox",
+          "id": "use_auto_title",
+          "label": "Use page title when empty",
+          "default": true
+        },
+        {
+          "type": "select",
+          "id": "alignment",
+          "label": "Alignment",
+          "options": [
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "range",
+          "id": "font_size_mobile",
+          "label": "Font size mobile",
+          "min": 24,
+          "max": 56,
+          "step": 2,
+          "unit": "px",
+          "default": 32
+        },
+        {
+          "type": "range",
+          "id": "font_size_desktop",
+          "label": "Font size desktop",
+          "min": 32,
+          "max": 88,
+          "step": 2,
+          "unit": "px",
+          "default": 48
+        },
+        {
+          "type": "select",
+          "id": "font_weight",
+          "label": "Font weight",
+          "options": [
+            { "value": "400", "label": "Regular" },
+            { "value": "500", "label": "Medium" },
+            { "value": "600", "label": "Semibold" },
+            { "value": "700", "label": "Bold" }
+          ],
+          "default": "500"
+        },
+        { "type": "color", "id": "text_color", "label": "Text colour", "default": "#ffffff" },
+        {
+          "type": "range",
+          "id": "max_width_pct",
+          "label": "Max width",
+          "min": 40,
+          "max": 100,
+          "step": 5,
+          "unit": "%",
+          "default": 100
+        }
+      ]
+    },
+    {
+      "type": "divider",
+      "name": "Divider line",
+      "settings": [
+        {
+          "type": "select",
+          "id": "alignment",
+          "label": "Alignment",
+          "options": [
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "center"
+        },
+        { "type": "color", "id": "line_color", "label": "Line colour", "default": "#a67b22" },
+        {
+          "type": "range",
+          "id": "line_width_px",
+          "label": "Line width",
+          "min": 24,
+          "max": 240,
+          "step": 4,
+          "unit": "px",
+          "default": 48
+        },
+        {
+          "type": "range",
+          "id": "line_thickness_px",
+          "label": "Line thickness",
+          "min": 1,
+          "max": 8,
+          "step": 1,
+          "unit": "px",
+          "default": 2
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text copy",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Add supporting copy for this page hero.</p>"
+        },
+        {
+          "type": "select",
+          "id": "alignment",
+          "label": "Alignment",
+          "options": [
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "range",
+          "id": "font_size_mobile",
+          "label": "Font size mobile",
+          "min": 12,
+          "max": 28,
+          "step": 1,
+          "unit": "px",
+          "default": 15
+        },
+        {
+          "type": "range",
+          "id": "font_size_desktop",
+          "label": "Font size desktop",
+          "min": 12,
+          "max": 32,
+          "step": 1,
+          "unit": "px",
+          "default": 18
+        },
+        {
+          "type": "select",
+          "id": "font_weight",
+          "label": "Font weight",
+          "options": [
+            { "value": "400", "label": "Regular" },
+            { "value": "500", "label": "Medium" },
+            { "value": "600", "label": "Semibold" },
+            { "value": "700", "label": "Bold" }
+          ],
+          "default": "400"
+        },
+        { "type": "color", "id": "text_color", "label": "Text colour", "default": "#f0ebe4" },
+        {
+          "type": "range",
+          "id": "max_width_pct",
+          "label": "Max width",
+          "min": 40,
+          "max": 100,
+          "step": 5,
+          "unit": "%",
+          "default": 90
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Godshill page hero",
+      "blocks": [
+        {
+          "type": "eyebrow",
+          "settings": {
+            "text": "God's Hill Wines",
+            "alignment": "center",
+            "text_color": "#c49a52"
+          }
+        },
+        {
+          "type": "heading",
+          "settings": {
+            "use_auto_title": true,
+            "alignment": "center",
+            "text_color": "#ffffff"
+          }
+        },
+        {
+          "type": "divider",
+          "settings": {
+            "alignment": "center",
+            "line_color": "#a67b22",
+            "line_width_px": 48,
+            "line_thickness_px": 2
+          }
+        },
+        {
+          "type": "text",
+          "settings": {
+            "alignment": "center",
+            "text_color": "#f0ebe4"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

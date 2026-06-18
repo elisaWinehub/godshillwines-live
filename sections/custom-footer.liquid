@@ -1,0 +1,633 @@
+{% comment %}
+  Multi-column configurable footer matching Godshill cellar-door mockup.
+  Use with Theme ▸ Godshill ▸ hide Horizon header/footer on homepage when placing on index.
+{% endcomment %}
+{% unless section.settings.section_enabled %}
+  <div {{ section.shopify_attributes }} hidden></div>
+{% else %}
+  <footer
+    id="GhFoot-{{ section.id }}"
+    class="gh-ft {{ section.settings.custom_css }}"
+    {{ section.shopify_attributes }}
+    style="
+      --bg: {{ section.settings.bg_color }};
+      --txt: {{ section.settings.text_color }};
+      --head: {{ section.settings.heading_color }};
+      --link: {{ section.settings.link_color }};
+      --gold: {{ section.settings.accent_color }};
+      --pt: {{ section.settings.padding_top }}px;
+      --pb: {{ section.settings.padding_bottom }}px;
+      --mw: {{ section.settings.footer_max_width }}px;
+      --gap: {{ section.settings.column_gap }}px;
+      --logo-w: {{ section.settings.logo_max_width }}px;
+    "
+  >
+    <div class="gh-ft__main">
+      <div class="gh-ft__cols gh-ft__cols--{{ section.settings.columns_desktop }}">
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'brand' %}
+              <div
+                class="gh-ft__col gh-ft__col--brand"
+                style="--brand-logo-w: {{ block.settings.logo_width | default: section.settings.logo_max_width }}px;"
+                {{ block.shopify_attributes }}
+              >
+                {% if block.settings.logo != blank %}
+                  {{
+                    block.settings.logo
+                    | image_url: width: 500
+                    | image_tag: loading: 'lazy', class: 'gh-ft__logo-img', widths: '120,180,240,320,500', alt: shop.name
+                  }}
+                {% elsif block.settings.show_logo_fallback %}
+                  <div class="gh-ft__crest" aria-hidden="true"></div>
+                {% endif %}
+                {% if block.settings.tagline != blank %}
+                  <div class="gh-ft__tag rte">{{ block.settings.tagline }}</div>
+                {% endif %}
+                {% if block.settings.instagram_url != blank
+                  or block.settings.facebook_url != blank
+                  or block.settings.tripadvisor_url != blank
+                %}
+                  <div class="gh-ft__brand-soc-row">
+                    {% if block.settings.facebook_url != blank %}
+                      <a class="gh-ft__brand-soc" href="{{ block.settings.facebook_url }}" target="_blank" rel="noopener" aria-label="Facebook">f</a>
+                    {% endif %}
+                    {% if block.settings.instagram_url != blank %}
+                      <a class="gh-ft__brand-soc" href="{{ block.settings.instagram_url }}" target="_blank" rel="noopener" aria-label="Instagram">◎</a>
+                    {% endif %}
+                    {% if block.settings.tripadvisor_url != blank %}
+                      <a class="gh-ft__brand-soc" href="{{ block.settings.tripadvisor_url }}" target="_blank" rel="noopener" aria-label="TripAdvisor">ⓣ</a>
+                    {% endif %}
+                  </div>
+                {% endif %}
+              </div>
+            {% when 'menu_links' %}
+              {% if block.settings.menu != blank %}
+                <div class="gh-ft__col" {{ block.shopify_attributes }}>
+                  {% if block.settings.heading != blank %}
+                    <h4 class="gh-ft__col-title">{{ block.settings.heading }}</h4>
+                  {% endif %}
+                  <nav aria-label="{{ block.settings.heading | default: 'Footer' }}">
+                    {% for link in block.settings.menu.links %}
+                      <a class="gh-ft__link" href="{{ link.url }}">{{ link.title }}</a>
+                    {% endfor %}
+                  </nav>
+                </div>
+              {% endif %}
+            {% when 'contact' %}
+              <div class="gh-ft__col" {{ block.shopify_attributes }}>
+                {% if block.settings.heading != blank %}
+                  <h4 class="gh-ft__col-title">{{ block.settings.heading }}</h4>
+                {% endif %}
+                {% if block.settings.body != blank %}
+                  <div class="gh-ft__body rte">{{ block.settings.body }}</div>
+                {% endif %}
+              </div>
+            {% when 'rich_text' %}
+              <div class="gh-ft__col" {{ block.shopify_attributes }}>
+                {% if block.settings.heading != blank %}
+                  <h4 class="gh-ft__col-title">{{ block.settings.heading }}</h4>
+                {% endif %}
+                {% if block.settings.body != blank %}
+                  <div class="gh-ft__body rte">{{ block.settings.body }}</div>
+                {% endif %}
+              </div>
+            {% when 'newsletter' %}
+              <div class="gh-ft__col" {{ block.shopify_attributes }}>
+                {% if block.settings.heading != blank %}
+                  <h4 class="gh-ft__col-title">{{ block.settings.heading }}</h4>
+                {% endif %}
+                {% if block.settings.intro != blank %}
+                  <div class="gh-ft__body rte">{{ block.settings.intro }}</div>
+                {% endif %}
+                {% if block.settings.enable_custom_newsletter_embed and block.settings.newsletter_embed_html != blank %}
+                  <div class="footer-newsletter-embed gh-ft__newsletter-embed">
+                    {{ block.settings.newsletter_embed_html }}
+                  </div>
+                {% elsif block.settings.show_static_newsletter %}
+                  <form
+                    class="footer-newsletter-static gh-ft__newsletter-static"
+                    data-static-newsletter
+                    novalidate
+                    action="#"
+                    method="post"
+                  >
+                    <div class="gh-ft__newsletter">
+                      <label class="visually-hidden" for="GhFootEmail-{{ block.id }}">
+                        {{ block.settings.newsletter_placeholder | default: 'Enter your email' }}
+                      </label>
+                      <input
+                        id="GhFootEmail-{{ block.id }}"
+                        type="email"
+                        name="email"
+                        required
+                        placeholder="{{ block.settings.newsletter_placeholder | default: 'Enter your email' }}"
+                        autocomplete="email"
+                      >
+                      <button type="submit" class="gh-ft__nw-btn" aria-label="{{ block.settings.newsletter_button_label | default: 'Subscribe' }}">
+                        {{ block.settings.newsletter_button_label | default: '→' }}
+                      </button>
+                    </div>
+                  </form>
+                {% endif %}
+              </div>
+            {% when 'social' %}
+              <div class="gh-ft__col gh-ft__social" {{ block.shopify_attributes }}>
+                {% if block.settings.heading != blank %}
+                  <h4 class="gh-ft__col-title">{{ block.settings.heading }}</h4>
+                {% endif %}
+                <div class="gh-ft__social-row">
+                  {% if block.settings.facebook_url != blank %}
+                    <a class="gh-ft__soc-item" href="{{ block.settings.facebook_url }}" target="_blank" rel="noopener" aria-label="Facebook">f</a>
+                  {% endif %}
+                  {% if block.settings.instagram_url != blank %}
+                    <a class="gh-ft__soc-item" href="{{ block.settings.instagram_url }}" target="_blank" rel="noopener" aria-label="Instagram">◎</a>
+                  {% endif %}
+                  {% if block.settings.email_address != blank %}
+                    <a class="gh-ft__soc-item" href="mailto:{{ block.settings.email_address }}" aria-label="Email">✉</a>
+                  {% endif %}
+                </div>
+              </div>
+            {% when '@app' %}
+              <div class="gh-ft__col gh-ft__col--app" {{ block.shopify_attributes }}>
+                {% render block %}
+              </div>
+          {% endcase %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="gh-ft__bottom" style="background: {{ section.settings.bottom_bar_bg }};">
+      <div class="gh-ft__bottom-inner">
+        {% if section.settings.bottom_left_html != blank %}
+          <div class="gh-ft__bottom-left rte">{{ section.settings.bottom_left_html }}</div>
+        {% endif %}
+        <div class="gh-ft__bottom-links">
+          {% if section.settings.privacy_policy_url != blank %}
+            <a href="{{ section.settings.privacy_policy_url }}">{{ section.settings.privacy_label }}</a>
+          {% endif %}
+          {% if section.settings.terms_conditions_url != blank %}
+            <a href="{{ section.settings.terms_conditions_url }}">{{ section.settings.terms_label }}</a>
+          {% endif %}
+        </div>
+        {% if section.settings.site_credit_html != blank %}
+          <div class="gh-ft__credit rte">{{ section.settings.site_credit_html }}</div>
+        {% endif %}
+      </div>
+    </div>
+  </footer>
+
+  <style>
+    #GhFoot-{{ section.id }}.gh-ft {
+      background: var(--bg);
+      color: var(--txt);
+      padding-top: var(--pt);
+    }
+    #GhFoot-{{ section.id }} .gh-ft__main {
+      width: min(100%, var(--mw));
+      margin: 0 auto;
+      padding: 0 clamp(16px, 4vw, 28px);
+    }
+    #GhFoot-{{ section.id }} .gh-ft__cols {
+      display: grid;
+      gap: var(--gap);
+      padding-bottom: var(--pb);
+    }
+    @media screen and (min-width: 750px) {
+      #GhFoot-{{ section.id }} .gh-ft__cols--1 {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      #GhFoot-{{ section.id }} .gh-ft__cols--2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      #GhFoot-{{ section.id }} .gh-ft__cols--3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      #GhFoot-{{ section.id }} .gh-ft__cols--4 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+    @media screen and (max-width: 749px) {
+      #GhFoot-{{ section.id }} .gh-ft__cols {
+        grid-template-columns: 1fr;
+      }
+    }
+    #GhFoot-{{ section.id }} .gh-ft__col-title {
+      color: var(--head);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 13px;
+      margin: 0 0 16px;
+    }
+    #GhFoot-{{ section.id }} .gh-ft__link {
+      display: block;
+      color: var(--link);
+      text-decoration: none;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    #GhFoot-{{ section.id }} .gh-ft__link:hover {
+      color: var(--gold);
+      text-decoration: underline;
+    }
+    #GhFoot-{{ section.id }} .gh-ft__body,
+    #GhFoot-{{ section.id }} .gh-ft__tag {
+      font-size: 14px;
+      line-height: 1.58;
+      color: var(--link);
+    }
+    #GhFoot-{{ section.id }} .gh-ft__logo-img {
+      max-width: min(var(--brand-logo-w, var(--logo-w)), 250px);
+      width: 100%;
+      height: auto;
+      margin-bottom: 16px;
+      display: block;
+    }
+    #GhFoot-{{ section.id }} .gh-ft__crest {
+      width: {{ section.settings.logo_max_width }}px;
+      max-width: min(92px, 100%);
+      aspect-ratio: 1;
+      border-radius: 999px;
+      background: radial-gradient(#111827, #0b1220);
+      border: 1px solid var(--gold);
+      margin-bottom: 16px;
+    }
+    #GhFoot-{{ section.id }} .gh-ft__brand-soc-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    #GhFoot-{{ section.id }} .gh-ft__brand-soc {
+      color: var(--link);
+      text-decoration: none;
+      font-size: 14px;
+      line-height: 1;
+    }
+    #GhFoot-{{ section.id }} .gh-ft__brand-soc:hover {
+      color: var(--gold);
+    }
+    #GhFoot-{{ section.id }} .gh-ft__newsletter-static,
+    #GhFoot-{{ section.id }} .gh-ft__newsletter-embed {
+      margin-top: 17px;
+    }
+    #GhFoot-{{ section.id }} .gh-ft__newsletter {
+      display: flex;
+    }
+    #GhFoot-{{ section.id }} .gh-ft__newsletter input {
+      flex: 1;
+      min-width: 0;
+      padding: 14px;
+      border: 0;
+      font-size: 14px;
+    }
+    #GhFoot-{{ section.id }} .gh-ft__nw-btn {
+      flex-shrink: 0;
+      min-width: 50px;
+      padding: 0 14px;
+      border: 0;
+      background: var(--gold);
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #GhFoot-{{ section.id }} .footer-newsletter-embed :is(input, button) {
+      max-width: 100%;
+    }
+    #GhFoot-{{ section.id }} .gh-ft__soc-item {
+      color: var(--link);
+      text-decoration: none;
+      margin-right: 14px;
+      font-size: 14px;
+    }
+    #GhFoot-{{ section.id }} .gh-ft__bottom {
+      border-top: 1px solid rgb(255 255 255 / 0.12);
+      padding: 18px 0;
+    }
+    #GhFoot-{{ section.id }} .gh-ft__bottom-inner {
+      width: min(100%, var(--mw));
+      margin: 0 auto;
+      padding: 0 clamp(16px, 4vw, 28px);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 12px;
+      color: {{ section.settings.bottom_text_color }};
+    }
+    #GhFoot-{{ section.id }} .gh-ft__bottom-links a {
+      color: var(--gold);
+      text-decoration: none;
+      margin-left: 14px;
+    }
+    #GhFoot-{{ section.id }} .visually-hidden {
+      position: absolute !important;
+      height: 1px;
+      width: 1px;
+      clip: rect(0 0 0 0);
+      overflow: hidden;
+    }
+  </style>
+{% endunless %}
+
+{% schema %}
+{
+  "name": "God's Hill custom footer",
+  "tag": "section",
+  "class": "godshill-custom-footer",
+  "max_blocks": 12,
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Logo / tagline",
+      "limit": 1,
+      "settings": [
+        { "type": "image_picker", "id": "logo", "label": "Logo" },
+        {
+          "type": "range",
+          "id": "logo_width",
+          "min": 60,
+          "max": 250,
+          "step": 2,
+          "unit": "px",
+          "label": "Logo width",
+          "default": 120
+        },
+        {
+          "type": "checkbox",
+          "id": "show_logo_fallback",
+          "label": "Placeholder crest if no logo",
+          "default": true
+        },
+        {
+          "type": "richtext",
+          "id": "tagline",
+          "label": "Tagline",
+          "default": "<p>Family owned. Barossa made.<br />Shared with the world.</p>"
+        },
+        { "type": "url", "id": "facebook_url", "label": "Facebook URL (below tagline)" },
+        { "type": "url", "id": "instagram_url", "label": "Instagram URL (below tagline)" },
+        { "type": "url", "id": "tripadvisor_url", "label": "TripAdvisor URL" }
+      ]
+    },
+    {
+      "type": "menu_links",
+      "name": "Menu links",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Column heading", "default": "Quick Links" },
+        { "type": "link_list", "id": "menu", "label": "Menu" }
+      ]
+    },
+    {
+      "type": "contact",
+      "name": "Contact / RTE",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Cellar Door" },
+        {
+          "type": "richtext",
+          "id": "body",
+          "label": "Details",
+          "default": "<p>267 Torque Park Road<br />Light Pass SA 5355</p><p>(08) 8563 8700</p><p><a href=\"mailto:wine@godshill.com.au\">wine@godshill.com.au</a></p><p>Open Thu - Sun, 11am - 5pm</p>"
+        }
+      ]
+    },
+    {
+      "type": "rich_text",
+      "name": "Rich text column",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading" },
+        { "type": "richtext", "id": "body", "label": "Copy" }
+      ]
+    },
+    {
+      "type": "newsletter",
+      "name": "Newsletter signup",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Use the static form below, or enable custom embed to paste Klaviyo, Omnisend, Shopify Forms, or other app HTML."
+        },
+        { "type": "text", "id": "heading", "label": "Newsletter heading", "default": "Stay In The Loop" },
+        {
+          "type": "richtext",
+          "id": "intro",
+          "label": "Newsletter text",
+          "default": "<p>Subscribe for new releases, events & offers.</p>"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_static_newsletter",
+          "label": "Show static newsletter form",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "newsletter_placeholder",
+          "label": "Email placeholder",
+          "default": "Enter your email"
+        },
+        {
+          "type": "text",
+          "id": "newsletter_button_label",
+          "label": "Button label",
+          "default": "→"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_custom_newsletter_embed",
+          "label": "Enable custom embed",
+          "default": false,
+          "info": "When enabled and HTML is provided, the static form is hidden."
+        },
+        {
+          "type": "html",
+          "id": "newsletter_embed_html",
+          "label": "Custom embed HTML",
+          "info": "Paste Klaviyo, Omnisend, or app embed code here."
+        }
+      ]
+    },
+    {
+      "type": "social",
+      "name": "Social row",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading (optional)" },
+        { "type": "url", "id": "facebook_url", "label": "Facebook URL" },
+        { "type": "url", "id": "instagram_url", "label": "Instagram URL" },
+        { "type": "text", "id": "email_address", "label": "Email address" }
+      ]
+    },
+    { "type": "@app" }
+  ],
+  "settings": [
+    { "type": "checkbox", "id": "section_enabled", "label": "Show footer section", "default": true },
+
+    {
+      "type": "paragraph",
+      "content": "Theme ▸ Godshill - hide Horizon footer when using this on the homepage to avoid duplication."
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "label": "Desktop columns",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "min": 16,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap between columns",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "footer_max_width",
+      "min": 980,
+      "max": 1500,
+      "step": 10,
+      "unit": "px",
+      "label": "Inner max-width",
+      "default": 1240
+    },
+    {
+      "type": "range",
+      "id": "logo_max_width",
+      "min": 60,
+      "max": 200,
+      "step": 2,
+      "unit": "px",
+      "label": "Brand column logo max-width",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 24,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 24,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding bottom (above bottom bar)",
+      "default": 40
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Footer background",
+      "default": "#0d2117"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Default text colour",
+      "default": "#d7d0c3"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Column heading colour",
+      "default": "#A67B22"
+    },
+    {
+      "type": "color",
+      "id": "link_color",
+      "label": "Body & link idle colour",
+      "default": "#d7d0c3"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent (hover / highlights)",
+      "default": "#A67B22"
+    },
+
+    {
+      "type": "color",
+      "id": "bottom_bar_bg",
+      "label": "Bottom bar strip background",
+      "default": "#080f0c"
+    },
+    {
+      "type": "color",
+      "id": "bottom_text_color",
+      "label": "Bottom bar text",
+      "default": "#d7d0c3"
+    },
+    {
+      "type": "richtext",
+      "id": "bottom_left_html",
+      "label": "Bottom left (copyright)",
+      "default": "<p>© 2026 God’s Hill Wines</p>"
+    },
+    {
+      "type": "url",
+      "id": "privacy_policy_url",
+      "label": "Privacy policy URL"
+    },
+    {
+      "type": "text",
+      "id": "privacy_label",
+      "label": "Privacy policy label",
+      "default": "Privacy Policy"
+    },
+    {
+      "type": "url",
+      "id": "terms_conditions_url",
+      "label": "Terms & conditions URL"
+    },
+    {
+      "type": "text",
+      "id": "terms_label",
+      "label": "Terms label",
+      "default": "Terms & Conditions"
+    },
+    {
+      "type": "richtext",
+      "id": "site_credit_html",
+      "label": "Site credit (right)",
+      "default": "<p>Website by Your Studio</p>"
+    },
+    {
+      "type": "text",
+      "id": "custom_css",
+      "label": "Extra wrapper classes",
+      "info": "Optional space-separated classes; leave unset if unused."
+    }
+  ],
+  "presets": [
+    {
+      "name": "God's Hill custom footer",
+      "blocks": [
+        { "type": "brand", "settings": {} },
+        { "type": "menu_links", "settings": {} },
+        { "type": "contact", "settings": {} },
+        {
+          "type": "newsletter",
+          "settings": {
+            "heading": "Stay In The Loop",
+            "intro": "<p>Subscribe to hear about releases, events & offers.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

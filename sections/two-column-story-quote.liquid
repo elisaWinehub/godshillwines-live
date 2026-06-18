@@ -1,0 +1,436 @@
+{% comment %} Two-column story + quote card · About Us editorial {% endcomment %}
+{% liquid
+  assign show = section.settings.section_enabled | default: true
+  assign mobile_quote_first = false
+  if section.settings.mobile_column_order == 'quote_first'
+    assign mobile_quote_first = true
+  endif
+%}
+{% unless show %}
+  <div {{ section.shopify_attributes }} hidden></div>
+{% else %}
+  <section
+    id="GHTCSQ-{{ section.id }}"
+    class="gh-tcsq"
+    {{ section.shopify_attributes }}
+    style="
+      --gh-tcsq-bg: {{ section.settings.section_background }};
+      --gh-tcsq-pt: {{ section.settings.padding_top }}px;
+      --gh-tcsq-pb: {{ section.settings.padding_bottom }}px;
+      --gh-tcsq-cw: {{ section.settings.container_width }}px;
+      --gh-tcsq-gap: {{ section.settings.column_gap }}px;
+      --gh-tcsq-eyebrow: {{ section.settings.eyebrow_color }};
+      --gh-tcsq-heading-m: {{ section.settings.heading_size_mobile }}px;
+      --gh-tcsq-heading-d: {{ section.settings.heading_size_desktop }}px;
+      --gh-tcsq-body: {{ section.settings.body_size }}px;
+      --gh-tcsq-text: {{ section.settings.text_color }};
+      --gh-tcsq-quote-bg: {{ section.settings.quote_card_background }};
+      --gh-tcsq-quote-pad: {{ section.settings.quote_card_padding }}px;
+      --gh-tcsq-quote-align: {{ section.settings.quote_card_alignment }};
+      --gh-tcsq-quote-mark: {{ section.settings.quote_mark_color }};
+      --gh-tcsq-sig: {{ section.settings.quote_signature_color }};
+      --gh-tcsq-role: {{ section.settings.quote_role_color }};
+      --gh-tcsq-illus-o: {{ section.settings.quote_bg_image_opacity | divided_by: 100.0 }};
+    "
+    data-mobile-quote-first="{% if mobile_quote_first %}true{% else %}false{% endif %}"
+  >
+    <div class="gh-tcsq__inner">
+      <div class="gh-tcsq__grid">
+        <div class="gh-tcsq__story">
+          {% if section.settings.eyebrow != blank %}
+            <p class="gh-tcsq__eyebrow">{{ section.settings.eyebrow }}</p>
+          {% endif %}
+          {% if section.settings.heading != blank %}
+            <h2 class="gh-tcsq__heading">{{ section.settings.heading | escape | newline_to_br }}</h2>
+          {% endif %}
+          {% if section.settings.body != blank %}
+            <div class="gh-tcsq__body rte">{{ section.settings.body }}</div>
+          {% endif %}
+          {% if section.settings.button_style == 'secondary' %}
+            {% render 'godshill-cta-btn',
+              label: section.settings.button_label,
+              url: section.settings.button_link,
+              style: 'secondary',
+              bg: section.settings.secondary_bg,
+              fg: section.settings.secondary_text,
+              border_c: section.settings.secondary_border,
+              h_bg: section.settings.secondary_hover_bg,
+              h_fg: section.settings.secondary_hover_text,
+              h_border: section.settings.secondary_hover_border
+            %}
+          {% else %}
+            {% render 'godshill-cta-btn',
+              label: section.settings.button_label,
+              url: section.settings.button_link,
+              style: 'primary',
+              bg: section.settings.primary_bg,
+              fg: section.settings.primary_text,
+              border_c: section.settings.primary_border,
+              h_bg: section.settings.primary_hover_bg,
+              h_fg: section.settings.primary_hover_text,
+              h_border: section.settings.primary_hover_border
+            %}
+          {% endif %}
+        </div>
+
+        <aside class="gh-tcsq__quote-wrap">
+          <blockquote class="gh-tcsq__quote">
+            {% if section.settings.quote_bg_image != blank %}
+              <div class="gh-tcsq__quote-illus" aria-hidden="true">
+                {{
+                  section.settings.quote_bg_image
+                  | image_url: width: 900
+                  | image_tag: loading: 'lazy', class: 'gh-tcsq__quote-illus-img', widths: '400,600,900'
+                }}
+              </div>
+            {% endif %}
+            <span class="gh-tcsq__quote-mark" aria-hidden="true">&ldquo;</span>
+            {% if section.settings.quote_text != blank %}
+              <p class="gh-tcsq__quote-text">{{ section.settings.quote_text }}</p>
+            {% endif %}
+            {% if section.settings.quote_author != blank %}
+              <p class="gh-tcsq__quote-author">{{ section.settings.quote_author }}</p>
+            {% endif %}
+            {% if section.settings.quote_role != blank %}
+              <p class="gh-tcsq__quote-role">{{ section.settings.quote_role }}</p>
+            {% endif %}
+          </blockquote>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    #GHTCSQ-{{ section.id }}.gh-tcsq {
+      background: var(--gh-tcsq-bg);
+      padding-block: var(--gh-tcsq-pt) var(--gh-tcsq-pb);
+      color: var(--gh-tcsq-text);
+    }
+    #GHTCSQ-{{ section.id }} .gh-tcsq__inner {
+      width: min(100%, var(--gh-tcsq-cw));
+      margin-inline: auto;
+      padding-inline: clamp(16px, 3vw, 32px);
+    }
+    #GHTCSQ-{{ section.id }} .gh-tcsq__grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--gh-tcsq-gap);
+      align-items: center;
+    }
+    #GHTCSQ-{{ section.id }} .gh-tcsq__eyebrow {
+      margin: 0 0 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gh-tcsq-eyebrow);
+    }
+    #GHTCSQ-{{ section.id }} .gh-tcsq__heading {
+      margin: 0 0 18px;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(var(--gh-tcsq-heading-m), 3.2vw, var(--gh-tcsq-heading-d));
+      font-weight: 500;
+      line-height: 1.12;
+      color: inherit;
+    }
+    #GHTCSQ-{{ section.id }} .gh-tcsq__body {
+      margin: 0 0 24px;
+      font-size: var(--gh-tcsq-body);
+      line-height: 1.65;
+      color: inherit;
+    }
+    #GHTCSQ-{{ section.id }} .gh-tcsq__body :is(p, ul, ol) {
+      margin: 0;
+    }
+    #GHTCSQ-{{ section.id }} .gh-tcsq__body :is(p + p, p + ul, p + ol) {
+      margin-top: 1em;
+    }
+    #GHTCSQ-{{ section.id }} .gh-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 22px;
+      text-transform: uppercase;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      transition: 0.22s ease;
+    }
+    #GHTCSQ-{{ section.id }} .gh-cta::after {
+      content: '\2192';
+    }
+    #GHTCSQ-{{ section.id }} .gh-cta:hover {
+      transform: translateY(-1px);
+      background-color: var(--gh-h-bg) !important;
+      color: var(--gh-h-fg) !important;
+      border-color: var(--gh-h-bd) !important;
+    }
+    #GHTCSQ-{{ section.id }} .gh-tcsq__quote {
+      position: relative;
+      margin: 0;
+      padding: var(--gh-tcsq-quote-pad);
+      background: var(--gh-tcsq-quote-bg);
+      text-align: var(--gh-tcsq-quote-align);
+      overflow: hidden;
+      min-height: clamp(280px, 38vw, 380px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    #GHTCSQ-{{ section.id }} .gh-tcsq__quote-illus {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: var(--gh-tcsq-illus-o);
+    }
+    #GHTCSQ-{{ section.id }} .gh-tcsq__quote-illus-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center bottom;
+    }
+    #GHTCSQ-{{ section.id }} .gh-tcsq__quote-mark {
+      position: relative;
+      z-index: 1;
+      display: block;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(56px, 8vw, 88px);
+      line-height: 0.85;
+      color: var(--gh-tcsq-quote-mark);
+      margin-bottom: 12px;
+    }
+    #GHTCSQ-{{ section.id }} .gh-tcsq__quote-text {
+      position: relative;
+      z-index: 1;
+      margin: 0 0 20px;
+      max-width: 34ch;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(17px, 2.2vw, 22px);
+      line-height: 1.45;
+      font-style: italic;
+      color: inherit;
+    }
+    #GHTCSQ-{{ section.id }} .gh-tcsq__quote-author {
+      position: relative;
+      z-index: 1;
+      margin: 0 0 6px;
+      font-family: 'Brush Script MT', 'Segoe Script', cursive;
+      font-size: clamp(28px, 4vw, 38px);
+      line-height: 1.1;
+      color: var(--gh-tcsq-sig);
+    }
+    #GHTCSQ-{{ section.id }} .gh-tcsq__quote-role {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gh-tcsq-role);
+    }
+    @media screen and (max-width: 989px) {
+      #GHTCSQ-{{ section.id }} .gh-tcsq__grid {
+        grid-template-columns: 1fr;
+      }
+      #GHTCSQ-{{ section.id }}[data-mobile-quote-first='true'] .gh-tcsq__story {
+        order: 2;
+      }
+      #GHTCSQ-{{ section.id }}[data-mobile-quote-first='true'] .gh-tcsq__quote-wrap {
+        order: 1;
+      }
+    }
+  </style>
+{% endunless %}
+
+{% schema %}
+{
+  "name": "Two column story quote",
+  "tag": "section",
+  "class": "gh-two-column-story-quote",
+  "settings": [
+    { "type": "checkbox", "id": "section_enabled", "label": "Show section", "default": true },
+    { "type": "header", "content": "Layout" },
+    { "type": "color", "id": "section_background", "label": "Section background", "default": "#F9F7F2" },
+    {
+      "type": "range",
+      "id": "container_width",
+      "label": "Container max width",
+      "min": 960,
+      "max": 1440,
+      "step": 20,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Column gap",
+      "min": 16,
+      "max": 96,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "select",
+      "id": "mobile_column_order",
+      "label": "Mobile column order",
+      "options": [
+        { "value": "story_first", "label": "Story first" },
+        { "value": "quote_first", "label": "Quote first" }
+      ],
+      "default": "story_first"
+    },
+    { "type": "header", "content": "Left column" },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "OUR STORY"
+    },
+    { "type": "color", "id": "eyebrow_color", "label": "Eyebrow colour", "default": "#A67B22" },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Five Generations. One Passion."
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading size mobile",
+      "min": 24,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Heading size desktop",
+      "min": 28,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Body text",
+      "default": "<p>Charlie's grandfather (Carmine) amongst his farming activities he also grew grapes and produced wine for the local community. This was the beginning of Charlie's involvement in the wine industry.</p><p>Recalling the early age of 6 when his grandfather asked him to wash his feet thoroughly so that he could place him in the large wooden vats of grapes to crush with his feet.</p><p>From those early days to today, the family tradition continues with the same passion for winemaking, the land and the Barossa Valley.</p>"
+    },
+    {
+      "type": "range",
+      "id": "body_size",
+      "label": "Body font size",
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    { "type": "color", "id": "text_color", "label": "Text colour", "default": "#25211B" },
+    { "type": "header", "content": "Button" },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "OUR HISTORY"
+    },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Button style",
+      "options": [
+        { "value": "primary", "label": "Primary" },
+        { "value": "secondary", "label": "Secondary" }
+      ],
+      "default": "primary"
+    },
+    { "type": "color", "id": "primary_bg", "label": "Primary background", "default": "#1A2414" },
+    { "type": "color", "id": "primary_text", "label": "Primary text", "default": "#FFFFFF" },
+    { "type": "color", "id": "primary_border", "label": "Primary border", "default": "#1A2414" },
+    { "type": "color", "id": "primary_hover_bg", "label": "Primary hover background", "default": "#A67B22" },
+    { "type": "color", "id": "primary_hover_text", "label": "Primary hover text", "default": "#FFFFFF" },
+    { "type": "color", "id": "primary_hover_border", "label": "Primary hover border", "default": "#A67B22" },
+    { "type": "color", "id": "secondary_bg", "label": "Secondary fill accent", "default": "#A67B22" },
+    { "type": "color", "id": "secondary_text", "label": "Secondary text", "default": "#1A2414" },
+    { "type": "color", "id": "secondary_border", "label": "Secondary border", "default": "#1A2414" },
+    { "type": "color", "id": "secondary_hover_bg", "label": "Secondary hover background", "default": "#1A2414" },
+    { "type": "color", "id": "secondary_hover_text", "label": "Secondary hover text", "default": "#FFFFFF" },
+    { "type": "color", "id": "secondary_hover_border", "label": "Secondary hover border", "default": "#1A2414" },
+    { "type": "header", "content": "Quote card" },
+    {
+      "type": "textarea",
+      "id": "quote_text",
+      "label": "Quote text",
+      "default": "When making wine my actions are controlled by my perfectionist nature to everything I do in life, and most importantly how well can I serve the consumer."
+    },
+    { "type": "text", "id": "quote_author", "label": "Author name", "default": "Charlie Scalzi" },
+    { "type": "text", "id": "quote_role", "label": "Author role", "default": "Chief Winemaker" },
+    { "type": "color", "id": "quote_card_background", "label": "Quote card background", "default": "#EDE6D8" },
+    { "type": "image_picker", "id": "quote_bg_image", "label": "Quote background illustration" },
+    {
+      "type": "range",
+      "id": "quote_bg_image_opacity",
+      "label": "Background illustration opacity",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "%",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "quote_card_padding",
+      "label": "Quote card padding",
+      "min": 24,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "select",
+      "id": "quote_card_alignment",
+      "label": "Quote card alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    { "type": "color", "id": "quote_mark_color", "label": "Quote mark colour", "default": "#A67B22" },
+    { "type": "color", "id": "quote_signature_color", "label": "Signature colour", "default": "#A67B22" },
+    { "type": "color", "id": "quote_role_color", "label": "Role text colour", "default": "#5C5348" }
+  ],
+  "presets": [{ "name": "Two column story quote", "category": "God's Hill" }]
+}
+{% endschema %}

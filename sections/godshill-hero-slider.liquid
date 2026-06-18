@@ -1,0 +1,1064 @@
+{% comment %}
+  Godshill homepage hero — fades between slide blocks with arrows + pagination.
+  Vanilla JS scoped to #shopify-section-{{ section.id }}.
+{% endcomment %}
+{% liquid
+  assign slides = section.blocks | where: 'type', 'slide'
+  assign slide_ct = slides.size
+
+  assign show_section = section.settings.section_enabled | default: true
+  assign autoplay = section.settings.autoplay
+  assign speed = section.settings.autoplay_speed | default: 6000 | times: 1
+  assign show_dots = section.settings.show_dots | default: true
+  assign show_arrows = section.settings.show_arrows | default: true
+
+  assign overlay_vis_base = section.settings.overlay_strength_pct | divided_by: 100.0
+
+  if slide_ct > 1
+    assign use_slider = true
+  else
+    assign use_slider = false
+  endif
+
+  if autoplay != true or use_slider == false
+    assign autoplay_eff = false
+  else
+    assign autoplay_eff = true
+  endif
+
+  assign gh_home_full_height = false
+  if template.name == 'index' and section.settings.full_viewport_home
+    assign gh_home_full_height = true
+  endif
+%}
+{% unless show_section %}
+  <div {{ section.shopify_attributes }} hidden></div>
+{% else %}
+  <div
+    id="GodshillHero-{{ section.id }}"
+    class="gh-hs-root{% if gh_home_full_height %} gh-hs-root--full-height{% endif %} {{ section.settings.custom_css_class | strip }}"
+    data-godshill-slider-root
+    data-autoplay="{{ autoplay_eff }}"
+    data-speed="{{ speed }}"
+    data-slider="{{ use_slider }}"
+    {{ section.shopify_attributes }}
+    style="
+      --gh-bg: {{ section.settings.section_background_color }};
+      --gh-pt: {{ section.settings.padding_top }}px;
+      --gh-pb: {{ section.settings.padding_bottom }}px;
+      --gh-cont: {{ section.settings.container_max_width }}px;
+      --gh-h-desktop: {{ section.settings.height_desktop }}px;
+      --gh-h-mobile: {{ section.settings.height_mobile }}px;
+      --overlay-col: {{ section.settings.section_overlay_color }};
+      --overlay-op: {{ overlay_vis_base | times: 0.55 }};
+      --eyebrow-size: {{ section.settings.heading_eyebrow_size }}px;
+      --heading-size-d: {{ section.settings.heading_size_desktop }}px;
+      --heading-size-m: {{ section.settings.heading_size_mobile }}px;
+      --sub-size-d: {{ section.settings.subheading_size_desktop }}px;
+      --sub-size-m: {{ section.settings.subheading_size_mobile }}px;
+      --eyebrow-fw: {{ section.settings.heading_eyebrow_weight }};
+      --heading-fw: {{ section.settings.heading_weight }};
+      --ls-h: {{ section.settings.heading_letter_spacing | divided_by: 100.0 }}em;
+      --ls-b: {{ section.settings.body_letter_spacing | divided_by: 100.0 }}em;
+    "
+  >
+    {% if slide_ct == 0 %}
+      <div class="gh-hs-empty">Add Slide blocks to build your hero.</div>
+    {% else %}
+      <div class="hero-slider gh-hs-viewport hero-slider__viewport{% if section.settings.rounded_corners %} gh-hs-viewport--radius{% endif %}" aria-roledescription="carousel" aria-live="{% if autoplay_eff %}off{% else %}polite{% endif %}">
+        <div class="gh-hs-slides hero-slider__list">
+          {% for block in slides %}
+            {% liquid
+              assign bx = block.settings.overlay_color | default: section.settings.slide_overlay_fallback
+              assign bop_pct = block.settings.overlay_opacity | default: 50
+              assign overlay_alpha = bop_pct | divided_by: 100.0 | times: overlay_vis_base
+
+              assign th = blank
+              if block.settings.heading_font_size_px > 0
+                assign th = block.settings.heading_font_size_px
+              endif
+              assign tes = blank
+              if block.settings.body_font_size_px > 0
+                assign tes = block.settings.body_font_size_px
+              endif
+
+              assign btn_st = block.settings.slide_button_style
+              if btn_st == 'inherit' or btn_st == blank
+                assign btn_st = section.settings.default_button_style | default: 'primary'
+              endif
+              assign lbl = block.settings.button_label
+              assign lnk = block.settings.button_link
+
+              assign b_bg = block.settings.btn_bg_color
+              if b_bg == blank or b_bg == ''
+                assign b_bg = section.settings.primary_btn_background
+              endif
+              assign b_tx = block.settings.btn_text_color
+              if b_tx == blank or b_tx == ''
+                assign b_tx = section.settings.primary_btn_text
+              endif
+              assign b_bd = block.settings.btn_border_color
+              if b_bd == blank or b_bd == ''
+                assign b_bd = section.settings.primary_btn_border
+              endif
+              assign b_hb = block.settings.btn_hover_bg
+              if b_hb == blank or b_hb == ''
+                assign b_hb = section.settings.primary_btn_hover_bg
+              endif
+              assign b_ht = block.settings.btn_hover_text
+              if b_ht == blank or b_ht == ''
+                assign b_ht = section.settings.primary_btn_hover_text
+              endif
+              assign b_hbd = block.settings.btn_hover_border
+              if b_hbd == blank or b_hbd == ''
+                assign b_hbd = section.settings.primary_btn_hover_border
+              endif
+
+              assign sec_bg = blank
+              if block.settings.secondary_btn_bg_color != blank and block.settings.secondary_btn_bg_color != ''
+                assign sec_bg = block.settings.secondary_btn_bg_color
+              elsif section.settings.secondary_btn_background != blank
+                assign sec_bg = section.settings.secondary_btn_background
+              endif
+              assign sec_tx = blank
+              if block.settings.secondary_btn_text_color != blank and block.settings.secondary_btn_text_color != ''
+                assign sec_tx = block.settings.secondary_btn_text_color
+              elsif section.settings.secondary_btn_text != blank
+                assign sec_tx = section.settings.secondary_btn_text
+              endif
+              assign sec_bd = blank
+              if block.settings.secondary_btn_border_color != blank and block.settings.secondary_btn_border_color != ''
+                assign sec_bd = block.settings.secondary_btn_border_color
+              elsif section.settings.secondary_btn_border != blank
+                assign sec_bd = section.settings.secondary_btn_border
+              endif
+              assign sec_hb = blank
+              if block.settings.secondary_btn_hover_bg != blank and block.settings.secondary_btn_hover_bg != ''
+                assign sec_hb = block.settings.secondary_btn_hover_bg
+              elsif section.settings.secondary_btn_hover_background != blank
+                assign sec_hb = section.settings.secondary_btn_hover_background
+              endif
+              assign sec_ht = blank
+              if block.settings.secondary_btn_hover_text != blank and block.settings.secondary_btn_hover_text != ''
+                assign sec_ht = block.settings.secondary_btn_hover_text
+              elsif section.settings.secondary_btn_hover_text != blank
+                assign sec_ht = section.settings.secondary_btn_hover_text
+              endif
+              assign sec_hbd = blank
+              if block.settings.secondary_btn_hover_border != blank and block.settings.secondary_btn_hover_border != ''
+                assign sec_hbd = block.settings.secondary_btn_hover_border
+              elsif section.settings.secondary_btn_hover_border != blank
+                assign sec_hbd = section.settings.secondary_btn_hover_border
+              endif
+            %}
+
+            {% liquid
+              assign align = block.settings.horizontal_text | default: 'inherit'
+              if align == 'inherit'
+                assign align = section.settings.horizontal_text_default | default: 'left'
+              endif
+              assign valign = block.settings.vertical_text | default: 'center'
+              case align
+                when 'center'
+                  assign tx_a = 'center'
+                  assign js_f = 'center'
+                  assign ml = 'auto'
+                  assign mr = 'auto'
+                when 'right'
+                  assign tx_a = 'right'
+                  assign js_f = 'flex-end'
+                  assign ml = 'auto'
+                  assign mr = '0'
+                else
+                  assign tx_a = 'left'
+                  assign js_f = 'flex-start'
+                  assign ml = '8%'
+                  assign mr = 'auto'
+              endcase
+
+              assign va_map = valign
+              if va_map == 'top'
+                assign ai_sel = 'flex-start'
+              elsif va_map == 'bottom'
+                assign ai_sel = 'flex-end'
+              else
+                assign ai_sel = 'center'
+              endif
+              assign grad_f = block.settings.gradient_css | strip | downcase
+            %}
+
+            <div
+              class="hero-slider__slide gh-hs-slide {% if forloop.first %}active{% endif %}"
+              aria-hidden="{% if forloop.first %}false{% else %}true{% endif %}"
+              data-slide-index="{{ forloop.index0 }}"
+              {{ block.shopify_attributes }}
+            >
+              <div class="gh-hs-slide-bg {% if section.settings.parallax_feel %} gh-hs-slide-bg--parallax{% endif %}">
+                {% if block.settings.bg_image != blank %}
+                  {% if forloop.first %}
+                    {{
+                      block.settings.bg_image
+                      | image_url: width: 2800
+                      | image_tag:
+                        widths: '800,1100,1600,2000,2600',
+                        sizes: '(min-width: 990px) 100vw, 100vw',
+                        class: 'hero-slider__image gh-hs-bg-img',
+                        loading: 'eager',
+                        fetchpriority: 'high'
+                    }}
+                  {% else %}
+                    {{
+                      block.settings.bg_image
+                      | image_url: width: 2800
+                      | image_tag:
+                        widths: '800,1100,1600,2000,2600',
+                        sizes: '(min-width: 990px) 100vw, 100vw',
+                        class: 'hero-slider__image gh-hs-bg-img',
+                        loading: 'lazy'
+                    }}
+                  {% endif %}
+                {% elsif grad_f != blank and grad_f != 'none' %}
+                  <div class="gh-hs-gradient-bg" style="background: {{ block.settings.gradient_css }};"></div>
+                {% else %}
+                  <div class="gh-hs-placeholder"></div>
+                {% endif %}
+
+                {% if block.settings.bg_image != blank %}
+                  <div
+                    class="gh-hs-overlay gh-hs-overlay--tint"
+                    style="background-color: {{ bx }}; opacity: {{ overlay_alpha }};"
+                  ></div>
+                {% elsif grad_f != blank and grad_f != 'none' %}
+                  <div
+                    class="gh-hs-overlay gh-hs-overlay--grad"
+                    style="opacity: {{ overlay_alpha }}; background-image: linear-gradient(90deg, rgba(0,0,0,0.72), transparent 58%), {{ block.settings.gradient_css }};"
+                  ></div>
+                {% endif %}
+              </div>
+
+              {% capture inner_style %}
+                  text-align: {{ tx_a }}; justify-content: {{ js_f }}; align-items: {{ ai_sel }};
+                  margin-left: {{ ml }}; margin-right: {{ mr }};
+                {% endcapture %}
+              {% capture h_style %}
+                  {% if th != blank %} font-size: {{ th }}px; {% endif %} font-weight: var(--heading-fw); letter-spacing: var(--ls-h);
+                {% endcapture %}
+
+              <div class="gh-hs-shell">
+                <div class="gh-hs-shell-inner gh-hs-shell-inner-inherit" style="{{ inner_style | strip }}">
+                  <div class="gh-hs-text" style="{{ inner_style | strip }}">
+                    {% if block.settings.eyebrow != blank %}
+                      <p class="gh-hs-eyebrow" style="font-size: var(--eyebrow-size); font-weight: var(--eyebrow-fw); letter-spacing: var(--ls-b);">{{ block.settings.eyebrow }}</p>
+                    {% endif %}
+                    {% if block.settings.heading != blank %}
+                      <h2 class="gh-hs-heading" style="{{ h_style }}">{{ block.settings.heading }}</h2>
+                    {% endif %}
+                    {% if block.settings.subheading != blank %}
+                      <div
+                        class="gh-hs-desc rte"
+                        {% if tes != blank %}
+                          style="font-size: {{ tes }}px; letter-spacing: var(--ls-b);"
+                        {% endif %}
+                      >
+                        {{ block.settings.subheading }}
+                      </div>
+                    {% endif %}
+
+                    {% if btn_st == 'secondary' %}
+                      {% render 'godshill-cta-btn',
+                        label: lbl,
+                        url: lnk,
+                        style: 'secondary',
+                        bg: sec_bg,
+                        fg: sec_tx,
+                        border_c: sec_bd,
+                        h_bg: sec_hb,
+                        h_fg: sec_ht,
+                        h_border: sec_hbd
+                      %}
+                    {% else %}
+                      {% render 'godshill-cta-btn',
+                        label: lbl,
+                        url: lnk,
+                        style: 'primary',
+                        bg: b_bg,
+                        fg: b_tx,
+                        border_c: b_bd,
+                        h_bg: b_hb,
+                        h_fg: b_ht,
+                        h_border: b_hbd
+                      %}
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        {% if use_slider and show_arrows %}
+          <button type="button" class="gh-hs-arr gh-hs-prev" aria-controls="GodshillHero-{{ section.id }}" data-gh-prev aria-label="Previous slide">‹</button>
+          <button type="button" class="gh-hs-arr gh-hs-next" aria-controls="GodshillHero-{{ section.id }}" data-gh-next aria-label="Next slide">›</button>
+        {% endif %}
+
+        {% if use_slider and show_dots %}
+          <div class="gh-hs-dots" data-gh-dots role="tablist" aria-label="Slides"></div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+
+  <style>
+    /* Horizon / page margins: breakout to true viewport edges (scoped to this section only) */
+    #shopify-section-{{ section.id }} {
+      box-sizing: border-box;
+      width: 100vw !important;
+      max-width: 100vw !important;
+      margin-left: calc(50% - 50vw) !important;
+      margin-right: calc(50% - 50vw) !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      overflow-x: clip;
+      border-radius: 0 !important;
+    }
+
+    /* Inner root: fills Shopify section wrapper (no duplicate breakout) */
+    #GodshillHero-{{ section.id }}.gh-hs-root {
+      position: relative;
+      contain: layout;
+      background: var(--gh-bg);
+      padding-block: var(--gh-pt) var(--gh-pb);
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+
+    /* Full-bleed track + slides — edge-to-edge */
+    #GodshillHero-{{ section.id }} .gh-hs-viewport,
+    #GodshillHero-{{ section.id }} .hero-slider__viewport,
+    #GodshillHero-{{ section.id }} .gh-hs-slides,
+    #GodshillHero-{{ section.id }} .hero-slider__list,
+    #GodshillHero-{{ section.id }} .gh-hs-slide,
+    #GodshillHero-{{ section.id }} .hero-slider__slide {
+      width: 100% !important;
+      max-width: none !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+    #GodshillHero-{{ section.id }} .gh-hs-empty {
+      padding: 3rem 1rem;
+      text-align: center;
+      color: #444;
+      max-width: var(--gh-cont);
+      margin: 0 auto;
+    }
+    #GodshillHero-{{ section.id }}:not(.gh-hs-root--full-height) .gh-hs-viewport {
+      position: relative;
+      overflow: hidden;
+      border-radius: 0 !important;
+      /* Explicit height so absolute-positioned slides have a containing block (min-height alone collapses in-flow track). */
+      height: var(--gh-h-mobile);
+      min-height: var(--gh-h-mobile);
+      width: 100% !important;
+      max-width: none !important;
+      margin-inline: 0 !important;
+      padding-inline: 0 !important;
+    }
+    #GodshillHero-{{ section.id }}.gh-hs-root--full-height .gh-hs-viewport {
+      position: relative;
+      overflow: hidden;
+      border-radius: 0 !important;
+      width: 100% !important;
+      max-width: none !important;
+      margin-inline: 0 !important;
+      padding-inline: 0 !important;
+    }
+    #GodshillHero-{{ section.id }} .gh-hs-viewport--radius {
+      border-radius: 0;
+    }
+    @media screen and (min-width: 750px) {
+      #GodshillHero-{{ section.id }}:not(.gh-hs-root--full-height) .gh-hs-viewport {
+        height: var(--gh-h-desktop);
+        min-height: var(--gh-h-desktop);
+      }
+    }
+
+    /* Homepage only — fill the viewport (header overlays on top) */
+    #GodshillHero-{{ section.id }}.gh-hs-root--full-height {
+      padding-block: 0;
+    }
+    #GodshillHero-{{ section.id }}.gh-hs-root--full-height .gh-hs-viewport {
+      height: 100svh;
+      min-height: 100svh;
+    }
+    @media screen and (min-width: 750px) {
+      #GodshillHero-{{ section.id }}.gh-hs-root--full-height .gh-hs-viewport {
+        height: 100svh;
+        min-height: 100svh;
+      }
+    }
+
+    #GodshillHero-{{ section.id }} .gh-hs-slides {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+    }
+    #GodshillHero-{{ section.id }} .gh-hs-slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
+    }
+    #GodshillHero-{{ section.id }} .gh-hs-slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      z-index: 1;
+    }
+    #GodshillHero-{{ section.id }} .gh-hs-slide-bg {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background: #1b1b1b;
+    }
+    #GodshillHero-{{ section.id }} .gh-hs-gradient-bg {
+      position: absolute;
+      inset: 0;
+    }
+    #GodshillHero-{{ section.id }} .gh-hs-slide-bg img,
+    #GodshillHero-{{ section.id }} .hero-slider__slide img,
+    #GodshillHero-{{ section.id }} .hero-slider__image {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover;
+      display: block;
+      border-radius: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    #GodshillHero-{{ section.id }} .gh-hs-slide-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(
+        90deg,
+        rgba(0, 0, 0, var(--overlay-op, 0.45)),
+        rgba(0, 0, 0, 0.08) 58%,
+        rgba(0, 0, 0, 0.2)
+      );
+    }
+    #GodshillHero-{{ section.id }} .gh-hs-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    #GodshillHero-{{ section.id }}:not(.gh-hs-root--full-height) .gh-hs-shell {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      height: var(--gh-h-mobile);
+      width: min(var(--gh-cont, 1180px), 92%);
+      margin: 0 auto;
+      align-items: stretch;
+    }
+    #GodshillHero-{{ section.id }}.gh-hs-root--full-height .gh-hs-shell {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      height: 100%;
+      width: min(var(--gh-cont, 1180px), 92%);
+      margin: 0 auto;
+      align-items: stretch;
+    }
+    #GodshillHero-{{ section.id }} .gh-hs-shell-inner {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      min-height: 100%;
+      padding-inline: clamp(20px, 4vw, 48px);
+    }
+    #GodshillHero-{{ section.id }} .gh-hs-text {
+      max-width: 650px;
+      color: #fff;
+      text-align: inherit;
+    }
+    #GodshillHero-{{ section.id }} .gh-hs-eyebrow {
+      margin: 0 0 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      color: #edc87a;
+    }
+    #GodshillHero-{{ section.id }} .gh-hs-heading {
+      margin: 0 0 0.5rem;
+      font-family: Georgia, Times, serif;
+      line-height: 1.06;
+      font-size: clamp(2rem, 5vw, var(--heading-size-d, 3.75rem));
+      font-weight: 500;
+    }
+    #GodshillHero-{{ section.id }} .gh-hs-desc {
+      margin: 0 0 1.5rem;
+      font-family: Georgia, Times, serif;
+      font-size: clamp(var(--sub-size-m, 1rem), 2vw, var(--sub-size-d, 1.9rem));
+      line-height: 1.28;
+      color: #f9f9f9;
+      font-weight: 400;
+    }
+    #GodshillHero-{{ section.id }} .gh-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 22px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition:
+        transform 0.22s ease,
+        background-color 0.22s ease,
+        color 0.22s ease,
+        border-color 0.22s ease;
+    }
+    #GodshillHero-{{ section.id }} .gh-cta::after {
+      content: '\2192';
+    }
+    @media screen and (min-width: 750px) {
+      #GodshillHero-{{ section.id }}:not(.gh-hs-root--full-height) .gh-hs-shell {
+        height: var(--gh-h-desktop);
+      }
+    }
+    #GodshillHero-{{ section.id }} .gh-cta--primary:hover,
+    #GodshillHero-{{ section.id }} .gh-cta--secondary:hover {
+      transform: translateY(-1px);
+      background-color: var(--gh-h-bg) !important;
+      color: var(--gh-h-fg) !important;
+      border-color: var(--gh-h-bd) !important;
+    }
+    #GodshillHero-{{ section.id }} .gh-hs-arr {
+      position: absolute;
+      z-index: 4;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: 0;
+      color: #fff;
+      font-size: 56px;
+      cursor: pointer;
+      padding: 12px;
+      line-height: 1;
+      width: auto;
+      min-width: 44px;
+    }
+    #GodshillHero-{{ section.id }} .gh-hs-prev {
+      left: clamp(12px, 3vw, 28px);
+    }
+    #GodshillHero-{{ section.id }} .gh-hs-next {
+      right: clamp(12px, 3vw, 28px);
+    }
+    #GodshillHero-{{ section.id }} .gh-hs-dots {
+      position: absolute;
+      bottom: clamp(14px, 3vw, 22px);
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 9px;
+      z-index: 4;
+      padding: 0;
+      margin: 0;
+    }
+    #GodshillHero-{{ section.id }} .gh-hs-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1px solid #fff;
+      background: transparent;
+      cursor: pointer;
+      padding: 0;
+      transition:
+        transform 0.22s ease,
+        background-color 0.22s ease;
+    }
+    #GodshillHero-{{ section.id }} .gh-hs-dot.active {
+      background: #fff;
+      transform: scale(1.2);
+      border-color: #fff;
+    }
+    @media screen and (max-width: 640px) {
+      #GodshillHero-{{ section.id }} .gh-hs-arr {
+        font-size: 36px;
+        padding: 6px;
+      }
+    }
+    #GodshillHero-{{ section.id }} .gh-hs-placeholder {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #d8d2c7, #a59b8a);
+    }
+
+    /* Custom header overlay — slider sits under transparent nav on homepage */
+    body:has([data-gh-custom-header][data-gh-overlay='true']) #shopify-section-{{ section.id }} {
+      position: relative;
+      z-index: 0;
+    }
+    body:has([data-gh-custom-header][data-gh-overlay='true']) #GodshillHero-{{ section.id }}.gh-hs-root {
+      contain: none;
+    }
+  </style>
+
+  <script>
+    (function () {
+      var root = document.querySelector('#GodshillHero-{{ section.id }}');
+      if (!root || root.dataset.slider !== 'true') return;
+      var viewport = root.querySelector('.gh-hs-viewport');
+      if (!viewport) return;
+      var slides = [...root.querySelectorAll('.gh-hs-slide')];
+      var dotsWrap = root.querySelector('[data-gh-dots]');
+      var prevBtn = root.querySelector('[data-gh-prev]');
+      var nextBtn = root.querySelector('[data-gh-next]');
+      var autoplay = root.dataset.autoplay === 'true';
+      var speed = parseInt(root.dataset.speed || '6000', 10);
+      var current = slides.findIndex((s) => s.classList.contains('active'));
+      if (current < 0) current = 0;
+      /** @type {HTMLElement[]} */
+      var dots = [];
+
+      function go(idx) {
+        if (!slides.length) return;
+        var n = (idx + slides.length) % slides.length;
+        slides.forEach(function (sl, i) {
+          sl.classList.toggle('active', i === n);
+          sl.setAttribute('aria-hidden', i === n ? 'false' : 'true');
+        });
+        dots.forEach(function (dot, i) {
+          dot.classList.toggle('active', i === n);
+          dot.setAttribute('aria-selected', i === n ? 'true' : 'false');
+          dot.tabIndex = i === n ? 0 : -1;
+        });
+        current = n;
+      }
+
+      function buildDots() {
+        if (!dotsWrap) return;
+        dotsWrap.innerHTML = '';
+        dots = slides.map(function (_, i) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'gh-hs-dot' + (i === current ? ' active' : '');
+          b.setAttribute('role', 'tab');
+          b.setAttribute('aria-label', 'Slide ' + (i + 1));
+          b.setAttribute('aria-selected', i === current ? 'true' : 'false');
+          b.tabIndex = i === current ? 0 : -1;
+          b.addEventListener('click', function () {
+            go(i);
+            resetInterval();
+          });
+          dotsWrap.appendChild(b);
+          return /** @type {HTMLElement} **/ (b);
+        });
+      }
+
+      buildDots();
+
+      prevBtn?.addEventListener('click', function () {
+        go(current - 1);
+        resetInterval();
+      });
+      nextBtn?.addEventListener('click', function () {
+        go(current + 1);
+        resetInterval();
+      });
+
+      var timerId = /** @type {ReturnType<typeof setInterval> | null} */ (null);
+
+      function startInterval() {
+        if (!autoplay || slides.length < 2) return;
+        stopInterval();
+        timerId = setInterval(function () {
+          go(current + 1);
+        }, speed || 6000);
+      }
+
+      function stopInterval() {
+        if (timerId) clearInterval(timerId);
+        timerId = null;
+      }
+
+      function resetInterval() {
+        stopInterval();
+        startInterval();
+      }
+
+      root.addEventListener('pointerenter', stopInterval);
+      root.addEventListener('pointerleave', startInterval);
+
+      document.addEventListener('visibilitychange', function () {
+        if (document.hidden) stopInterval();
+        else startInterval();
+      });
+
+      startInterval();
+
+      window.addEventListener('shopify:section:unload', function (e) {
+        if (e && e.detail && e.detail.sectionId === '{{ section.id }}') stopInterval();
+      });
+    })();
+  </script>
+{% endunless %}
+
+{% schema %}
+{
+  "name": "Godshill Hero Slider",
+  "tag": "section",
+  "class": "godshill-hero-slider",
+  "max_blocks": 12,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "On the Homepage, hide Horizon’s Header & Footer in Theme Settings → God’s Hill when using the custom-header & custom-footer sections in this template."
+    },
+    { "type": "checkbox", "id": "section_enabled", "label": "Show section", "default": true },
+    { "type": "header", "content": "Spacing & layout" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 120, "step": 4, "unit": "px", "label": "Padding top", "default": 0 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 120, "step": 4, "unit": "px", "label": "Padding bottom", "default": 0 },
+    {
+      "type": "range",
+      "id": "container_max_width",
+      "min": 980,
+      "max": 1600,
+      "step": 10,
+      "unit": "px",
+      "label": "Hero content max-width",
+      "info": "Constrains only the headline/CTA column. The slideshow images are always full viewport width.",
+      "default": 1180
+    },
+    { "type": "checkbox", "id": "rounded_corners", "label": "Rounded viewport (optional)", "default": false },
+    { "type": "checkbox", "id": "parallax_feel", "label": "Subtle zoom on background image", "default": false },
+    {
+      "type": "checkbox",
+      "id": "full_viewport_home",
+      "label": "Full viewport height on homepage",
+      "default": true,
+      "info": "Only applies on the homepage template. Other pages keep the height settings below."
+    },
+
+    {
+      "type": "range",
+      "id": "height_mobile",
+      "min": 360,
+      "max": 720,
+      "step": 10,
+      "unit": "px",
+      "label": "Hero height (mobile)",
+      "default": 520
+    },
+    {
+      "type": "range",
+      "id": "height_desktop",
+      "min": 420,
+      "max": 900,
+      "step": 5,
+      "unit": "px",
+      "label": "Hero height (desktop)",
+      "default": 615
+    },
+    { "type": "checkbox", "id": "autoplay", "label": "Autoplay", "default": true },
+    { "type": "range", "id": "autoplay_speed", "min": 2000, "max": 9500, "step": 500, "unit": "ms", "label": "Autoplay speed", "default": 6000 },
+    { "type": "checkbox", "id": "show_arrows", "label": "Show arrows", "default": true },
+    { "type": "checkbox", "id": "show_dots", "label": "Show pagination dots", "default": true },
+    {
+      "type": "color",
+      "id": "section_background_color",
+      "label": "Behind hero (revealed if viewport max-width narrower than screen)",
+      "default": "#1b1b1b"
+    },
+    {
+      "type": "color",
+      "id": "section_overlay_color",
+      "label": "Global gradient tint color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_strength_pct",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "%",
+      "label": "Global tint strength multiplier",
+      "default": 100
+    },
+    {
+      "type": "color",
+      "id": "slide_overlay_fallback",
+      "label": "Slide overlay base (fallback)",
+      "default": "#000000"
+    },
+
+    {
+      "type": "header",
+      "content": "Default typography"
+    },
+    {
+      "type": "select",
+      "id": "horizontal_text_default",
+      "label": "Default horizontal text position",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "heading_eyebrow_size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Eyebrow size",
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "heading_eyebrow_weight",
+      "label": "Eyebrow font weight",
+      "options": [
+        { "value": "700", "label": "Bold" },
+        { "value": "600", "label": "Semibold" },
+        { "value": "400", "label": "Normal" }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "min": 32,
+      "max": 80,
+      "step": 1,
+      "unit": "px",
+      "label": "Heading desktop (fallback)",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "min": 24,
+      "max": 56,
+      "step": 1,
+      "unit": "px",
+      "label": "Heading mobile (fallback)",
+      "default": 40
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Heading font weight",
+      "options": [
+        { "value": "500", "label": "Medium (serif headline)" },
+        { "value": "400", "label": "Normal" },
+        { "value": "600", "label": "Semibold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "range",
+      "id": "heading_letter_spacing",
+      "min": 0,
+      "max": 22,
+      "step": 1,
+      "label": "Heading letter-spacing (÷100 em)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "subheading_size_desktop",
+      "min": 14,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "label": "Subheading / body desktop size",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "subheading_size_mobile",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "Subheading / body mobile size",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "body_letter_spacing",
+      "min": 0,
+      "max": 22,
+      "step": 1,
+      "label": "Eyebrow & body letter-spacing (÷100 em)",
+      "default": 8
+    },
+
+    { "type": "header", "content": "Default button style" },
+    {
+      "type": "select",
+      "id": "default_button_style",
+      "label": "Default slide button style",
+      "options": [
+        { "value": "primary", "label": "Primary — solid fill" },
+        { "value": "secondary", "label": "Secondary — outlined" }
+      ],
+      "default": "primary"
+    },
+    { "type": "color", "id": "primary_btn_background", "label": "Primary background", "default": "#A67B22" },
+    { "type": "color", "id": "primary_btn_text", "label": "Primary text", "default": "#FFFFFF" },
+    { "type": "color", "id": "primary_btn_border", "label": "Primary border", "default": "#A67B22" },
+    { "type": "color", "id": "primary_btn_hover_bg", "label": "Primary hover background", "default": "#846118" },
+    { "type": "color", "id": "primary_btn_hover_text", "label": "Primary hover text", "default": "#FFFFFF" },
+    { "type": "color", "id": "primary_btn_hover_border", "label": "Primary hover border", "default": "#846118" },
+    {
+      "type": "paragraph",
+      "content": "Secondary buttons use fills on hover via the secondary colors below unless overridden per slide."
+    },
+    { "type": "color", "id": "secondary_btn_background", "label": "Secondary fill accent (mostly unused)", "default": "#A67B22" },
+    { "type": "color", "id": "secondary_btn_text", "label": "Secondary label & border tint", "default": "#EDC87A" },
+    { "type": "color", "id": "secondary_btn_border", "label": "Secondary border", "default": "#A67B22" },
+    {
+      "type": "color",
+      "id": "secondary_btn_hover_background",
+      "label": "Secondary hover background",
+      "default": "#A67B22"
+    },
+    { "type": "color", "id": "secondary_btn_hover_text", "label": "Secondary hover text", "default": "#FFFFFF" },
+    { "type": "color", "id": "secondary_btn_hover_border", "label": "Secondary hover border", "default": "#A67B22" },
+    {
+      "type": "header",
+      "content": "Developer"
+    },
+    { "type": "text", "id": "custom_css_class", "label": "Extra wrapper CSS class(es)" }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        { "type": "image_picker", "id": "bg_image", "label": "Background image" },
+        {
+          "type": "text",
+          "id": "gradient_css",
+          "label": "CSS gradient fallback (optional)",
+          "info": "Use “none” to disable. Example: linear-gradient(135deg,#30451f,#b78b36,#1d2c18)",
+          "default": "none"
+        },
+        { "type": "text", "id": "eyebrow", "label": "Eyebrow", "info": "Leave blank to hide on this slide." },
+        { "type": "text", "id": "heading", "label": "Heading", "default": "God's Hill Wines" },
+        {
+          "type": "richtext",
+          "id": "subheading",
+          "label": "Content / subheading",
+          "default": "<p>A family-owned business in the famous Barossa Valley, Australia.</p>"
+        },
+        {
+          "type": "select",
+          "id": "horizontal_text",
+          "label": "Text horizontal position",
+          "options": [
+            { "value": "inherit", "label": "Use section default" },
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "inherit"
+        },
+        {
+          "type": "select",
+          "id": "vertical_text",
+          "label": "Vertical alignment",
+          "options": [
+            { "value": "top", "label": "Top" },
+            { "value": "center", "label": "Center" },
+            { "value": "bottom", "label": "Bottom" }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "range",
+          "id": "heading_font_size_px",
+          "min": 0,
+          "max": 88,
+          "step": 1,
+          "unit": "px",
+          "label": "Custom heading size (0 = inherit)",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "body_font_size_px",
+          "min": 0,
+          "max": 40,
+          "step": 1,
+          "unit": "px",
+          "label": "Custom body size (0 = inherit)",
+          "default": 0
+        },
+        { "type": "color", "id": "overlay_color", "label": "Overlay color", "default": "#000000" },
+        {
+          "type": "range",
+          "id": "overlay_opacity",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "unit": "%",
+          "label": "Overlay intensity",
+          "default": 50
+        },
+        {
+          "type": "select",
+          "id": "slide_button_style",
+          "label": "Button style (inherit = section default)",
+          "options": [
+            { "value": "inherit", "label": "Inherit section default" },
+            { "value": "primary", "label": "Primary" },
+            { "value": "secondary", "label": "Secondary" }
+          ],
+          "default": "inherit"
+        },
+        { "type": "text", "id": "button_label", "label": "Button label", "default": "Discover Our Story" },
+        { "type": "url", "id": "button_link", "label": "Button link" },
+        {
+          "type": "paragraph",
+          "content": "Per-slide overrides (leave blank for section defaults)."
+        },
+        { "type": "color", "id": "btn_bg_color", "label": "Primary button background override" },
+        { "type": "color", "id": "btn_text_color", "label": "Primary button text override" },
+        { "type": "color", "id": "btn_border_color", "label": "Primary button border override" },
+        { "type": "color", "id": "btn_hover_bg", "label": "Primary hover background override" },
+        { "type": "color", "id": "btn_hover_text", "label": "Primary hover text override" },
+        { "type": "color", "id": "btn_hover_border", "label": "Primary hover border override" },
+        { "type": "color", "id": "secondary_btn_bg_color", "label": "Secondary overrides — fill/accent background" },
+        { "type": "color", "id": "secondary_btn_text_color", "label": "Secondary overrides — label color" },
+        { "type": "color", "id": "secondary_btn_border_color", "label": "Secondary overrides — border color" },
+        { "type": "color", "id": "secondary_btn_hover_bg", "label": "Secondary hover background override" },
+        { "type": "color", "id": "secondary_btn_hover_text", "label": "Secondary hover text override" },
+        { "type": "color", "id": "secondary_btn_hover_border", "label": "Secondary hover border override" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Godshill Hero Slider",
+      "category": "God's Hill",
+      "blocks": [{ "type": "slide" }, { "type": "slide" }, { "type": "slide" }]
+    }
+  ]
+}
+{% endschema %}
