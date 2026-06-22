@@ -1,0 +1,87 @@
+{%- render 'gh-tokens' -%}
+{%- assign video_url = section.settings.video_url | default: '' -%}
+{%- assign is_youtube = video_url contains 'youtube.com' or video_url contains 'youtu.be' -%}
+{%- assign is_vimeo = video_url contains 'vimeo.com' -%}
+
+<section class="gh-about-video-{{ section.id }}" style="background: {{ section.settings.bg_color | default: '#FDF8F2' }};">
+  <div class="gh-about-video-shell">
+    <div class="gh-about-video-grid">
+      <div class="gh-about-video-content">
+        {% if section.settings.eyebrow != blank %}<p class="gh-eyebrow">{{ section.settings.eyebrow }}</p>{% endif %}
+        <div class="gh-heading">{{ section.settings.heading | default: '<p>Built on Hard Work and Dedication</p>' }}</div>
+        <p>{{ section.settings.body_1 | default: "The family's journey began in 1998 with just 25 acres of vines at Lyndoch in the Barossa Valley. Today, God's Hill Vineyard consists of some of the most renowned vineyards in the region." }}</p>
+        <p>{{ section.settings.body_2 | default: 'We remain committed to producing exceptional wines while respecting the land and embracing sustainable vineyard practices for future generations.' }}</p>
+        <p>{{ section.settings.body_3 | default: 'Our wines reflect the true character of the Barossa — rich in history, bold in flavour and crafted with care.' }}</p>
+        <div class="gh-btn-row">
+          {% if section.settings.btn_primary_label != blank and section.settings.btn_primary_url != blank %}
+            <a class="gh-btn gh-btn-primary" href="{{ section.settings.btn_primary_url }}">{{ section.settings.btn_primary_label }}</a>
+          {% endif %}
+          {% if section.settings.btn_secondary_label != blank and section.settings.btn_secondary_url != blank %}
+            <a class="gh-btn gh-btn-secondary" href="{{ section.settings.btn_secondary_url }}">{{ section.settings.btn_secondary_label }}</a>
+          {% endif %}
+        </div>
+      </div>
+      <div class="gh-about-video-media">
+        {% if video_url != blank and is_youtube %}
+          {% assign youtube_id = video_url | split: 'v=' | last | split: '&' | first | split: '/' | last %}
+          <iframe src="https://www.youtube.com/embed/{{ youtube_id }}" title="About video" allowfullscreen loading="lazy"></iframe>
+        {% elsif video_url != blank and is_vimeo %}
+          {% assign vimeo_id = video_url | split: '/' | last %}
+          <iframe src="https://player.vimeo.com/video/{{ vimeo_id }}" title="About video" allowfullscreen loading="lazy"></iframe>
+        {% else %}
+          <div class="gh-video-cover">
+            {% if section.settings.video_cover %}
+              {{ section.settings.video_cover | image_url: width: 1400 | image_tag: loading: 'lazy' }}
+            {% endif %}
+            <span class="gh-play-btn">▶</span>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .gh-about-video-{{ section.id }} { padding: 96px 40px; }
+  .gh-about-video-{{ section.id }} .gh-about-video-shell { width: min(1280px, 100%); margin: 0 auto; }
+  .gh-about-video-{{ section.id }} .gh-about-video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+  .gh-about-video-{{ section.id }} .gh-eyebrow { font: 600 10px/1.3 'Inter', sans-serif; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gh-gold); margin: 0 0 8px; }
+  .gh-about-video-{{ section.id }} .gh-heading { font: 400 40px/1.1 'EB Garamond', Georgia, serif; color: var(--gh-vine); margin-bottom: 12px; }
+  .gh-about-video-{{ section.id }} .gh-heading p { margin: 0; }
+  .gh-about-video-{{ section.id }} p { color: var(--gh-muted); }
+  .gh-about-video-{{ section.id }} .gh-btn-row { display: flex; gap: 10px; margin-top: 12px; }
+  .gh-about-video-{{ section.id }} .gh-btn { text-decoration: none; padding: 10px 14px; border: 1px solid var(--gh-gold); }
+  .gh-about-video-{{ section.id }} .gh-btn-primary { background: var(--gh-gold); color: #fff; }
+  .gh-about-video-{{ section.id }} .gh-btn-secondary { color: var(--gh-gold); background: transparent; }
+  .gh-about-video-{{ section.id }} .gh-about-video-media { aspect-ratio: 16 / 10; border-radius: 4px; overflow: hidden; background: var(--gh-vine); }
+  .gh-about-video-{{ section.id }} iframe,
+  .gh-about-video-{{ section.id }} .gh-video-cover img { width: 100%; height: 100%; border: none; object-fit: cover; }
+  .gh-about-video-{{ section.id }} .gh-video-cover { width: 100%; height: 100%; position: relative; }
+  .gh-about-video-{{ section.id }} .gh-play-btn { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 64px; height: 64px; border-radius: 50%; background: var(--gh-gold); color: #fff; display: grid; place-items: center; }
+  @media (max-width: 768px) {
+    .gh-about-video-{{ section.id }} { padding: 56px 20px; }
+    .gh-about-video-{{ section.id }} .gh-about-video-grid { grid-template-columns: 1fr; }
+    .gh-about-video-{{ section.id }} .gh-btn-row { flex-wrap: wrap; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "GH — About Video",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "" },
+    { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p>Built on Hard Work and Dedication</p>" },
+    { "type": "textarea", "id": "body_1", "label": "First paragraph", "default": "The family's journey began in 1998 with just 25 acres of vines at Lyndoch in the Barossa Valley. Today, God's Hill Vineyard consists of some of the most renowned vineyards in the region." },
+    { "type": "textarea", "id": "body_2", "label": "Second paragraph", "default": "We remain committed to producing exceptional wines while respecting the land and embracing sustainable vineyard practices for future generations." },
+    { "type": "textarea", "id": "body_3", "label": "Third paragraph", "default": "Our wines reflect the true character of the Barossa — rich in history, bold in flavour and crafted with care." },
+    { "type": "text", "id": "btn_primary_label", "label": "Primary button label", "default": "Our wines" },
+    { "type": "url", "id": "btn_primary_url", "label": "Primary button URL" },
+    { "type": "text", "id": "btn_secondary_label", "label": "Secondary button label", "default": "Visit us" },
+    { "type": "url", "id": "btn_secondary_url", "label": "Secondary button URL" },
+    { "type": "url", "id": "video_url", "label": "Video URL (YouTube/Vimeo)" },
+    { "type": "image_picker", "id": "video_cover", "label": "Video cover image" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#FDF8F2" }
+  ],
+  "presets": [{ "name": "GH — About Video" }]
+}
+{% endschema %}

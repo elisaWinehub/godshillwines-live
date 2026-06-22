@@ -1,0 +1,20 @@
+{
+  "sections": {
+    "gh_hero": {
+      "type": "gh-page-hero-block",
+      "settings": {
+        "hero_eyebrow": "God's Hill Wines",
+        "hero_title": "<p><em>Gallery</em></p>",
+        "hero_subheading": "Life at the vineyard — captured through the seasons.",
+        "hero_height": 380
+      }
+    },
+    "gh_gallery_grid": {
+      "type": "gh-gallery-grid",
+      "blocks": {},
+      "block_order": [],
+      "settings": {}
+    }
+  },
+  "order": ["gh_hero", "gh_gallery_grid"]
+}
