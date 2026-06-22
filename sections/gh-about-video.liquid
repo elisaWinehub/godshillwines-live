@@ -1,7 +1,15 @@
 {%- render 'gh-tokens' -%}
-{%- assign video_url = section.settings.video_url | default: '' -%}
-{%- assign is_youtube = video_url contains 'youtube.com' or video_url contains 'youtu.be' -%}
-{%- assign is_vimeo = video_url contains 'vimeo.com' -%}
+{%- liquid
+  assign video_url = section.settings.video_url | default: ''
+  assign is_youtube = false
+  assign is_vimeo = false
+  if video_url contains 'youtube.com' or video_url contains 'youtu.be'
+    assign is_youtube = true
+  endif
+  if video_url contains 'vimeo.com'
+    assign is_vimeo = true
+  endif
+-%}
 
 <section class="gh-about-video-{{ section.id }}" style="background: {{ section.settings.bg_color | default: '#FDF8F2' }};">
   <div class="gh-about-video-shell">
@@ -69,7 +77,7 @@
 {
   "name": "GH — About Video",
   "settings": [
-    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "About" },
     { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p>Built on Hard Work and Dedication</p>" },
     { "type": "textarea", "id": "body_1", "label": "First paragraph", "default": "The family's journey began in 1998 with just 25 acres of vines at Lyndoch in the Barossa Valley. Today, God's Hill Vineyard consists of some of the most renowned vineyards in the region." },
     { "type": "textarea", "id": "body_2", "label": "Second paragraph", "default": "We remain committed to producing exceptional wines while respecting the land and embracing sustainable vineyard practices for future generations." },

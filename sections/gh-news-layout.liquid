@@ -20,8 +20,14 @@
         </div>
         <aside class="gh-news-sidebar">
           <h3>{{ section.settings.sidebar_heading | default: 'More stories' }}</h3>
-          {% assign sidebar_articles = blog.articles | where_exp: 'a', 'a.id != featured.id' %}
-          {% for article in sidebar_articles limit: 4 %}
+          {% assign sidebar_count = 0 %}
+          {% for article in blog.articles %}
+            {% if featured and article.id == featured.id %}
+              {% continue %}
+            {% endif %}
+            {% if sidebar_count >= 4 %}
+              {% break %}
+            {% endif %}
             <article class="gh-sidebar-item">
               <a href="{{ article.url }}" class="gh-side-img">{% if article.image %}{{ article.image | image_url: width: 220 | image_tag: loading: 'lazy' }}{% endif %}</a>
               <div>
@@ -30,18 +36,32 @@
                 <p class="gh-side-date">{{ article.published_at | date: '%d %B %Y' }}</p>
               </div>
             </article>
+            {% assign sidebar_count = sidebar_count | plus: 1 %}
           {% endfor %}
         </aside>
       </div>
 
       <div class="gh-news-cards">
-        {% for article in sidebar_articles limit: 3 offset: 4 %}
+        {% assign cards_seen = 0 %}
+        {% assign cards_rendered = 0 %}
+        {% for article in blog.articles %}
+          {% if featured and article.id == featured.id %}
+            {% continue %}
+          {% endif %}
+          {% assign cards_seen = cards_seen | plus: 1 %}
+          {% if cards_seen <= 4 %}
+            {% continue %}
+          {% endif %}
+          {% if cards_rendered >= 3 %}
+            {% break %}
+          {% endif %}
           <article class="gh-card">
             <a href="{{ article.url }}">{% if article.image %}{{ article.image | image_url: width: 700 | image_tag: loading: 'lazy' }}{% endif %}</a>
             {% for tag in article.tags limit: 1 %}<span class="gh-news-tag">{{ tag }}</span>{% endfor %}
             <a class="gh-card-title" href="{{ article.url }}">{{ article.title }}</a>
             <p class="gh-side-date">{{ article.published_at | date: '%d %B %Y' }}</p>
           </article>
+          {% assign cards_rendered = cards_rendered | plus: 1 %}
         {% endfor %}
       </div>
     </div>
