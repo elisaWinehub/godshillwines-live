@@ -9,72 +9,9 @@
  */
 {
   "sections": {
-    "main": {
-      "type": "main-collection-product-grid",
-      "settings": {
-        "color_scheme": "",
-        "hero_fallback_image": "shopify://shop_images/ghwines_2.png",
-        "hero_overlay_color": "#1a2414",
-        "hero_overlay_opacity": 42,
-        "hero_height_mobile": 280,
-        "hero_height_desktop": 360,
-        "hero_title_align": "center",
-        "hero_title_size_mobile": 28,
-        "hero_title_size_desktop": 44,
-        "hero_title_weight": "500",
-        "hero_color_scheme": "",
-        "show_collection_description": false,
-        "sidebar_column_span": 3,
-        "sticky_filter_sidebar": true,
-        "mobile_filter_drawer": true,
-        "enable_filtering": true,
-        "filter_style": "vertical",
-        "filter_width": "full-width",
-        "text_label_case": "uppercase",
-        "show_swatch_label": false,
-        "show_filter_label": false,
-        "enable_sorting": true,
-        "enable_grid_density": false,
-        "inherit_color_scheme": true,
-        "facets_color_scheme": "",
-        "padding-block-start": 8,
-        "padding-block-end": 20,
-        "padding-inline-start": 0,
-        "padding-inline-end": 16,
-        "facets_margin_bottom": 16,
-        "facets_margin_right": 28,
-        "padding_top": 36,
-        "padding_bottom": 52,
-        "grid_gap": 28,
-        "grid_padding_inline": 0,
-        "grid_padding_mobile": 16,
-        "products_per_page": 9,
-        "columns_desktop": 3,
-        "columns_tablet": 2,
-        "columns_mobile": "2",
-        "card_image_aspect": "ratio_4_5",
-        "inherit_section_color_scheme": true,
-        "product_area_color_scheme": "",
-        "show_badges": true,
-        "new_badge_days": 28,
-        "badge_new_label": "New",
-        "badge_bestseller_label": "Best seller",
-        "badge_sale_bg": "#9a8530",
-        "badge_sale_fg": "#ffffff",
-        "badge_muted_bg": "#2b2b28",
-        "badge_muted_fg": "#f5f2ea",
-        "badge_accent_bg": "#f4eedd",
-        "badge_accent_fg": "#352e20",
-        "show_vendor": false,
-        "show_quantity_selector": true,
-        "cart_button_background": "#b29b33",
-        "cart_button_text": "#ffffff",
-        "cart_button_hover": "#9a8530",
-        "choose_options_label": "Choose options"
-      }
-    }
+    "gh_collection_hero": { "type": "gh-collection-hero", "settings": {} },
+    "gh_collection_toolbar": { "type": "gh-collection-toolbar", "settings": {} },
+    "gh_collection_grid": { "type": "gh-collection-grid", "settings": {} }
   },
-  "order": [
-    "main"
-  ]
+  "order": ["gh_collection_hero", "gh_collection_toolbar", "gh_collection_grid"]
 }

@@ -1,0 +1,134 @@
+{%- liquid
+  assign gh_eyebrow = eyebrow | default: 'God''s Hill Wines'
+  assign gh_title = title | default: '<p>Page <em>Title</em></p>'
+  assign gh_subheading = subheading | default: ''
+  assign gh_image = image
+  assign gh_height = height | default: 380
+  assign gh_overlay_opacity = overlay_opacity | default: 55
+  assign gh_alignment = content_alignment | default: 'left'
+-%}
+
+<div
+  class="gh-page-hero-snippet gh-page-hero-align-{{ gh_alignment }}"
+  style="--gh-page-hero-height: {{ gh_height }}px; --gh-page-hero-overlay-opacity: {{ gh_overlay_opacity | times: 0.01 }};"
+>
+  {% if gh_image %}
+    {{
+      gh_image
+      | image_url: width: 2200
+      | image_tag: loading: 'eager', class: 'gh-page-hero-image'
+    }}
+  {% endif %}
+  <div class="gh-page-hero-overlay"></div>
+  <div class="gh-page-hero-content-wrap">
+    <div class="gh-page-hero-content">
+      {% if gh_eyebrow != blank %}
+        <p class="gh-page-hero-eyebrow">{{ gh_eyebrow }}</p>
+      {% endif %}
+      <span class="gh-page-hero-divider"></span>
+      <div class="gh-page-hero-title">{{ gh_title }}</div>
+      {% if gh_subheading != blank %}
+        <p class="gh-page-hero-subheading">{{ gh_subheading }}</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+  .gh-page-hero-snippet {
+    position: relative;
+    overflow: hidden;
+    min-height: var(--gh-page-hero-height);
+    background: var(--gh-vine, #1c2b1a);
+  }
+
+  .gh-page-hero-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .gh-page-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(20, 28, 18, 0.3) 0%, rgba(20, 28, 18, 0.75) 100%);
+    opacity: var(--gh-page-hero-overlay-opacity);
+  }
+
+  .gh-page-hero-content-wrap {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: flex-end;
+    min-height: var(--gh-page-hero-height);
+  }
+
+  .gh-page-hero-content {
+    width: min(1280px, 100%);
+    margin: 0 auto;
+    padding: 0 40px 52px;
+    color: #f5efe3;
+  }
+
+  .gh-page-hero-align-center .gh-page-hero-content {
+    text-align: center;
+  }
+
+  .gh-page-hero-eyebrow {
+    margin: 0;
+    font: 600 10px/1.4 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--gh-gold, #b8913a);
+  }
+
+  .gh-page-hero-divider {
+    display: block;
+    width: 40px;
+    height: 1px;
+    margin: 16px 0;
+    background: var(--gh-gold, #b8913a);
+  }
+
+  .gh-page-hero-align-center .gh-page-hero-divider {
+    margin-inline: auto;
+  }
+
+  .gh-page-hero-title {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: clamp(40px, 5vw, 68px);
+    line-height: 1.02;
+    color: #f5efe3;
+  }
+
+  .gh-page-hero-title em {
+    color: var(--gh-gold-light, #d4bc8a);
+  }
+
+  .gh-page-hero-title p {
+    margin: 0;
+  }
+
+  .gh-page-hero-subheading {
+    max-width: 520px;
+    margin: 14px 0 0;
+    font: 400 14px/1.55 'Inter', sans-serif;
+    color: rgba(245, 239, 227, 0.65);
+  }
+
+  .gh-page-hero-align-center .gh-page-hero-subheading {
+    margin-inline: auto;
+  }
+
+  @media (max-width: 768px) {
+    .gh-page-hero-content {
+      padding: 0 20px 36px;
+    }
+
+    .gh-page-hero-title {
+      font-size: clamp(32px, 8vw, 48px);
+    }
+  }
+</style>

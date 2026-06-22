@@ -1,0 +1,83 @@
+{%- render 'gh-tokens' -%}
+<section class="gh-contact-forms-{{ section.id }}" style="background: {{ section.settings.bg_color | default: '#FDF8F2' }};">
+  <div class="gh-contact-forms-shell">
+    <div class="gh-contact-forms-grid">
+      <div class="gh-form-card">
+        <p class="gh-title">{{ section.settings.form_title | default: 'Send us a message' }}</p>
+        {% form 'contact', id: 'gh-contact-form' %}
+          {% if form.posted_successfully? %}
+            <p class="gh-form-success">Thank you! Your message has been sent.</p>
+          {% else %}
+            <div class="gh-form-field"><label>{{ section.settings.name_label }}</label><input type="text" name="contact[name]" required></div>
+            <div class="gh-form-field"><label>{{ section.settings.email_label }}</label><input type="email" name="contact[email]" required></div>
+            <div class="gh-form-field"><label>{{ section.settings.subject_label }}</label><input type="text" name="contact[subject]"></div>
+            <div class="gh-form-field"><label>{{ section.settings.message_label }}</label><textarea name="contact[body]" required></textarea></div>
+            <button type="submit" class="gh-submit">{{ section.settings.submit_label }} →</button>
+          {% endif %}
+        {% endform %}
+      </div>
+      <div class="gh-ways-card" style="background: {{ section.settings.ways_bg | default: '#F5EFE3' }};">
+        <p class="gh-title">{{ section.settings.ways_title | default: 'Other ways to reach us' }}</p>
+        {% for block in section.blocks %}
+          {% if block.type == 'contact_way' %}
+            <article class="gh-way" {{ block.shopify_attributes }}>
+              <p class="gh-way-label">{{ block.settings.label }}</p>
+              <p class="gh-way-value{% if block.settings.is_phone %} is-phone{% endif %}">{{ block.settings.value | newline_to_br }}</p>
+            </article>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+  .gh-contact-forms-{{ section.id }} { padding: 0 40px 64px; }
+  .gh-contact-forms-{{ section.id }} .gh-contact-forms-shell { width: min(1280px, 100%); margin: 0 auto; }
+  .gh-contact-forms-{{ section.id }} .gh-contact-forms-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+  .gh-contact-forms-{{ section.id }} .gh-form-card, .gh-contact-forms-{{ section.id }} .gh-ways-card { border-radius: 4px; padding: 36px; }
+  .gh-contact-forms-{{ section.id }} .gh-form-card { background: #fff; border: 0.5px solid var(--gh-border); }
+  .gh-contact-forms-{{ section.id }} .gh-title { margin: 0 0 14px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--gh-gold); }
+  .gh-contact-forms-{{ section.id }} .gh-form-field { margin-bottom: 10px; }
+  .gh-contact-forms-{{ section.id }} label { display: block; margin-bottom: 6px; font-size: 12px; color: var(--gh-vine); }
+  .gh-contact-forms-{{ section.id }} input, .gh-contact-forms-{{ section.id }} textarea { width: 100%; border: 0.5px solid var(--gh-border); border-radius: 3px; padding: 10px; font-family: 'Inter', sans-serif; }
+  .gh-contact-forms-{{ section.id }} textarea { min-height: 120px; }
+  .gh-contact-forms-{{ section.id }} .gh-submit { border: 1px solid {{ section.settings.accent_color | default: '#B8913A' }}; background: {{ section.settings.accent_color | default: '#B8913A' }}; color: #fff; padding: 10px 14px; }
+  .gh-contact-forms-{{ section.id }} .gh-way { border-top: 0.5px solid var(--gh-border); padding: 12px 0; }
+  .gh-contact-forms-{{ section.id }} .gh-way-label { margin: 0 0 4px; font-size: 11px; text-transform: uppercase; color: var(--gh-vine); }
+  .gh-contact-forms-{{ section.id }} .gh-way-value { margin: 0; color: var(--gh-muted); }
+  .gh-contact-forms-{{ section.id }} .gh-way-value.is-phone { font: 400 22px/1.2 'EB Garamond', Georgia, serif; color: var(--gh-vine); }
+  @media (max-width: 768px) {
+    .gh-contact-forms-{{ section.id }} { padding: 0 20px 56px; }
+    .gh-contact-forms-{{ section.id }} .gh-contact-forms-grid { grid-template-columns: 1fr; }
+  }
+</style>
+{% schema %}
+{
+  "name": "GH — Contact Forms",
+  "settings": [
+    { "type": "text", "id": "form_title", "label": "Form card title", "default": "Send us a message" },
+    { "type": "text", "id": "ways_title", "label": "Contact ways title", "default": "Other ways to reach us" },
+    { "type": "text", "id": "name_label", "label": "Name field label", "default": "Your Name (required)" },
+    { "type": "text", "id": "email_label", "label": "Email field label", "default": "Your Email (required)" },
+    { "type": "text", "id": "subject_label", "label": "Subject field label", "default": "Subject" },
+    { "type": "text", "id": "message_label", "label": "Message field label", "default": "Your Message" },
+    { "type": "text", "id": "submit_label", "label": "Submit button label", "default": "Send Message" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#FDF8F2" },
+    { "type": "color", "id": "ways_bg", "label": "Contact ways card background", "default": "#F5EFE3" },
+    { "type": "color", "id": "accent_color", "label": "Accent", "default": "#B8913A" }
+  ],
+  "blocks": [
+    {
+      "type": "contact_way",
+      "name": "Contact way",
+      "settings": [
+        { "type": "select", "id": "icon", "label": "Icon", "default": "phone", "options": [{ "value": "phone", "label": "Phone" }, { "value": "location", "label": "Location" }, { "value": "mail", "label": "Mail" }, { "value": "building", "label": "Building" }, { "value": "accommodation", "label": "Accommodation" }] },
+        { "type": "text", "id": "label", "label": "Label", "default": "Cellar door, general enquiries" },
+        { "type": "textarea", "id": "value", "label": "Value/details", "default": "0412 107 926" },
+        { "type": "checkbox", "id": "is_phone", "label": "Style as large phone number", "default": false }
+      ]
+    }
+  ],
+  "presets": [{ "name": "GH — Contact Forms" }]
+}
+{% endschema %}

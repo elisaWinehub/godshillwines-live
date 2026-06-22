@@ -1,0 +1,44 @@
+{%- render 'gh-tokens' -%}
+<section class="gh-awards-strip-{{ section.id }}" style="background: {{ section.settings.bg_color | default: '#1C2B1A' }};">
+  <div class="gh-awards-strip-shell">
+    <p class="gh-eyebrow">{{ section.settings.eyebrow | default: 'Award Winning Wines' }}</p>
+    <span class="gh-divider"></span>
+    <div class="gh-medals">
+      {% for i in (1..section.settings.medal_count) %}
+        <span class="gh-medal" aria-hidden="true"></span>
+      {% endfor %}
+    </div>
+    <p class="gh-caption">{{ section.settings.caption | default: 'Winner of DECANTER and IWC – International Wine Challenge 2012 – CWSA Double Gold Medal and many more.' }}</p>
+    {% if section.settings.show_btn and section.settings.btn_label != blank and section.settings.btn_url != blank %}
+      <a class="gh-strip-btn" href="{{ section.settings.btn_url }}">{{ section.settings.btn_label }}</a>
+    {% endif %}
+  </div>
+</section>
+<style>
+  .gh-awards-strip-{{ section.id }} { padding: 64px 40px; text-align: center; color: #f5efe3; }
+  .gh-awards-strip-{{ section.id }} .gh-awards-strip-shell { width: min(1280px, 100%); margin: 0 auto; }
+  .gh-awards-strip-{{ section.id }} .gh-eyebrow { margin: 0; letter-spacing: 0.12em; text-transform: uppercase; font-size: 11px; color: var(--gh-gold-light); }
+  .gh-awards-strip-{{ section.id }} .gh-divider { display: block; width: 40px; height: 1px; background: var(--gh-gold); margin: 16px auto 20px; }
+  .gh-awards-strip-{{ section.id }} .gh-medals { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 20px; }
+  .gh-awards-strip-{{ section.id }} .gh-medal { width: 60px; height: 60px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #d4bc8a, #b8913a 60%, #7a5e20); }
+  .gh-awards-strip-{{ section.id }} .gh-caption { margin: 0 auto; max-width: 780px; color: rgba(245, 239, 227, 0.9); }
+  .gh-awards-strip-{{ section.id }} .gh-strip-btn { display: inline-block; margin-top: 12px; color: var(--gh-gold-light); text-decoration: none; }
+  @media (max-width: 768px) {
+    .gh-awards-strip-{{ section.id }} { padding: 56px 20px; }
+  }
+</style>
+{% schema %}
+{
+  "name": "GH — Awards Strip",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Award Winning Wines" },
+    { "type": "textarea", "id": "caption", "label": "Caption", "default": "Winner of DECANTER and IWC – International Wine Challenge 2012 – CWSA Double Gold Medal and many more." },
+    { "type": "range", "id": "medal_count", "label": "Number of medals", "min": 4, "max": 12, "step": 1, "default": 10 },
+    { "type": "text", "id": "btn_label", "label": "CTA label (optional)", "default": "View all awards →" },
+    { "type": "url", "id": "btn_url", "label": "CTA URL" },
+    { "type": "checkbox", "id": "show_btn", "label": "Show CTA button", "default": false },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#1C2B1A" }
+  ],
+  "presets": [{ "name": "GH — Awards Strip" }]
+}
+{% endschema %}

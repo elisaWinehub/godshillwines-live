@@ -1,0 +1,331 @@
+{%- render 'gh-tokens' -%}
+
+<section class="gh-product-detail-{{ section.id }}" style="background: {{ section.settings.bg_color | default: '#FDF8F2' }};">
+  <div class="gh-product-detail-shell">
+    <div class="gh-product-detail-grid">
+      <div class="gh-product-media-col">
+        {% assign featured = product.selected_or_first_available_variant.featured_image | default: product.featured_image %}
+        {% assign main_img_id = 'gh-main-img-tag-' | append: section.id %}
+        <div class="gh-product-main-img">
+          {% if featured %}
+            {{ featured | image_url: width: 1000 | image_tag: id: main_img_id, loading: 'eager' }}
+          {% endif %}
+          <button type="button" class="gh-zoom-btn" aria-label="Zoom image">+</button>
+        </div>
+        {% if section.settings.show_thumbnails %}
+          <div class="gh-product-thumbs">
+            {% for image in product.images limit: 5 %}
+              <button
+                type="button"
+                class="gh-product-thumb {% if forloop.first %}active{% endif %}"
+                data-src="{{ image | image_url: width: 1000 }}"
+                onclick="document.getElementById('{{ main_img_id }}').src=this.dataset.src;this.parentElement.querySelectorAll('.gh-product-thumb').forEach(function(t){t.classList.remove('active')});this.classList.add('active');"
+              >
+                {{ image | image_url: width: 160 | image_tag: loading: 'lazy' }}
+              </button>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="gh-product-info-col">
+        {% if section.settings.show_vendor %}
+          <p class="gh-vendor">{{ product.vendor | default: 'Gods Hill Wines' }}</p>
+        {% endif %}
+        <h1 class="gh-title">{{ product.title | default: 'Wine name' }}</h1>
+
+        {% if section.settings.show_rating and product.metafields.reviews.rating %}
+          <p class="gh-rating">★★★★★ <span>{{ product.metafields.reviews.rating }}</span></p>
+        {% endif %}
+
+        {% assign variant = product.selected_or_first_available_variant %}
+        <div class="gh-price-row">
+          <span class="gh-detail-price">{{ variant.price | money }}</span>
+          {% if variant.compare_at_price > variant.price %}
+            <span class="gh-detail-price-old">{{ variant.compare_at_price | money }}</span>
+            {% assign saving = variant.compare_at_price | minus: variant.price | times: 100 | divided_by: variant.compare_at_price %}
+            <span class="gh-price-save">You save {{ saving }}%</span>
+          {% endif %}
+        </div>
+
+        <div class="gh-description">
+          {{ product.description | split: '</p>' | first | append: '</p>' }}
+        </div>
+
+        {% if section.settings.show_subscribe_option and product.selling_plan_groups.size > 0 %}
+          <div class="gh-purchase-options">
+            <label><input type="radio" name="gh-purchase-{{ section.id }}" checked> One-time purchase</label>
+            <label><input type="radio" name="gh-purchase-{{ section.id }}"> Subscribe &amp; Save <strong>{{ section.settings.subscribe_discount_label | default: 'Save 10%' }}</strong></label>
+          </div>
+        {% endif %}
+
+        {% form 'product', product, id: 'gh-product-form' %}
+          <input type="hidden" name="id" value="{{ variant.id }}">
+          <div class="gh-qty-add-row">
+            <div class="gh-qty-control">
+              <button type="button" onclick="var i=this.nextElementSibling;i.value=Math.max(1,Number(i.value)-1)">-</button>
+              <input type="number" name="quantity" value="1" min="1">
+              <button type="button" onclick="var i=this.previousElementSibling;i.value=Number(i.value)+1">+</button>
+            </div>
+            <button
+              type="submit"
+              class="gh-add-cart-btn"
+              {% unless variant.available %}
+                disabled
+              {% endunless %}
+            >
+              {% if variant.available %}
+                Add to cart
+              {% else %}
+                Sold out
+              {% endif %}
+            </button>
+          </div>
+        {% endform %}
+
+        <div class="gh-accordion">
+          {% for block in section.blocks %}
+            {% if block.type == 'tab' %}
+              <details {{ block.shopify_attributes }}>
+                <summary>{{ block.settings.title | default: 'Tab' }}</summary>
+                <div class="gh-acc-content">{{ block.settings.content }}</div>
+              </details>
+            {% endif %}
+          {% endfor %}
+
+          {% if section.settings.pdf_url != blank %}
+            <details>
+              <summary>Tasting Note PDF</summary>
+              <div class="gh-acc-content"><a href="{{ section.settings.pdf_url }}">Download PDF</a></div>
+            </details>
+          {% endif %}
+
+          <details>
+            <summary>Reviews</summary>
+            <div class="gh-acc-content">
+              {% if product.metafields.reviews.rating %}
+                <p>{{ product.metafields.reviews.rating }}</p>
+              {% else %}
+                <p>No reviews available yet.</p>
+              {% endif %}
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .gh-product-detail-{{ section.id }} {
+    padding: 56px 40px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-product-detail-shell {
+    width: min(1280px, 100%);
+    margin: 0 auto;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-product-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 52px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-product-main-img {
+    background: var(--gh-cream);
+    border-radius: 4px;
+    min-height: 540px;
+    display: grid;
+    place-items: center;
+    position: relative;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-product-main-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-zoom-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: #fff;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-product-thumbs {
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-product-thumb {
+    width: 72px;
+    height: 72px;
+    border: 1.5px solid transparent;
+    border-radius: 3px;
+    padding: 0;
+    overflow: hidden;
+    background: var(--gh-cream);
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-product-thumb.active {
+    border-color: var(--gh-gold);
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-product-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-vendor {
+    margin: 0 0 8px;
+    font: 600 10px/1.3 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--gh-gold);
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-title {
+    margin: 0 0 12px;
+    font: 400 clamp(28px, 3.5vw, 42px)/1.1 'EB Garamond', Georgia, serif;
+    color: var(--gh-vine);
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-rating {
+    color: var(--gh-gold);
+    margin: 0 0 16px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-detail-price {
+    font: 400 32px/1 'EB Garamond', Georgia, serif;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-detail-price-old {
+    text-decoration: line-through;
+    color: var(--gh-muted);
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-price-save {
+    color: #bc3d35;
+    font-size: 12px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-description {
+    color: var(--gh-muted);
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-purchase-options {
+    border: 0.5px solid var(--gh-border);
+    border-radius: 4px;
+    padding: 12px;
+    display: grid;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-qty-add-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-qty-control {
+    display: grid;
+    grid-template-columns: 36px 1fr 36px;
+    border: 0.5px solid var(--gh-border);
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-qty-control button,
+  .gh-product-detail-{{ section.id }} .gh-qty-control input {
+    border: none;
+    background: #fff;
+    height: 42px;
+    text-align: center;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-add-cart-btn {
+    border: 1px solid var(--gh-gold);
+    background: var(--gh-gold);
+    color: #fff;
+    font-weight: 600;
+    height: 42px;
+    cursor: pointer;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-add-cart-btn:disabled {
+    background: transparent;
+    color: var(--gh-muted);
+    border-color: var(--gh-muted);
+    cursor: not-allowed;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-accordion details {
+    border-bottom: 0.5px solid var(--gh-border);
+    padding: 10px 0;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-accordion summary {
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-acc-content {
+    color: var(--gh-muted);
+    margin-top: 8px;
+  }
+
+  @media (max-width: 768px) {
+    .gh-product-detail-{{ section.id }} {
+      padding: 56px 20px;
+    }
+
+    .gh-product-detail-{{ section.id }} .gh-product-detail-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .gh-product-detail-{{ section.id }} .gh-qty-add-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "GH — Product Info",
+  "settings": [
+    { "type": "checkbox", "id": "show_vendor", "label": "Show vendor label", "default": true },
+    { "type": "checkbox", "id": "show_rating", "label": "Show star rating", "default": true },
+    { "type": "checkbox", "id": "show_subscribe_option", "label": "Show Subscribe & Save option", "default": true },
+    { "type": "text", "id": "subscribe_discount_label", "label": "Subscribe discount label", "default": "Save 10%" },
+    { "type": "url", "id": "pdf_url", "label": "Tasting note PDF URL" },
+    { "type": "checkbox", "id": "show_thumbnails", "label": "Show thumbnails", "default": true },
+    { "type": "color", "id": "bg_color", "label": "Section background", "default": "#FDF8F2" }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Tab",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Tab title", "default": "Wine Details" },
+        { "type": "richtext", "id": "content", "label": "Tab content", "default": "<p>Add tab content here.</p>" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "GH — Product Info" }]
+}
+{% endschema %}

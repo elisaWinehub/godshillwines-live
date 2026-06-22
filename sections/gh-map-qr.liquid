@@ -1,0 +1,48 @@
+{%- render 'gh-tokens' -%}
+<section class="gh-map-qr-{{ section.id }}">
+  <div class="gh-map-grid">
+    <div class="gh-qr-box" style="background: {{ section.settings.qr_bg | default: '#F5EFE3' }};">
+      <p class="gh-title">{{ section.settings.qr_title | default: 'Scan to find us' }}</p>
+      <p>{{ section.settings.qr_body | default: 'Open your camera on your phone and scan the QR code for directions to our Cellar Door.' }}</p>
+      {% if section.settings.qr_image %}
+        {{ section.settings.qr_image | image_url: width: 500 | image_tag: loading: 'lazy' }}
+      {% endif %}
+    </div>
+    <div class="gh-map-box">
+      {% if section.settings.map_embed != blank %}
+        <div class="gh-map-embed">{{ section.settings.map_embed }}</div>
+      {% else %}
+        <div class="gh-map-placeholder"><p>Paste your Google Maps embed code in the theme editor.</p></div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+<style>
+  .gh-map-qr-{{ section.id }} .gh-map-grid { display: grid; grid-template-columns: 1fr 2fr; min-height: 320px; }
+  .gh-map-qr-{{ section.id }} .gh-qr-box { padding: 40px; }
+  .gh-map-qr-{{ section.id }} .gh-title { margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.12em; font-size: 11px; color: var(--gh-gold); }
+  .gh-map-qr-{{ section.id }} .gh-qr-box p { color: var(--gh-muted); }
+  .gh-map-qr-{{ section.id }} .gh-qr-box img { width: 220px; max-width: 100%; height: auto; }
+  .gh-map-qr-{{ section.id }} .gh-map-box { min-height: 320px; overflow: hidden; background: var(--gh-cream); }
+  .gh-map-qr-{{ section.id }} .gh-map-embed,
+  .gh-map-qr-{{ section.id }} .gh-map-embed iframe { width: 100%; height: 100%; }
+  .gh-map-qr-{{ section.id }} .gh-map-placeholder { width: 100%; height: 100%; display: grid; place-items: center; color: var(--gh-muted); padding: 20px; }
+  @media (max-width: 768px) {
+    .gh-map-qr-{{ section.id }} .gh-map-grid { grid-template-columns: 1fr; }
+    .gh-map-qr-{{ section.id }} .gh-qr-box { padding: 30px 20px; }
+    .gh-map-qr-{{ section.id }} .gh-map-box { min-height: 280px; }
+  }
+</style>
+{% schema %}
+{
+  "name": "GH — Map & QR",
+  "settings": [
+    { "type": "text", "id": "qr_title", "label": "QR box title", "default": "Scan to find us" },
+    { "type": "textarea", "id": "qr_body", "label": "QR box body", "default": "Open your camera on your phone and scan the QR code for directions to our Cellar Door." },
+    { "type": "image_picker", "id": "qr_image", "label": "QR code image" },
+    { "type": "html", "id": "map_embed", "label": "Google Maps embed code" },
+    { "type": "color", "id": "qr_bg", "label": "QR box background", "default": "#F5EFE3" }
+  ],
+  "presets": [{ "name": "GH — Map & QR" }]
+}
+{% endschema %}

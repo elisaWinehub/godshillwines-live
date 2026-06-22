@@ -1,0 +1,50 @@
+{%- render 'gh-tokens' -%}
+<section class="gh-contact-intro-{{ section.id }}" style="background: {{ section.settings.bg_color | default: '#FDF8F2' }};">
+  <div class="gh-contact-intro-shell">
+    <div class="gh-contact-intro-grid">
+      <div class="gh-contact-text">
+        <p class="gh-eyebrow">{{ section.settings.eyebrow | default: 'Cellar door' }}</p>
+        <h2>{{ section.settings.heading | default: 'Scalzi Estate Vineyard & Cantina Scalzi' }}</h2>
+        <span class="gh-divider" style="background: {{ section.settings.accent_color | default: '#B8913A' }};"></span>
+        <p>{{ section.settings.body_1 }}</p>
+        <p>{{ section.settings.body_2 }}</p>
+      </div>
+      <div class="gh-contact-image">
+        {% if section.settings.image %}
+          {{ section.settings.image | image_url: width: 1600 | image_tag: loading: 'lazy', alt: section.settings.image_alt }}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+  .gh-contact-intro-{{ section.id }} { padding: 64px 40px; }
+  .gh-contact-intro-{{ section.id }} .gh-contact-intro-shell { width: min(1280px, 100%); margin: 0 auto; }
+  .gh-contact-intro-{{ section.id }} .gh-contact-intro-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+  .gh-contact-intro-{{ section.id }} .gh-eyebrow { margin: 0 0 8px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--gh-gold); }
+  .gh-contact-intro-{{ section.id }} h2 { margin: 0; font: 400 40px/1.1 'EB Garamond', Georgia, serif; color: var(--gh-vine); }
+  .gh-contact-intro-{{ section.id }} .gh-divider { display: block; width: 40px; height: 1px; margin: 16px 0; }
+  .gh-contact-intro-{{ section.id }} p { color: var(--gh-muted); }
+  .gh-contact-intro-{{ section.id }} .gh-contact-image { height: 380px; border-radius: 4px; overflow: hidden; background: var(--gh-cream); }
+  .gh-contact-intro-{{ section.id }} .gh-contact-image img { width: 100%; height: 100%; object-fit: cover; }
+  @media (max-width: 768px) {
+    .gh-contact-intro-{{ section.id }} { padding: 56px 20px; }
+    .gh-contact-intro-{{ section.id }} .gh-contact-intro-grid { grid-template-columns: 1fr; }
+  }
+</style>
+{% schema %}
+{
+  "name": "GH — Contact Intro",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Cellar door" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Scalzi Estate Vineyard & Cantina Scalzi" },
+    { "type": "textarea", "id": "body_1", "label": "Paragraph 1", "default": "God's Hill \"Cantina Scalzi\" Cellar Door open from Thursday to Sunday from 11am to 5pm. Kitchen open 11am to 4pm. We are closed Monday, Tuesday and Wednesday. Open on public holidays from 11am to 5pm." },
+    { "type": "textarea", "id": "body_2", "label": "Paragraph 2", "default": "Wine Sales can be purchased 7 days a week, please call before coming to collect. We also take other bookings during the week for wine tasting etc; please call to book your event in. Call 0412 836 004." },
+    { "type": "image_picker", "id": "image", "label": "Right image" },
+    { "type": "text", "id": "image_alt", "label": "Image alt text", "default": "Cantina Scalzi outdoor dining" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#FDF8F2" },
+    { "type": "color", "id": "accent_color", "label": "Accent", "default": "#B8913A" }
+  ],
+  "presets": [{ "name": "GH — Contact Intro" }]
+}
+{% endschema %}

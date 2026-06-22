@@ -1,0 +1,86 @@
+{%- render 'gh-tokens' -%}
+<section class="gh-news-layout-{{ section.id }}" style="background: {{ section.settings.bg_color | default: '#FDF8F2' }};">
+  {% paginate blog.articles by 9 %}
+    {% assign featured = blog.articles.first %}
+    <div class="gh-news-shell">
+      <div class="gh-news-top">
+        <div class="gh-news-featured">
+          {% if featured %}
+            <a href="{{ featured.url }}" class="gh-news-featured-img">
+              {% if featured.image %}
+                {{ featured.image | image_url: width: 1200 | image_tag: loading: 'eager' }}
+              {% endif %}
+            </a>
+            {% for tag in featured.tags limit: 1 %}<span class="gh-news-tag">{{ tag }}</span>{% endfor %}
+            <h2>{{ featured.title }}</h2>
+            <p class="gh-meta">{{ featured.published_at | date: '%d %B %Y' }} · {{ featured.author }}</p>
+            <p class="gh-excerpt">{{ featured.excerpt_or_content | strip_html | truncate: 280 }}</p>
+            <a href="{{ featured.url }}" class="gh-read-more">Read the full story →</a>
+          {% endif %}
+        </div>
+        <aside class="gh-news-sidebar">
+          <h3>{{ section.settings.sidebar_heading | default: 'More stories' }}</h3>
+          {% assign sidebar_articles = blog.articles | where_exp: 'a', 'a.id != featured.id' %}
+          {% for article in sidebar_articles limit: 4 %}
+            <article class="gh-sidebar-item">
+              <a href="{{ article.url }}" class="gh-side-img">{% if article.image %}{{ article.image | image_url: width: 220 | image_tag: loading: 'lazy' }}{% endif %}</a>
+              <div>
+                {% for tag in article.tags limit: 1 %}<p class="gh-side-tag">{{ tag }}</p>{% endfor %}
+                <a href="{{ article.url }}" class="gh-side-title">{{ article.title }}</a>
+                <p class="gh-side-date">{{ article.published_at | date: '%d %B %Y' }}</p>
+              </div>
+            </article>
+          {% endfor %}
+        </aside>
+      </div>
+
+      <div class="gh-news-cards">
+        {% for article in sidebar_articles limit: 3 offset: 4 %}
+          <article class="gh-card">
+            <a href="{{ article.url }}">{% if article.image %}{{ article.image | image_url: width: 700 | image_tag: loading: 'lazy' }}{% endif %}</a>
+            {% for tag in article.tags limit: 1 %}<span class="gh-news-tag">{{ tag }}</span>{% endfor %}
+            <a class="gh-card-title" href="{{ article.url }}">{{ article.title }}</a>
+            <p class="gh-side-date">{{ article.published_at | date: '%d %B %Y' }}</p>
+          </article>
+        {% endfor %}
+      </div>
+    </div>
+  {% endpaginate %}
+</section>
+<style>
+  .gh-news-layout-{{ section.id }} { padding: 64px 40px 80px; }
+  .gh-news-layout-{{ section.id }} .gh-news-shell { width: min(1280px, 100%); margin: 0 auto; }
+  .gh-news-layout-{{ section.id }} .gh-news-top { display: grid; grid-template-columns: 2fr 1fr; gap: 48px; }
+  .gh-news-layout-{{ section.id }} .gh-news-featured-img { display: block; height: 380px; border-radius: 4px; overflow: hidden; background: var(--gh-cream); }
+  .gh-news-layout-{{ section.id }} .gh-news-featured-img img { width: 100%; height: 100%; object-fit: cover; }
+  .gh-news-layout-{{ section.id }} .gh-news-tag { display: inline-block; margin-top: 10px; border-radius: 2px; background: var(--gh-cream); color: {{ section.settings.accent_color | default: '#B8913A' }}; font-size: 10px; padding: 4px 8px; }
+  .gh-news-layout-{{ section.id }} h2 { margin: 10px 0; font: 400 30px/1.15 'EB Garamond', Georgia, serif; color: var(--gh-vine); }
+  .gh-news-layout-{{ section.id }} .gh-meta, .gh-news-layout-{{ section.id }} .gh-excerpt, .gh-news-layout-{{ section.id }} .gh-side-date { color: var(--gh-muted); font-size: 12px; }
+  .gh-news-layout-{{ section.id }} .gh-read-more { color: {{ section.settings.accent_color | default: '#B8913A' }}; text-decoration: none; }
+  .gh-news-layout-{{ section.id }} .gh-news-sidebar h3 { margin-top: 0; font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gh-vine); }
+  .gh-news-layout-{{ section.id }} .gh-sidebar-item { display: grid; grid-template-columns: 90px 1fr; gap: 12px; margin-bottom: 14px; }
+  .gh-news-layout-{{ section.id }} .gh-side-img { height: 90px; border-radius: 3px; overflow: hidden; background: var(--gh-cream); }
+  .gh-news-layout-{{ section.id }} .gh-side-img img { width: 100%; height: 100%; object-fit: cover; }
+  .gh-news-layout-{{ section.id }} .gh-side-tag { margin: 0; font-size: 10px; color: {{ section.settings.accent_color | default: '#B8913A' }}; }
+  .gh-news-layout-{{ section.id }} .gh-side-title { color: var(--gh-vine); text-decoration: none; font-family: 'EB Garamond', Georgia, serif; }
+  .gh-news-layout-{{ section.id }} .gh-news-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 30px; }
+  .gh-news-layout-{{ section.id }} .gh-card a:first-child { display: block; height: 220px; border-radius: 3px; overflow: hidden; background: var(--gh-cream); }
+  .gh-news-layout-{{ section.id }} .gh-card a:first-child img { width: 100%; height: 100%; object-fit: cover; }
+  .gh-news-layout-{{ section.id }} .gh-card-title { display: block; margin-top: 10px; color: var(--gh-vine); text-decoration: none; font-family: 'EB Garamond', Georgia, serif; font-size: 24px; }
+  @media (max-width: 768px) {
+    .gh-news-layout-{{ section.id }} { padding: 56px 20px; }
+    .gh-news-layout-{{ section.id }} .gh-news-top { grid-template-columns: 1fr; }
+    .gh-news-layout-{{ section.id }} .gh-news-cards { grid-template-columns: 1fr; }
+  }
+</style>
+{% schema %}
+{
+  "name": "GH — News Layout",
+  "settings": [
+    { "type": "text", "id": "sidebar_heading", "label": "Sidebar heading", "default": "More stories" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#FDF8F2" },
+    { "type": "color", "id": "accent_color", "label": "Accent colour", "default": "#B8913A" }
+  ],
+  "presets": [{ "name": "GH — News Layout" }]
+}
+{% endschema %}

@@ -1,14 +1,22 @@
 {% liquid
   assign card_id = section.id | default: 'gh'
-  assign show_badge = show_badge | default: false
-  assign badge_label = badge_label | default: 'Winter Special'
+  assign variant = product.selected_or_first_available_variant
+  assign compare_at_price = variant.compare_at_price | default: 0
+  assign sale_diff = compare_at_price | minus: variant.price
+  assign sale_pct = 0
+  if compare_at_price > variant.price and compare_at_price > 0
+    assign sale_pct = sale_diff | times: 100 | divided_by: compare_at_price
+  endif
 %}
 
 <article class="gh-product-card gh-product-card-{{ card_id }}">
   <a class="gh-product-card__image-wrap" href="{{ product.url | default: '#' }}">
-    {% if show_badge %}
-      <span class="gh-product-card__badge">{{ badge_label }}</span>
+    {% if product.available == false %}
+      <span class="gh-product-card__badge gh-product-card__badge--sold">{{ 'SOLD OUT' | default: 'SOLD OUT' }}</span>
+    {% elsif sale_pct > 0 %}
+      <span class="gh-product-card__badge gh-product-card__badge--sale">{{ sale_pct }}% OFF</span>
     {% endif %}
+
     {% if product.featured_media %}
       {{
         product.featured_media
@@ -19,18 +27,33 @@
       <div class="gh-product-card__image gh-product-card__image--placeholder"></div>
     {% endif %}
   </a>
+
   <div class="gh-product-card__body">
     {% assign variety = product.metafields.custom.variety | default: product.type | default: 'Estate Wine' %}
     <p class="gh-product-card__variety">{{ variety }}</p>
-    <h3 class="gh-product-card__title"><a href="{{ product.url | default: '#' }}">{{ product.title }}</a></h3>
-    {% assign vintage = product.metafields.custom.vintage | default: '' %}
-    {% assign region = product.metafields.custom.region | default: 'Barossa Valley' %}
-    <p class="gh-product-card__meta">
-      {% if vintage != blank %}{{ vintage }} · {% endif %}{{ region }}
-    </p>
+    <h3 class="gh-product-card__title"><a href="{{ product.url | default: '#' }}">{{ product.title | default: 'Product title' }}</a></h3>
+
     <div class="gh-product-card__row">
-      <span class="gh-product-card__price">{{ product.price | money }}</span>
-      <a class="gh-product-card__btn" href="{{ product.url | default: '#' }}">Add to cart</a>
+      <span class="gh-product-card__price">{{ variant.price | money }}</span>
+      {% if compare_at_price > variant.price %}
+        <span class="gh-product-card__compare">{{ compare_at_price | money }}</span>
+      {% endif %}
     </div>
+
+    {% if product.available %}
+      {% form 'product', product, class: 'gh-product-card__form' %}
+        <input type="hidden" name="id" value="{{ variant.id }}">
+        <div class="gh-product-card__actions">
+          <div class="gh-product-card__qty">
+            <button type="button" aria-label="Decrease quantity" onclick="var i=this.nextElementSibling;i.value=Math.max(1,Number(i.value)-1);">-</button>
+            <input type="number" name="quantity" value="1" min="1">
+            <button type="button" aria-label="Increase quantity" onclick="var i=this.previousElementSibling;i.value=Number(i.value)+1;">+</button>
+          </div>
+          <button type="submit" class="gh-product-card__btn">{{ 'Add to cart' | default: 'Add to cart' }}</button>
+        </div>
+      {% endform %}
+    {% else %}
+      <button type="button" class="gh-product-card__btn gh-product-card__btn--sold" disabled>Sold out</button>
+    {% endif %}
   </div>
 </article>

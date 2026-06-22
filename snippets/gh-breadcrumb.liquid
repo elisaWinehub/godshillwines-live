@@ -1,0 +1,39 @@
+{% if template != 'index' %}
+  <nav class="gh-breadcrumb" aria-label="Breadcrumb">
+    <div class="gh-breadcrumb-inner">
+      {{ breadcrumb | replace: '<a', '<a class="gh-bc-link"' }}
+    </div>
+  </nav>
+{% endif %}
+
+<style>
+  .gh-breadcrumb {
+    width: min(1280px, 100%);
+    margin: 0 auto;
+    padding: 14px 40px;
+    font: 400 11px/1.5 'Inter', sans-serif;
+    color: var(--gh-muted, #6b7668);
+  }
+
+  .gh-breadcrumb-inner a,
+  .gh-bc-link {
+    color: var(--gh-gold, #b8913a);
+    text-decoration: none;
+  }
+
+  .gh-breadcrumb-inner a:hover,
+  .gh-bc-link:hover {
+    text-decoration: underline;
+  }
+
+  .gh-breadcrumb-inner .divider,
+  .gh-breadcrumb-inner .separator {
+    opacity: 0.4;
+  }
+
+  @media (max-width: 768px) {
+    .gh-breadcrumb {
+      padding: 14px 20px;
+    }
+  }
+</style>

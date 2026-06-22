@@ -1,0 +1,95 @@
+{%- render 'gh-tokens' -%}
+{%- liquid
+  assign bg_color = section.settings.bg_color | default: '#F5EFE3'
+  assign cell_bg = section.settings.cell_bg | default: '#F5EFE3'
+  assign text_color = section.settings.text_color | default: '#1C2B1A'
+  assign title_color = section.settings.title_color | default: '#1C2B1A'
+  if section.settings.dark_mode
+    assign bg_color = '#1C2B1A'
+    assign cell_bg = '#1C2B1A'
+    assign text_color = '#F5EFE3'
+    assign title_color = '#F5EFE3'
+  endif
+-%}
+
+<section class="gh-pillars-{{ section.id }}" style="--gh-p-bg: {{ bg_color }}; --gh-p-cell: {{ cell_bg }}; --gh-p-text: {{ text_color }}; --gh-p-title: {{ title_color }};">
+  <div class="gh-pillars-shell">
+    <div class="gh-pillars-grid">
+      {% for block in section.blocks %}
+        {% if block.type == 'pillar' %}
+          <article class="gh-pillar" {{ block.shopify_attributes }}>
+            <h3>{{ block.settings.title | default: 'Barossa Heritage' }}</h3>
+            <p>{{ block.settings.body | default: 'Deep roots in the Barossa Valley spanning five generations.' }}</p>
+          </article>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+  .gh-pillars-{{ section.id }} {
+    padding: 56px 40px;
+    background: var(--gh-p-bg);
+  }
+  .gh-pillars-{{ section.id }} .gh-pillars-shell {
+    width: min(1280px, 100%);
+    margin: 0 auto;
+  }
+  .gh-pillars-{{ section.id }} .gh-pillars-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--gh-border);
+  }
+  .gh-pillars-{{ section.id }} .gh-pillar {
+    background: var(--gh-p-cell);
+    padding: 24px 22px;
+  }
+  .gh-pillars-{{ section.id }} .gh-pillar h3 {
+    margin: 0 0 10px;
+    color: var(--gh-p-title);
+    font: 500 22px/1.2 'EB Garamond', Georgia, serif;
+  }
+  .gh-pillars-{{ section.id }} .gh-pillar p {
+    margin: 0;
+    color: var(--gh-p-text);
+  }
+  @media (max-width: 768px) {
+    .gh-pillars-{{ section.id }} {
+      padding: 56px 20px;
+    }
+    .gh-pillars-{{ section.id }} .gh-pillars-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "GH — Pillars Strip",
+  "settings": [
+    { "type": "color", "id": "bg_color", "label": "Background colour", "default": "#F5EFE3" },
+    { "type": "color", "id": "text_color", "label": "Text colour", "default": "#1C2B1A" },
+    { "type": "color", "id": "cell_bg", "label": "Individual cell background", "default": "#F5EFE3" },
+    { "type": "color", "id": "title_color", "label": "Pillar title colour", "default": "#1C2B1A" },
+    { "type": "checkbox", "id": "dark_mode", "label": "Dark mode (vine bg, light text)", "default": false }
+  ],
+  "blocks": [
+    {
+      "type": "pillar",
+      "name": "Pillar",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Pillar title", "default": "Barossa Heritage" },
+        { "type": "textarea", "id": "body", "label": "Pillar body", "default": "Deep roots in the Barossa Valley spanning five generations." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "GH — Pillars Strip",
+      "blocks": [{ "type": "pillar" }, { "type": "pillar" }, { "type": "pillar" }, { "type": "pillar" }]
+    }
+  ]
+}
+{% endschema %}

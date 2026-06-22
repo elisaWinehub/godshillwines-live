@@ -1,0 +1,56 @@
+{%- render 'gh-tokens' -%}
+<section class="gh-featured-review-{{ section.id }}">
+  <div class="gh-featured-wrap">
+    <div class="gh-featured-left" style="background: {{ section.settings.bg_color | default: '#F5EFE3' }};">
+      <p class="gh-label" style="color: {{ section.settings.accent_color | default: '#B8913A' }};">{{ section.settings.label | default: 'Featured review' }}</p>
+      <h2>{{ section.settings.title | default: "Walkabout 2012 — God's Hill, Lyndoch." }}</h2>
+      <p class="gh-stars" style="color: {{ section.settings.accent_color | default: '#B8913A' }};">
+        {% for i in (1..section.settings.stars) %}★{% endfor %}
+      </p>
+      <p class="gh-excerpt">{{ section.settings.excerpt | default: "Koala's first face to face meeting with Charlie was arranged when calling for an appointment to visit the Cellar Door of God's Hill Wines. Charlie asked where Koala was calling from and discovering t..." }}</p>
+      {% if section.settings.link_label != blank and section.settings.link_url != blank %}
+        <a class="gh-link" href="{{ section.settings.link_url }}">{{ section.settings.link_label }}</a>
+      {% endif %}
+    </div>
+    <div class="gh-featured-right">
+      {% if section.settings.image %}
+        {{ section.settings.image | image_url: width: 1600 | image_tag: loading: 'lazy' }}
+      {% endif %}
+    </div>
+  </div>
+</section>
+<style>
+  .gh-featured-review-{{ section.id }} { padding: 0 40px; }
+  .gh-featured-review-{{ section.id }} .gh-featured-wrap { max-width: 1280px; margin: 48px auto; display: grid; grid-template-columns: 1fr 1fr; border: 0.5px solid var(--gh-border); border-radius: 4px; overflow: hidden; }
+  .gh-featured-review-{{ section.id }} .gh-featured-left { padding: 64px; display: flex; flex-direction: column; justify-content: center; }
+  .gh-featured-review-{{ section.id }} .gh-label { margin: 0 0 10px; font: 600 10px/1.2 'Inter', sans-serif; text-transform: uppercase; letter-spacing: 0.12em; }
+  .gh-featured-review-{{ section.id }} h2 { margin: 0 0 10px; font: 400 30px/1.1 'EB Garamond', Georgia, serif; color: var(--gh-vine); }
+  .gh-featured-review-{{ section.id }} .gh-stars { margin: 0 0 10px; letter-spacing: 3px; font-size: 18px; }
+  .gh-featured-review-{{ section.id }} .gh-excerpt { margin: 0 0 12px; color: var(--gh-muted); }
+  .gh-featured-review-{{ section.id }} .gh-link { color: var(--gh-gold); text-decoration: none; }
+  .gh-featured-review-{{ section.id }} .gh-featured-right { height: 460px; overflow: hidden; background: var(--gh-cream); }
+  .gh-featured-review-{{ section.id }} .gh-featured-right img { width: 100%; height: 100%; object-fit: cover; }
+  @media (max-width: 768px) {
+    .gh-featured-review-{{ section.id }} { padding: 0 20px; }
+    .gh-featured-review-{{ section.id }} .gh-featured-wrap { grid-template-columns: 1fr; }
+    .gh-featured-review-{{ section.id }} .gh-featured-left { padding: 32px 20px; }
+    .gh-featured-review-{{ section.id }} .gh-featured-right { height: 320px; }
+  }
+</style>
+{% schema %}
+{
+  "name": "GH — Featured Review",
+  "settings": [
+    { "type": "text", "id": "label", "label": "Label", "default": "Featured review" },
+    { "type": "text", "id": "title", "label": "Review title", "default": "Walkabout 2012 — God's Hill, Lyndoch." },
+    { "type": "range", "id": "stars", "label": "Star rating", "min": 1, "max": 5, "step": 1, "default": 5 },
+    { "type": "textarea", "id": "excerpt", "label": "Review excerpt", "default": "Koala's first face to face meeting with Charlie was arranged when calling for an appointment to visit the Cellar Door of God's Hill Wines. Charlie asked where Koala was calling from and discovering t..." },
+    { "type": "text", "id": "link_label", "label": "Read more label", "default": "Read more →" },
+    { "type": "url", "id": "link_url", "label": "Read more URL" },
+    { "type": "image_picker", "id": "image", "label": "Right-side image" },
+    { "type": "color", "id": "bg_color", "label": "Left panel background", "default": "#F5EFE3" },
+    { "type": "color", "id": "accent_color", "label": "Star + label colour", "default": "#B8913A" }
+  ],
+  "presets": [{ "name": "GH — Featured Review" }]
+}
+{% endschema %}

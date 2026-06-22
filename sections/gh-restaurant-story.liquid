@@ -1,0 +1,64 @@
+{%- render 'gh-tokens' -%}
+<section class="gh-restaurant-story-{{ section.id }}" style="background: {{ section.settings.bg_color | default: '#FDF8F2' }};">
+  <div class="gh-story-shell">
+    <div class="gh-story-grid">
+      <div class="gh-story-text">
+        <p class="gh-eyebrow">{{ section.settings.eyebrow | default: 'Our food' }}</p>
+        <div class="gh-heading">{{ section.settings.heading | default: '<p>Ennia Cucina: A Story of Passion</p>' }}</div>
+        <p>{{ section.settings.body_1 }}</p>
+        <p>{{ section.settings.body_2 }}</p>
+        <p>{{ section.settings.body_3 }}</p>
+      </div>
+      <div class="gh-story-images">
+        {% for i in (1..4) %}
+          {% assign image_key = 'image_' | append: i %}
+          {% assign image_value = section.settings[image_key] %}
+          <div class="gh-cell">
+            {% if image_value %}
+              {{ image_value | image_url: width: 800 | image_tag: loading: 'lazy' }}
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+  .gh-restaurant-story-{{ section.id }} { padding: 0 40px 80px; }
+  .gh-restaurant-story-{{ section.id }} .gh-story-shell { width: min(1280px, 100%); margin: 0 auto; }
+  .gh-restaurant-story-{{ section.id }} .gh-story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+  .gh-restaurant-story-{{ section.id }} .gh-eyebrow { margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.12em; font-size: 10px; color: var(--gh-gold); }
+  .gh-restaurant-story-{{ section.id }} .gh-heading { font: 400 40px/1.1 'EB Garamond', Georgia, serif; color: var(--gh-vine); margin-bottom: 12px; }
+  .gh-restaurant-story-{{ section.id }} .gh-heading p { margin: 0; }
+  .gh-restaurant-story-{{ section.id }} p { color: var(--gh-muted); }
+  .gh-restaurant-story-{{ section.id }} .gh-story-images { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; height: 440px; }
+  .gh-restaurant-story-{{ section.id }} .gh-cell { border-radius: 3px; overflow: hidden; background: var(--gh-cream); }
+  .gh-restaurant-story-{{ section.id }} .gh-cell img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.01); }
+  @media (prefers-reduced-motion: no-preference) {
+    .gh-restaurant-story-{{ section.id }} .gh-cell img { transition: transform 0.4s ease; }
+    .gh-restaurant-story-{{ section.id }} .gh-cell:hover img { transform: scale(1.04); }
+  }
+  @media (max-width: 768px) {
+    .gh-restaurant-story-{{ section.id }} { padding: 0 20px 56px; }
+    .gh-restaurant-story-{{ section.id }} .gh-story-grid { grid-template-columns: 1fr; }
+    .gh-restaurant-story-{{ section.id }} .gh-story-images { height: 360px; }
+  }
+</style>
+{% schema %}
+{
+  "name": "GH — Restaurant Story",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Our food" },
+    { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p>Ennia Cucina: A Story of Passion</p>" },
+    { "type": "textarea", "id": "body_1", "label": "Paragraph 1", "default": "Ennia Cucina is more than just a restaurant — it's a tribute to the Scalzi family's deep-rooted culinary heritage. At the heart of its story is the family matriarch, whose kitchen was a place of learning and love." },
+    { "type": "textarea", "id": "body_2", "label": "Paragraph 2", "default": "From her son Edward, grew up watching her transform simple ingredients into some of the most flavourful dishes he had ever tasted." },
+    { "type": "textarea", "id": "body_3", "label": "Paragraph 3", "default": "Today, Ennia Cucina continues this legacy — honouring tradition, celebrating flavour, and creating memorable experiences for every guest." },
+    { "type": "image_picker", "id": "image_1", "label": "Image 1 (top left)" },
+    { "type": "image_picker", "id": "image_2", "label": "Image 2 (top right)" },
+    { "type": "image_picker", "id": "image_3", "label": "Image 3 (bottom left)" },
+    { "type": "image_picker", "id": "image_4", "label": "Image 4 (bottom right)" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#FDF8F2" }
+  ],
+  "presets": [{ "name": "GH — Restaurant Story" }]
+}
+{% endschema %}

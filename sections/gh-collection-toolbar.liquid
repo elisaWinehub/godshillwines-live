@@ -1,0 +1,89 @@
+{%- render 'gh-tokens' -%}
+
+<section class="gh-collection-toolbar-{{ section.id }}">
+  <div class="gh-collection-toolbar-inner">
+    <div class="gh-collection-toolbar-left">
+      {% if section.settings.show_breadcrumb %}
+        {%- render 'gh-breadcrumb' -%}
+      {% endif %}
+    </div>
+
+    <div class="gh-collection-toolbar-right">
+      <p class="gh-collection-count">{{ collection.products_count }} products</p>
+      <label for="gh-sort-{{ section.id }}" class="visually-hidden">Sort</label>
+      <select id="gh-sort-{{ section.id }}" class="gh-sort" onchange="location=this.value">
+        {% for option in collection.sort_options %}
+          <option
+            value="{{ collection.url }}?sort_by={{ option.value }}"
+            {% if collection.sort_by == option.value %}
+              selected
+            {% endif %}
+          >
+            {{ option.name }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+</section>
+
+<style>
+  .gh-collection-toolbar-{{ section.id }} {
+    padding: 16px 40px 0;
+  }
+
+  .gh-collection-toolbar-{{ section.id }} .gh-collection-toolbar-inner {
+    width: min(1280px, 100%);
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .gh-collection-toolbar-{{ section.id }} .gh-collection-toolbar-left .gh-breadcrumb {
+    padding: 0;
+  }
+
+  .gh-collection-toolbar-{{ section.id }} .gh-collection-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .gh-collection-toolbar-{{ section.id }} .gh-collection-count {
+    margin: 0;
+    font: 400 12px/1.4 'Inter', sans-serif;
+    color: var(--gh-muted);
+  }
+
+  .gh-collection-toolbar-{{ section.id }} .gh-sort {
+    border: 0.5px solid var(--gh-border);
+    border-radius: 2px;
+    background: #fff;
+    color: var(--gh-vine);
+    font: 400 12px/1.4 'Inter', sans-serif;
+    padding: 7px 12px;
+  }
+
+  @media (max-width: 768px) {
+    .gh-collection-toolbar-{{ section.id }} {
+      padding: 16px 20px 0;
+    }
+
+    .gh-collection-toolbar-{{ section.id }} .gh-collection-toolbar-inner {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "GH — Collection Toolbar",
+  "settings": [
+    { "type": "checkbox", "id": "show_breadcrumb", "label": "Show breadcrumb", "default": true }
+  ],
+  "presets": [{ "name": "GH — Collection Toolbar" }]
+}
+{% endschema %}

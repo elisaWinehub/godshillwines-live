@@ -1,0 +1,72 @@
+{%- render 'gh-tokens' -%}
+<section class="gh-restaurant-booking-{{ section.id }}" style="background: {{ section.settings.bg_color | default: '#FDF8F2' }};">
+  <div class="gh-restaurant-shell">
+    <div class="gh-restaurant-grid">
+      <div class="gh-booking-card">
+        <p class="gh-booking-title">{{ section.settings.booking_title | default: 'Make a booking' }}</p>
+        {% if section.settings.resdiary_embed != blank %}
+          {{ section.settings.resdiary_embed }}
+        {% else %}
+          <div class="gh-booking-placeholder">
+            <p>ResDiary booking widget will appear here.</p>
+            <p>Paste your ResDiary embed code in the theme editor.</p>
+          </div>
+        {% endif %}
+      </div>
+      <div class="gh-story-col">
+        <p class="gh-eyebrow">{{ section.settings.eyebrow | default: 'Restaurant' }}</p>
+        <div class="gh-heading">{{ section.settings.heading | default: '<p>A Family Tradition of Flavour</p>' }}</div>
+        <p>{{ section.settings.body_1 }}</p>
+        <p>{{ section.settings.body_2 }}</p>
+        <div class="gh-btn-row">
+          {% if section.settings.btn_primary_label != blank and section.settings.btn_primary_url != blank %}
+            <a href="{{ section.settings.btn_primary_url }}" class="gh-btn gh-btn-primary">{{ section.settings.btn_primary_label }}</a>
+          {% endif %}
+          {% if section.settings.btn_secondary_label != blank and section.settings.btn_secondary_url != blank %}
+            <a href="{{ section.settings.btn_secondary_url }}" class="gh-btn gh-btn-secondary">{{ section.settings.btn_secondary_label }}</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+  .gh-restaurant-booking-{{ section.id }} { padding: 64px 40px; }
+  .gh-restaurant-booking-{{ section.id }} .gh-restaurant-shell { width: min(1280px, 100%); margin: 0 auto; }
+  .gh-restaurant-booking-{{ section.id }} .gh-restaurant-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+  .gh-restaurant-booking-{{ section.id }} .gh-booking-card { background: #fff; border: 0.5px solid var(--gh-border); border-radius: 4px; padding: 32px; }
+  .gh-restaurant-booking-{{ section.id }} .gh-booking-title { margin: 0 0 12px; text-align: center; text-transform: uppercase; letter-spacing: 0.12em; color: var(--gh-gold); font-size: 11px; }
+  .gh-restaurant-booking-{{ section.id }} .gh-booking-placeholder { border: 1px dashed var(--gh-border); padding: 20px; color: var(--gh-muted); }
+  .gh-restaurant-booking-{{ section.id }} .gh-eyebrow { margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--gh-gold); font-size: 10px; }
+  .gh-restaurant-booking-{{ section.id }} .gh-heading { margin-bottom: 12px; font: 400 40px/1.1 'EB Garamond', Georgia, serif; color: var(--gh-vine); }
+  .gh-restaurant-booking-{{ section.id }} .gh-heading p { margin: 0; }
+  .gh-restaurant-booking-{{ section.id }} p { color: var(--gh-muted); }
+  .gh-restaurant-booking-{{ section.id }} .gh-btn-row { display: flex; gap: 10px; margin-top: 12px; }
+  .gh-restaurant-booking-{{ section.id }} .gh-btn { text-decoration: none; padding: 10px 14px; border: 1px solid {{ section.settings.accent_color | default: '#B8913A' }}; }
+  .gh-restaurant-booking-{{ section.id }} .gh-btn-primary { background: {{ section.settings.accent_color | default: '#B8913A' }}; color: #fff; }
+  .gh-restaurant-booking-{{ section.id }} .gh-btn-secondary { background: transparent; color: {{ section.settings.accent_color | default: '#B8913A' }}; }
+  @media (max-width: 768px) {
+    .gh-restaurant-booking-{{ section.id }} { padding: 56px 20px; }
+    .gh-restaurant-booking-{{ section.id }} .gh-restaurant-grid { grid-template-columns: 1fr; }
+  }
+</style>
+{% schema %}
+{
+  "name": "GH — Restaurant Booking",
+  "settings": [
+    { "type": "html", "id": "resdiary_embed", "label": "ResDiary embed code" },
+    { "type": "text", "id": "booking_title", "label": "Booking widget title", "default": "Make a booking" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Restaurant" },
+    { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p>A Family Tradition of Flavour</p>" },
+    { "type": "textarea", "id": "body_1", "label": "First paragraph", "default": "Come join us where good food, natural fine wines, and friends come together. Our food is a true reflection of the Italian tradition of hosting guests with food and wine, passed down from generation to generation." },
+    { "type": "textarea", "id": "body_2", "label": "Second paragraph", "default": "Ennia the wife of Winemaker Charlie is passionate and an excellent cook and very creative and has always accompanied the family's wines. Ennia learned the art of cooking from her Venetian mum Lidia, passing down ancient recipes from generation to generation." },
+    { "type": "text", "id": "btn_primary_label", "label": "Primary CTA label", "default": "Book a table" },
+    { "type": "url", "id": "btn_primary_url", "label": "Primary CTA URL" },
+    { "type": "text", "id": "btn_secondary_label", "label": "Secondary CTA label", "default": "View menu" },
+    { "type": "url", "id": "btn_secondary_url", "label": "Secondary CTA URL" },
+    { "type": "color", "id": "bg_color", "label": "Section background", "default": "#FDF8F2" },
+    { "type": "color", "id": "accent_color", "label": "Accent colour", "default": "#B8913A" }
+  ],
+  "presets": [{ "name": "GH — Restaurant Booking" }]
+}
+{% endschema %}

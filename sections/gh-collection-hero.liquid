@@ -1,0 +1,27 @@
+{%- render 'gh-tokens' -%}
+
+<section class="gh-collection-hero-{{ section.id }}">
+  {%- render 'gh-page-hero',
+    eyebrow: section.settings.hero_eyebrow,
+    title: section.settings.hero_title,
+    subheading: section.settings.hero_subheading,
+    image: section.settings.hero_image,
+    height: section.settings.hero_height,
+    overlay_opacity: section.settings.overlay_opacity
+  -%}
+</section>
+
+{% schema %}
+{
+  "name": "GH — Collection Hero",
+  "settings": [
+    { "type": "image_picker", "id": "hero_image", "label": "Hero background image" },
+    { "type": "text", "id": "hero_eyebrow", "label": "Eyebrow", "default": "Cellar door" },
+    { "type": "richtext", "id": "hero_title", "label": "Page title (em = italic gold)", "default": "<p>Our <em>Wines</em></p>" },
+    { "type": "text", "id": "hero_subheading", "label": "Subheading", "default": "Small-batch Barossa wines crafted from generations of dedication to the land." },
+    { "type": "range", "id": "hero_height", "label": "Hero height (px)", "min": 280, "max": 600, "step": 20, "unit": "px", "default": 380 },
+    { "type": "range", "id": "overlay_opacity", "label": "Overlay darkness %", "min": 0, "max": 90, "step": 5, "default": 55 }
+  ],
+  "presets": [{ "name": "GH — Collection Hero" }]
+}
+{% endschema %}

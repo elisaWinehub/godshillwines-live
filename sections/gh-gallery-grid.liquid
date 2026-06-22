@@ -1,0 +1,97 @@
+{%- render 'gh-tokens' -%}
+<section class="gh-gallery-grid-{{ section.id }}" style="background: {{ section.settings.bg_color | default: '#FDF8F2' }};">
+  <div class="gh-gallery-shell">
+    {% if section.settings.show_filters %}
+      <div class="gh-gallery-filters">
+        <button class="gh-gallery-filter-btn active" data-cat="all" type="button">All</button>
+        <button class="gh-gallery-filter-btn" data-cat="vineyard" type="button">Vineyard</button>
+        <button class="gh-gallery-filter-btn" data-cat="cellar_door" type="button">Cellar door</button>
+        <button class="gh-gallery-filter-btn" data-cat="restaurant" type="button">Restaurant</button>
+        <button class="gh-gallery-filter-btn" data-cat="events" type="button">Events</button>
+        <button class="gh-gallery-filter-btn" data-cat="wines" type="button">Wines</button>
+      </div>
+    {% endif %}
+    <div class="gh-gallery-items">
+      {% for block in section.blocks %}
+        {% if block.type == 'photo' %}
+          <article
+            class="gh-gallery-item{% if block.settings.is_tall %} is-tall{% endif %}{% if block.settings.is_wide %} is-wide{% endif %}"
+            data-category="{{ block.settings.category | default: 'vineyard' }}"
+            {{ block.shopify_attributes }}
+          >
+            {% if block.settings.link != blank %}<a href="{{ block.settings.link }}">{% endif %}
+            {% if block.settings.image %}
+              {{ block.settings.image | image_url: width: 1200 | image_tag: loading: 'lazy', alt: block.settings.alt }}
+            {% endif %}
+            <span class="gh-overlay">⤢</span>
+            {% if block.settings.link != blank %}</a>{% endif %}
+          </article>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+<script>
+  (function () {
+    var root = document.querySelector('.gh-gallery-grid-{{ section.id }}');
+    if (!root) return;
+    root.querySelectorAll('.gh-gallery-filter-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var cat = btn.dataset.cat;
+        root.querySelectorAll('.gh-gallery-filter-btn').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        root.querySelectorAll('.gh-gallery-item').forEach(function (item) {
+          item.style.display = cat === 'all' || item.dataset.category === cat ? '' : 'none';
+        });
+      });
+    });
+  })();
+</script>
+<style>
+  .gh-gallery-grid-{{ section.id }} { padding: 56px 40px 80px; }
+  .gh-gallery-grid-{{ section.id }} .gh-gallery-shell { width: min(1280px, 100%); margin: 0 auto; }
+  .gh-gallery-grid-{{ section.id }} .gh-gallery-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+  .gh-gallery-grid-{{ section.id }} .gh-gallery-filter-btn { border: 0.5px solid var(--gh-border); background: #fff; color: var(--gh-vine); border-radius: 999px; padding: 8px 14px; font-size: 12px; cursor: pointer; }
+  .gh-gallery-grid-{{ section.id }} .gh-gallery-filter-btn.active { background: var(--gh-vine); color: #fff; }
+  .gh-gallery-grid-{{ section.id }} .gh-gallery-items { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 200px; gap: 8px; }
+  .gh-gallery-grid-{{ section.id }} .gh-gallery-item { border-radius: 3px; overflow: hidden; position: relative; cursor: pointer; background: var(--gh-cream); }
+  .gh-gallery-grid-{{ section.id }} .gh-gallery-item.is-tall { grid-row: span 2; }
+  .gh-gallery-grid-{{ section.id }} .gh-gallery-item.is-wide { grid-column: span 2; }
+  .gh-gallery-grid-{{ section.id }} .gh-gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+  .gh-gallery-grid-{{ section.id }} .gh-overlay { position: absolute; inset: 0; display: grid; place-items: center; font-size: 22px; color: #fff; background: rgba(28,43,26,0); }
+  @media (prefers-reduced-motion: no-preference) {
+    .gh-gallery-grid-{{ section.id }} .gh-gallery-item img { transition: transform 0.4s ease; }
+    .gh-gallery-grid-{{ section.id }} .gh-overlay { transition: background-color 0.3s ease; }
+    .gh-gallery-grid-{{ section.id }} .gh-gallery-item:hover img { transform: scale(1.06); }
+    .gh-gallery-grid-{{ section.id }} .gh-gallery-item:hover .gh-overlay { background: rgba(28,43,26,0.35); }
+  }
+  @media (max-width: 768px) {
+    .gh-gallery-grid-{{ section.id }} { padding: 56px 20px; }
+    .gh-gallery-grid-{{ section.id }} .gh-gallery-items { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+{% schema %}
+{
+  "name": "GH — Gallery Grid",
+  "settings": [
+    { "type": "checkbox", "id": "show_filters", "label": "Show category filter tabs", "default": true },
+    { "type": "text", "id": "load_more_label", "label": "Load more button label", "default": "Load more →" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#FDF8F2" }
+  ],
+  "blocks": [
+    {
+      "type": "photo",
+      "name": "Photo",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Photo" },
+        { "type": "text", "id": "alt", "label": "Alt text" },
+        { "type": "select", "id": "category", "label": "Category", "default": "vineyard", "options": [{ "value": "vineyard", "label": "Vineyard" }, { "value": "cellar_door", "label": "Cellar door" }, { "value": "restaurant", "label": "Restaurant" }, { "value": "events", "label": "Events" }, { "value": "wines", "label": "Wines" }] },
+        { "type": "checkbox", "id": "is_tall", "label": "Tall (double height)", "default": false },
+        { "type": "checkbox", "id": "is_wide", "label": "Wide (double width)", "default": false },
+        { "type": "url", "id": "link", "label": "Optional lightbox/link URL" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "GH — Gallery Grid" }]
+}
+{% endschema %}
