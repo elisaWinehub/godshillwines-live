@@ -9,8 +9,6 @@
 -%}
 
 <section class="gh-art-body-{{ section.id }}">
-  <div class="gh-read-progress" id="gh-read-progress-{{ section.id }}"></div>
-
   <nav class="gh-art-breadcrumb-{{ section.id }}" aria-label="Breadcrumb">
     <a href="{{ routes.root_url }}">Home</a>
     <span class="gh-art-bc-sep-{{ section.id }}" aria-hidden="true">›</span>
@@ -169,17 +167,6 @@
     --muted: #6B7668;
     --border: rgba(28,43,26,0.1);
     background: {{ section.settings.bg_color | default: '#FDF8F2' }};
-  }
-  .gh-read-progress {
-    position: fixed;
-    top: 70px;
-    left: 0;
-    width: 0%;
-    height: 2px;
-    background: var(--gold);
-    z-index: 99;
-    transition: width 0.1s linear;
-    pointer-events: none;
   }
   .gh-art-breadcrumb-{{ section.id }} {
     padding: 16px 40px;
@@ -516,23 +503,6 @@
 </style>
 
 <script>
-  (function () {
-    var bar = document.getElementById('gh-read-progress-{{ section.id }}');
-    var articleEl = document.querySelector('.gh-art-content-{{ section.id }}');
-    if (!bar || !articleEl) return;
-    window.addEventListener(
-      'scroll',
-      function () {
-        var rect = articleEl.getBoundingClientRect();
-        var total = articleEl.offsetHeight - window.innerHeight;
-        var scrolled = Math.max(0, -rect.top);
-        var pct = total > 0 ? Math.min(100, (scrolled / total) * 100) : 100;
-        bar.style.width = pct + '%';
-      },
-      { passive: true }
-    );
-  })();
-
   (function () {
     var scope = document.querySelector('.gh-art-body-{{ section.id }}');
     if (!scope) return;

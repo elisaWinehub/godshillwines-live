@@ -21,7 +21,7 @@
         {% for block in section.blocks %}
           {% if block.type == 'contact_way' %}
             <article class="gh-way" {{ block.shopify_attributes }}>
-              <div class="gh-way-icon" aria-hidden="true">
+              <div class="contact-way-icon" aria-hidden="true">
                 {% case block.settings.icon %}
                   {% when 'phone' %}
                     <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
@@ -81,7 +81,7 @@
   .gh-contact-forms-{{ section.id }} textarea { min-height: 120px; }
   .gh-contact-forms-{{ section.id }} .gh-submit { border: 1px solid {{ section.settings.accent_color | default: '#B8913A' }}; background: {{ section.settings.accent_color | default: '#B8913A' }}; color: #fff; padding: 10px 14px; }
   .gh-contact-forms-{{ section.id }} .gh-way { border-top: 0.5px solid var(--gh-border); padding: 14px 0; display: flex; gap: 10px; align-items: flex-start; }
-  .gh-contact-forms-{{ section.id }} .gh-way-icon { color: {{ section.settings.accent_color | default: '#B8913A' }}; flex-shrink: 0; margin-top: 2px; }
+  .gh-contact-forms-{{ section.id }} .contact-way-icon { color: {{ section.settings.accent_color | default: '#B8913A' }}; flex-shrink: 0; margin-top: 2px; }
   .gh-contact-forms-{{ section.id }} .gh-way-content { min-width: 0; }
   .gh-contact-forms-{{ section.id }} .gh-way-label { margin: 0 0 4px; font-size: 11px; text-transform: uppercase; color: var(--gh-vine); letter-spacing: 0.06em; }
   .gh-contact-forms-{{ section.id }} .gh-way-value { margin: 0; color: var(--gh-muted); line-height: 1.5; }

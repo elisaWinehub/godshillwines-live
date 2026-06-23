@@ -38,9 +38,64 @@
 
     {{ content_for_header }}
     {% # theme-check-enable RemoteAsset %}
+    <style>
+      .gh-page-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fdf8f2;
+        opacity: 1;
+        visibility: visible;
+        transition: opacity 0.28s ease, visibility 0.28s ease;
+        pointer-events: all;
+      }
+      .gh-page-loader__spinner {
+        width: 36px;
+        height: 36px;
+        border-radius: 999px;
+        border: 2px solid rgba(28, 43, 26, 0.16);
+        border-top-color: #b8913a;
+        animation: gh-loader-spin 0.8s linear infinite;
+      }
+      body.gh-page-ready .gh-page-loader {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      @keyframes gh-loader-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
   </head>
 
   <body class="page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }}">
+    <div class="gh-page-loader" id="gh-page-loader" aria-hidden="true">
+      <span class="gh-page-loader__spinner"></span>
+    </div>
+    <script>
+      (function () {
+        var readyClass = 'gh-page-ready';
+        var done = false;
+        function hideLoader() {
+          if (done) return;
+          done = true;
+          document.body.classList.add(readyClass);
+        }
+        if (document.readyState === 'complete') {
+          hideLoader();
+        } else {
+          document.addEventListener('DOMContentLoaded', hideLoader, { once: true });
+          window.addEventListener('load', hideLoader, { once: true });
+          window.addEventListener('pageshow', hideLoader, { once: true });
+          window.setTimeout(hideLoader, 2200);
+        }
+      })();
+    </script>
     {% render 'skip-to-content-link', href: '#MainContent', text: 'accessibility.skip_to_text' %}
 
     {% liquid

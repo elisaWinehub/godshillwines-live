@@ -213,6 +213,7 @@
     position: sticky;
     top: 0;
     z-index: 80;
+    box-shadow: none;
   }
   #GhHdr-{{ section.id }}.gh-hdr-shell {
     background: transparent;
@@ -346,13 +347,13 @@
   #GhHdr-{{ section.id }} .gh-has-drop > .gh-drop > a::after {
     content: '';
     display: inline-block;
-    width: 0;
-    height: 0;
+    width: 6px;
+    height: 6px;
     margin-left: 0.38em;
-    vertical-align: 0.12em;
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-top: 5px solid currentColor;
+    vertical-align: 0.18em;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: rotate(45deg);
     opacity: 0.78;
   }
   #GhHdr-{{ section.id }} .gh-sub {
