@@ -1,0 +1,27 @@
+{%- comment -%}
+  Usage: {%- render 'gh-blog-tag-pill', tag: tag_string -%}
+{%- endcomment -%}
+{%- liquid
+  assign raw_tag = tag | downcase | strip
+  assign pill_class = 'gh-pill-default'
+  assign pill_label = raw_tag | replace: '_', ' ' | capitalize
+
+  case raw_tag
+    when 'events'
+      assign pill_class = 'gh-pill-events'
+      assign pill_label = 'Events'
+    when 'awards'
+      assign pill_class = 'gh-pill-awards'
+      assign pill_label = 'Awards'
+    when 'release'
+      assign pill_class = 'gh-pill-release'
+      assign pill_label = 'New Release'
+    when 'charity'
+      assign pill_class = 'gh-pill-charity'
+      assign pill_label = 'Charity'
+    when 'news'
+      assign pill_class = 'gh-pill-news'
+      assign pill_label = 'Winery News'
+  endcase
+-%}
+<span class="gh-tag-pill {{ pill_class }}" aria-label="{{ pill_label }}">{{ pill_label }}</span>

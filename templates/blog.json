@@ -9,16 +9,57 @@
  */
 {
   "sections": {
-    "gh_hero": {
-      "type": "gh-page-hero-block",
+    "gh_blog_hero": {
+      "type": "gh-blog-hero",
       "settings": {
         "hero_eyebrow": "God's Hill Wines",
         "hero_title": "<p>News <em>&amp; Events</em></p>",
-        "hero_subheading": "Stories, releases and happenings from the vineyard.",
-        "hero_height": 380
+        "hero_subheading": "Stories, releases, charity events and happenings from the Scalzi family and Barossa Valley.",
+        "hero_height": 380,
+        "overlay_opacity": 65
       }
     },
-    "gh_news_layout": { "type": "gh-news-layout", "settings": {} }
+    "gh_blog_filter_bar": {
+      "type": "gh-blog-filter-bar",
+      "blocks": {
+        "tab_events": { "type": "tab", "settings": { "label": "Events", "tag_value": "events" } },
+        "tab_awards": { "type": "tab", "settings": { "label": "Awards", "tag_value": "awards" } },
+        "tab_release": { "type": "tab", "settings": { "label": "New Releases", "tag_value": "release" } },
+        "tab_charity": { "type": "tab", "settings": { "label": "Charity", "tag_value": "charity" } },
+        "tab_news": { "type": "tab", "settings": { "label": "Winery News", "tag_value": "news" } }
+      },
+      "block_order": ["tab_events", "tab_awards", "tab_release", "tab_charity", "tab_news"],
+      "settings": {
+        "all_label": "All"
+      }
+    },
+    "gh_blog_feed": {
+      "type": "gh-blog-feed",
+      "settings": {
+        "articles_per_page": 12,
+        "show_featured": true,
+        "show_highlight": true,
+        "events_heading": "Upcoming & Past Events",
+        "charity_heading": "Charity & Community",
+        "releases_heading": "Winery News & Releases",
+        "hl_btn_label": "Read more",
+        "hl_stat1_val": "9th",
+        "hl_stat1_label": "Major award won",
+        "hl_stat2_val": "CWSA",
+        "hl_stat2_label": "Double Gold Medal",
+        "hl_stat3_val": "2008",
+        "hl_stat3_label": "Vintage"
+      }
+    },
+    "gh_blog_newsletter": {
+      "type": "gh-blog-newsletter",
+      "settings": {
+        "eyebrow": "Stay in the loop",
+        "title": "<p>New releases, events <em>&amp; offers</em></p>",
+        "subheading": "Be first to hear about new vintages, cellar door events, wine club announcements and exclusive offers.",
+        "btn_label": "Subscribe"
+      }
+    }
   },
-  "order": ["gh_hero", "gh_news_layout"]
+  "order": ["gh_blog_hero", "gh_blog_filter_bar", "gh_blog_feed", "gh_blog_newsletter"]
 }

@@ -1,0 +1,140 @@
+<style>
+  .gh-blog-filter-bar-{{ section.id }} {
+    width: 100%;
+    background: {{ section.settings.bg_color | default: '#FDF8F2' }};
+    border-bottom: 0.5px solid rgba(28, 43, 26, 0.1);
+    position: sticky;
+    top: var(--gh-header-height, 70px);
+    z-index: 50;
+  }
+  .gh-blog-filter-bar-{{ section.id }} .gh-filter-bar-inner-{{ section.id }} {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 54px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .gh-blog-filter-bar-{{ section.id }} .gh-filter-bar-inner-{{ section.id }}::-webkit-scrollbar { display: none; }
+  .gh-blog-filter-bar-{{ section.id }} .gh-filter-btn-{{ section.id }} {
+    padding: 6px 16px;
+    border: 0.5px solid rgba(28, 43, 26, 0.12);
+    border-radius: 20px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    background: none;
+    color: #6B7668;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .gh-blog-filter-bar-{{ section.id }} .gh-filter-btn-{{ section.id }}:hover { border-color: #1C2B1A; color: #1C2B1A; }
+  .gh-blog-filter-bar-{{ section.id }} .gh-filter-btn-{{ section.id }}.is-active {
+    background: #1C2B1A;
+    color: #F5EFE3;
+    border-color: #1C2B1A;
+  }
+  @media (max-width: 768px) {
+    .gh-blog-filter-bar-{{ section.id }} .gh-filter-bar-inner-{{ section.id }} { padding: 0 20px; }
+  }
+</style>
+
+<div class="gh-blog-filter-bar-{{ section.id }}" id="gh-filter-bar-{{ section.id }}">
+  <div class="gh-filter-bar-inner-{{ section.id }}">
+    <button class="gh-filter-btn-{{ section.id }} is-active" data-filter="all" aria-pressed="true">
+      {{ section.settings.all_label | default: 'All' }}
+    </button>
+    {% for block in section.blocks %}
+      <button
+        class="gh-filter-btn-{{ section.id }}"
+        data-filter="{{ block.settings.tag_value | downcase | strip }}"
+        aria-pressed="false"
+        {{ block.shopify_attributes }}>
+        {{ block.settings.label }}
+      </button>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var bar = document.getElementById('gh-filter-bar-{{ section.id }}');
+    if (!bar) return;
+
+    bar.addEventListener('click', function (e) {
+      var btn = e.target.closest('.gh-filter-btn-{{ section.id }}');
+      if (!btn) return;
+
+      bar.querySelectorAll('.gh-filter-btn-{{ section.id }}').forEach(function (b) {
+        b.classList.remove('is-active');
+        b.setAttribute('aria-pressed', 'false');
+      });
+      btn.classList.add('is-active');
+      btn.setAttribute('aria-pressed', 'true');
+
+      var filter = btn.dataset.filter;
+
+      document.querySelectorAll('[data-gh-filterable]').forEach(function (el) {
+        if (filter === 'all') {
+          el.removeAttribute('hidden');
+          el.style.display = '';
+        } else {
+          var tags = (el.dataset.tags || '').split(',').map(function (t) { return t.trim().toLowerCase(); });
+          var show = tags.indexOf(filter) !== -1;
+          if (show) {
+            el.removeAttribute('hidden');
+            el.style.display = '';
+          } else {
+            el.setAttribute('hidden', '');
+            el.style.display = 'none';
+          }
+        }
+      });
+
+      document.querySelectorAll('[data-gh-section-group]').forEach(function (group) {
+        var visibleChildren = group.querySelectorAll('[data-gh-filterable]:not([hidden])');
+        var headingKey = group.getAttribute('data-gh-section-group');
+        var heading = document.querySelector('[data-gh-section-heading="' + headingKey + '"]');
+        if (heading) heading.style.display = visibleChildren.length > 0 ? '' : 'none';
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "GH — Blog Filter Bar",
+  "settings": [
+    { "type": "text", "id": "all_label", "label": "\"All\" tab label", "default": "All" },
+    { "type": "color", "id": "bg_color", "label": "Bar background", "default": "#FDF8F2" }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Filter tab",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Tab label", "default": "Events" },
+        { "type": "text", "id": "tag_value", "label": "Shopify tag to match", "default": "events" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "GH — Blog Filter Bar",
+      "blocks": [
+        { "type": "tab", "settings": { "label": "Events", "tag_value": "events" } },
+        { "type": "tab", "settings": { "label": "Awards", "tag_value": "awards" } },
+        { "type": "tab", "settings": { "label": "New Releases", "tag_value": "release" } },
+        { "type": "tab", "settings": { "label": "Charity", "tag_value": "charity" } },
+        { "type": "tab", "settings": { "label": "Winery News", "tag_value": "news" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,412 @@
+{%- render 'gh-tokens' -%}
+{%- liquid
+  assign gh_blog = section.settings.blog
+  if gh_blog == blank
+    assign gh_blog = blog
+  endif
+  assign has_live_articles = false
+  if gh_blog and gh_blog.articles_count > 0
+    assign has_live_articles = true
+  endif
+-%}
+
+{%- comment -%}
+  HOW TO TAG ARTICLES FOR THIS TEMPLATE
+  ─────────────────────────────────────
+  In Shopify Admin → Blog posts → [Article] → Tags, add:
+
+  Layout tags:
+  • featured   → hero featured article
+  • highlight  → dark highlight strip
+  • list       → horizontal list layout
+  • (no layout tag) → standard card grids
+
+  Category tags:
+  • events • awards • release • charity • news
+
+  For highlight strip stats, optional metafields on article:
+  Namespace: gh_highlight
+  Keys: stat1_value, stat1_label, stat2_value, stat2_label, stat3_value, stat3_label
+{%- endcomment -%}
+
+<style>
+  .gh-blog-feed-{{ section.id }} {
+    background: {{ section.settings.bg_color | default: '#FDF8F2' }};
+    padding: 0 40px 80px;
+  }
+  .gh-blog-feed-{{ section.id }} .gh-blog-feed-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  .gh-blog-feed-{{ section.id }} .gh-tag-pill {
+    display: inline-flex;
+    padding: 3px 10px;
+    border-radius: 2px;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-family: 'Inter', sans-serif;
+    border: 0.5px solid transparent;
+    white-space: nowrap;
+  }
+  .gh-blog-feed-{{ section.id }} .gh-pill-events  { background: rgba(45,88,45,0.08); color: #2D6B2D; border-color: rgba(45,107,45,0.2); }
+  .gh-blog-feed-{{ section.id }} .gh-pill-awards  { background: rgba(184,145,58,0.1); color: #8A6020; border-color: rgba(184,145,58,0.25); }
+  .gh-blog-feed-{{ section.id }} .gh-pill-release { background: rgba(28,43,26,0.07); color: #1C2B1A; border-color: rgba(28,43,26,0.15); }
+  .gh-blog-feed-{{ section.id }} .gh-pill-charity { background: rgba(160,60,60,0.08); color: #8B2020; border-color: rgba(160,60,60,0.2); }
+  .gh-blog-feed-{{ section.id }} .gh-pill-news    { background: rgba(28,43,26,0.07); color: #6B7668; border-color: rgba(28,43,26,0.12); }
+  .gh-blog-feed-{{ section.id }} .gh-pill-default { background: #F5EFE3; color: #B8913A; border-color: rgba(184,145,58,0.25); }
+
+  .gh-blog-feed-{{ section.id }} .gh-featured-wrap-{{ section.id }} { padding-top: 56px; }
+  .gh-blog-feed-{{ section.id }} .gh-featured-article-{{ section.id }} {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    background: white;
+    border: 0.5px solid rgba(28,43,26,0.1);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 56px;
+  }
+  .gh-blog-feed-{{ section.id }} .gh-featured-img-wrap-{{ section.id }} { height: 480px; overflow: hidden; position: relative; display: block; }
+  .gh-blog-feed-{{ section.id }} .gh-featured-img-wrap-{{ section.id }} img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+  .gh-blog-feed-{{ section.id }} .gh-featured-content-{{ section.id }} { padding: 52px 48px; display: flex; flex-direction: column; justify-content: center; }
+  .gh-blog-feed-{{ section.id }} .gh-featured-eyebrow-{{ section.id }} { font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: #6B7668; margin-bottom: 6px; }
+  .gh-blog-feed-{{ section.id }} .gh-featured-title-{{ section.id }} { font-family: 'EB Garamond', Georgia, serif; font-size: clamp(24px, 2.8vw, 36px); line-height: 1.2; margin: 0 0 18px; }
+  .gh-blog-feed-{{ section.id }} .gh-featured-title-{{ section.id }} a { color: #1C2B1A; text-decoration: none; }
+  .gh-blog-feed-{{ section.id }} .gh-featured-divider-{{ section.id }} { width: 32px; height: 1px; background: #B8913A; opacity: 0.6; margin-bottom: 20px; }
+  .gh-blog-feed-{{ section.id }} .gh-featured-date-{{ section.id }} { font-size: 11px; color: #6B7668; margin: 0 0 20px; letter-spacing: 0.04em; }
+  .gh-blog-feed-{{ section.id }} .gh-featured-excerpt-{{ section.id }} { font-size: 14.5px; color: #6B7668; line-height: 1.8; margin: 0 0 28px; }
+  .gh-blog-feed-{{ section.id }} .gh-read-more-{{ section.id }} { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #B8913A; text-decoration: none; }
+
+  .gh-blog-feed-{{ section.id }} .gh-section-heading-{{ section.id }} {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 0.5px solid rgba(28,43,26,0.1);
+  }
+  .gh-blog-feed-{{ section.id }} .gh-section-heading-title-{{ section.id }} { font-family: 'EB Garamond', Georgia, serif; font-size: 28px; margin: 0; color: #1C2B1A; }
+  .gh-blog-feed-{{ section.id }} .gh-section-heading-link-{{ section.id }} { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #B8913A; text-decoration: none; }
+
+  .gh-blog-feed-{{ section.id }} .gh-cards-grid-{{ section.id }} { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 64px; }
+  .gh-blog-feed-{{ section.id }} .gh-article-card-{{ section.id }} { background: white; border: 0.5px solid rgba(28,43,26,0.1); border-radius: 5px; overflow: hidden; display: flex; flex-direction: column; }
+  .gh-blog-feed-{{ section.id }} .gh-card-img-wrap-{{ section.id }} { height: 220px; overflow: hidden; position: relative; display: block; background: #F5EFE3; }
+  .gh-blog-feed-{{ section.id }} .gh-card-img-wrap-{{ section.id }} img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+  .gh-blog-feed-{{ section.id }} .gh-card-body-{{ section.id }} { padding: 22px; display: flex; flex-direction: column; flex: 1; }
+  .gh-blog-feed-{{ section.id }} .gh-card-meta-{{ section.id }} { font-size: 10px; color: #6B7668; margin: 8px 0 10px; }
+  .gh-blog-feed-{{ section.id }} .gh-card-title-{{ section.id }} { font-family: 'EB Garamond', Georgia, serif; font-size: 20px; line-height: 1.28; margin: 0 0 10px; }
+  .gh-blog-feed-{{ section.id }} .gh-card-title-{{ section.id }} a { color: #1C2B1A; text-decoration: none; }
+  .gh-blog-feed-{{ section.id }} .gh-card-excerpt-{{ section.id }} { font-size: 13px; color: #6B7668; line-height: 1.7; margin: 0 0 16px; }
+  .gh-blog-feed-{{ section.id }} .gh-card-read-{{ section.id }} { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #B8913A; text-decoration: none; }
+
+  .gh-blog-feed-{{ section.id }} .gh-highlight-{{ section.id }} { background: #1C2B1A; padding: 56px 40px; border-radius: 6px; margin-bottom: 64px; }
+  .gh-blog-feed-{{ section.id }} .gh-highlight-inner-{{ section.id }} { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+  .gh-blog-feed-{{ section.id }} .gh-highlight-eyebrow-{{ section.id }} { font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: #D4BC8A; margin-bottom: 12px; display: block; }
+  .gh-blog-feed-{{ section.id }} .gh-highlight-title-{{ section.id }} { font-family: 'EB Garamond', Georgia, serif; font-size: clamp(26px, 3vw, 40px); line-height: 1.15; margin: 0 0 16px; }
+  .gh-blog-feed-{{ section.id }} .gh-highlight-title-{{ section.id }} a { color: #F5EFE3; text-decoration: none; }
+  .gh-blog-feed-{{ section.id }} .gh-highlight-body-{{ section.id }} { color: rgba(245,239,227,0.6); font-size: 14px; line-height: 1.8; margin: 0 0 24px; }
+  .gh-blog-feed-{{ section.id }} .gh-highlight-stats-{{ section.id }} { display: flex; gap: 30px; margin-bottom: 24px; }
+  .gh-blog-feed-{{ section.id }} .gh-highlight-stat-val-{{ section.id }} { font-family: 'EB Garamond', Georgia, serif; font-size: 30px; color: #D4BC8A; display: block; }
+  .gh-blog-feed-{{ section.id }} .gh-highlight-stat-lbl-{{ section.id }} { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(245,239,227,0.4); }
+  .gh-blog-feed-{{ section.id }} .gh-highlight-btn-{{ section.id }} { display: inline-flex; align-items: center; gap: 8px; padding: 11px 24px; background: #B8913A; color: #FDF8F2; text-decoration: none; border-radius: 2px; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; }
+  .gh-blog-feed-{{ section.id }} .gh-highlight-img-{{ section.id }} { height: 340px; border-radius: 4px; overflow: hidden; }
+  .gh-blog-feed-{{ section.id }} .gh-highlight-img-{{ section.id }} img { width: 100%; height: 100%; object-fit: cover; }
+
+  .gh-blog-feed-{{ section.id }} .gh-list-articles-{{ section.id }} { margin-bottom: 64px; }
+  .gh-blog-feed-{{ section.id }} .gh-list-article-{{ section.id }} { display: grid; grid-template-columns: 120px 1fr; gap: 24px; padding: 24px 0; border-bottom: 0.5px solid rgba(28,43,26,0.1); }
+  .gh-blog-feed-{{ section.id }} .gh-list-article-{{ section.id }}:first-child { border-top: 0.5px solid rgba(28,43,26,0.1); }
+  .gh-blog-feed-{{ section.id }} .gh-list-img-{{ section.id }} { height: 80px; overflow: hidden; border-radius: 3px; display: block; background: #F5EFE3; }
+  .gh-blog-feed-{{ section.id }} .gh-list-img-{{ section.id }} img { width: 100%; height: 100%; object-fit: cover; }
+  .gh-blog-feed-{{ section.id }} .gh-list-meta-{{ section.id }} { font-size: 10px; color: #6B7668; margin: 5px 0 6px; }
+  .gh-blog-feed-{{ section.id }} .gh-list-title-{{ section.id }} { font-family: 'EB Garamond', Georgia, serif; font-size: 19px; margin: 0 0 6px; }
+  .gh-blog-feed-{{ section.id }} .gh-list-title-{{ section.id }} a { color: #1C2B1A; text-decoration: none; }
+  .gh-blog-feed-{{ section.id }} .gh-list-excerpt-{{ section.id }} { font-size: 13px; color: #6B7668; line-height: 1.6; margin: 0; }
+
+  .gh-blog-feed-{{ section.id }} .gh-pagination { margin-top: 16px; display: flex; justify-content: center; gap: 8px; }
+  .gh-blog-feed-{{ section.id }} .gh-page-btn { min-width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border: 0.5px solid rgba(28,43,26,0.18); text-decoration: none; color: #1C2B1A; border-radius: 3px; font-size: 12px; }
+  .gh-blog-feed-{{ section.id }} .gh-page-active { background: #1C2B1A; color: #F5EFE3; border-color: #1C2B1A; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .gh-blog-feed-{{ section.id }} .gh-featured-article-{{ section.id }}:hover .gh-featured-img-wrap-{{ section.id }} img { transform: scale(1.03); }
+    .gh-blog-feed-{{ section.id }} .gh-article-card-{{ section.id }}:hover .gh-card-img-wrap-{{ section.id }} img { transform: scale(1.05); }
+    .gh-blog-feed-{{ section.id }} .gh-article-card-{{ section.id }} { transition: transform 0.25s, box-shadow 0.25s; }
+    .gh-blog-feed-{{ section.id }} .gh-article-card-{{ section.id }}:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(28,43,26,0.09); }
+  }
+  @media (max-width: 900px) {
+    .gh-blog-feed-{{ section.id }} { padding: 0 20px 64px; }
+    .gh-blog-feed-{{ section.id }} .gh-featured-article-{{ section.id }} { grid-template-columns: 1fr; }
+    .gh-blog-feed-{{ section.id }} .gh-featured-img-wrap-{{ section.id }} { height: 300px; }
+    .gh-blog-feed-{{ section.id }} .gh-featured-content-{{ section.id }} { padding: 32px 28px; }
+    .gh-blog-feed-{{ section.id }} .gh-cards-grid-{{ section.id }} { grid-template-columns: repeat(2, 1fr); }
+    .gh-blog-feed-{{ section.id }} .gh-highlight-{{ section.id }} { padding: 34px 22px; }
+    .gh-blog-feed-{{ section.id }} .gh-highlight-inner-{{ section.id }} { grid-template-columns: 1fr; gap: 28px; }
+    .gh-blog-feed-{{ section.id }} .gh-highlight-img-{{ section.id }} { height: 240px; }
+  }
+  @media (max-width: 600px) {
+    .gh-blog-feed-{{ section.id }} .gh-cards-grid-{{ section.id }} { grid-template-columns: 1fr; }
+    .gh-blog-feed-{{ section.id }} .gh-list-article-{{ section.id }} { grid-template-columns: 80px 1fr; gap: 16px; }
+  }
+</style>
+
+<section class="gh-blog-feed-{{ section.id }}" id="gh-blog-feed-{{ section.id }}">
+  <div class="gh-blog-feed-inner">
+    {% if has_live_articles %}
+      {% paginate gh_blog.articles by section.settings.articles_per_page %}
+        {%- assign featured_article = nil -%}
+        {%- assign highlight_article = nil -%}
+        {% for article in gh_blog.articles %}
+          {% if featured_article == nil and article.tags contains 'featured' %}
+            {% assign featured_article = article %}
+          {% endif %}
+          {% if highlight_article == nil and article.tags contains 'highlight' %}
+            {% assign highlight_article = article %}
+          {% endif %}
+        {% endfor %}
+        {% if featured_article == nil %}
+          {% assign featured_article = gh_blog.articles.first %}
+        {% endif %}
+
+        {% if section.settings.show_featured and featured_article %}
+          {%- assign feat_tags = featured_article.tags | join: ',' -%}
+          <div class="gh-featured-wrap-{{ section.id }}">
+            <article class="gh-featured-article-{{ section.id }}" data-gh-filterable data-tags="{{ feat_tags }}">
+              <a href="{{ featured_article.url }}" class="gh-featured-img-wrap-{{ section.id }}" aria-hidden="true" tabindex="-1">
+                {% if featured_article.image %}
+                  {{ featured_article.image | image_url: width: 1200 | image_tag: loading: 'eager', alt: featured_article.image.alt | default: featured_article.title }}
+                {% else %}
+                  <div class="gh-card-img-wrap-{{ section.id }}"></div>
+                {% endif %}
+              </a>
+              <div class="gh-featured-content-{{ section.id }}">
+                <span class="gh-featured-eyebrow-{{ section.id }}">Latest</span>
+                <h2 class="gh-featured-title-{{ section.id }}"><a href="{{ featured_article.url }}">{{ featured_article.title }}</a></h2>
+                <div class="gh-featured-divider-{{ section.id }}"></div>
+                <p class="gh-featured-date-{{ section.id }}">{{ featured_article.published_at | date: '%d %B %Y' }}</p>
+                <p class="gh-featured-excerpt-{{ section.id }}">{{ featured_article.excerpt_or_content | strip_html | truncate: 280 }}</p>
+                <a href="{{ featured_article.url }}" class="gh-read-more-{{ section.id }}">Read the full story</a>
+              </div>
+            </article>
+          </div>
+        {% endif %}
+
+        <div class="gh-section-heading-{{ section.id }}" data-gh-section-heading="events">
+          <h2 class="gh-section-heading-title-{{ section.id }}">{{ section.settings.events_heading | default: 'Upcoming & Past Events' }}</h2>
+          {% if section.settings.events_view_all_url != blank %}<a href="{{ section.settings.events_view_all_url }}" class="gh-section-heading-link-{{ section.id }}">View all →</a>{% endif %}
+        </div>
+        <div class="gh-cards-grid-{{ section.id }}" data-gh-section-group="events">
+          {% for article in gh_blog.articles %}
+            {% assign tags_joined = article.tags | join: ',' %}
+            {% unless article.id == featured_article.id or article.tags contains 'highlight' or article.tags contains 'list' %}
+              {% if article.tags contains 'events' or article.tags contains 'awards' %}
+                <article class="gh-article-card-{{ section.id }}" data-gh-filterable data-tags="{{ tags_joined }}">
+                  <a href="{{ article.url }}" class="gh-card-img-wrap-{{ section.id }}">
+                    {% if article.image %}
+                      {{ article.image | image_url: width: 600 | image_tag: loading: 'lazy', alt: article.image.alt | default: article.title }}
+                    {% endif %}
+                  </a>
+                  <div class="gh-card-body-{{ section.id }}">
+                    {% for tag in article.tags %}{% if tag != 'featured' and tag != 'highlight' and tag != 'list' %}{% render 'gh-blog-tag-pill', tag: tag %}{% break %}{% endif %}{% endfor %}
+                    <p class="gh-card-meta-{{ section.id }}">{{ article.published_at | date: '%d %B %Y' }}</p>
+                    <h3 class="gh-card-title-{{ section.id }}"><a href="{{ article.url }}">{{ article.title }}</a></h3>
+                    <p class="gh-card-excerpt-{{ section.id }}">{{ article.excerpt_or_content | strip_html | truncate: 140 }}</p>
+                    <a href="{{ article.url }}" class="gh-card-read-{{ section.id }}">Read more →</a>
+                  </div>
+                </article>
+              {% endif %}
+            {% endunless %}
+          {% endfor %}
+        </div>
+
+        {% if section.settings.show_highlight and highlight_article %}
+          {%- assign hl_tags = highlight_article.tags | join: ',' -%}
+          <div class="gh-highlight-{{ section.id }}" data-gh-filterable data-tags="{{ hl_tags }}">
+            <div class="gh-highlight-inner-{{ section.id }}">
+              <div>
+                <span class="gh-highlight-eyebrow-{{ section.id }}">Highlight</span>
+                <h2 class="gh-highlight-title-{{ section.id }}"><a href="{{ highlight_article.url }}">{{ highlight_article.title }}</a></h2>
+                <p class="gh-highlight-body-{{ section.id }}">{{ highlight_article.excerpt_or_content | strip_html | truncate: 320 }}</p>
+                <div class="gh-highlight-stats-{{ section.id }}">
+                  <div><span class="gh-highlight-stat-val-{{ section.id }}">{{ highlight_article.metafields.gh_highlight.stat1_value | default: section.settings.hl_stat1_val }}</span><span class="gh-highlight-stat-lbl-{{ section.id }}">{{ highlight_article.metafields.gh_highlight.stat1_label | default: section.settings.hl_stat1_label }}</span></div>
+                  <div><span class="gh-highlight-stat-val-{{ section.id }}">{{ highlight_article.metafields.gh_highlight.stat2_value | default: section.settings.hl_stat2_val }}</span><span class="gh-highlight-stat-lbl-{{ section.id }}">{{ highlight_article.metafields.gh_highlight.stat2_label | default: section.settings.hl_stat2_label }}</span></div>
+                  <div><span class="gh-highlight-stat-val-{{ section.id }}">{{ highlight_article.metafields.gh_highlight.stat3_value | default: section.settings.hl_stat3_val }}</span><span class="gh-highlight-stat-lbl-{{ section.id }}">{{ highlight_article.metafields.gh_highlight.stat3_label | default: section.settings.hl_stat3_label }}</span></div>
+                </div>
+                <a href="{{ highlight_article.url }}" class="gh-highlight-btn-{{ section.id }}">{{ section.settings.hl_btn_label | default: 'Read more' }}</a>
+              </div>
+              <div class="gh-highlight-img-{{ section.id }}">
+                {% if highlight_article.image %}
+                  {{ highlight_article.image | image_url: width: 800 | image_tag: loading: 'lazy', alt: highlight_article.image.alt | default: highlight_article.title }}
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+
+        <div class="gh-section-heading-{{ section.id }}" data-gh-section-heading="list">
+          <h2 class="gh-section-heading-title-{{ section.id }}">{{ section.settings.charity_heading | default: 'Charity & Community' }}</h2>
+        </div>
+        <div class="gh-list-articles-{{ section.id }}" data-gh-section-group="list">
+          {% for article in gh_blog.articles %}
+            {% if article.tags contains 'list' %}
+              <div class="gh-list-article-{{ section.id }}" data-gh-filterable data-tags="{{ article.tags | join: ',' }}">
+                <a href="{{ article.url }}" class="gh-list-img-{{ section.id }}">
+                  {% if article.image %}{{ article.image | image_url: width: 240 | image_tag: loading: 'lazy', alt: article.image.alt | default: article.title }}{% endif %}
+                </a>
+                <div>
+                  {% for tag in article.tags %}{% if tag != 'featured' and tag != 'highlight' and tag != 'list' %}{% render 'gh-blog-tag-pill', tag: tag %}{% break %}{% endif %}{% endfor %}
+                  <div class="gh-list-meta-{{ section.id }}">{{ article.published_at | date: '%d %B %Y' }}</div>
+                  <h3 class="gh-list-title-{{ section.id }}"><a href="{{ article.url }}">{{ article.title }}</a></h3>
+                  <p class="gh-list-excerpt-{{ section.id }}">{{ article.excerpt_or_content | strip_html | truncate: 200 }}</p>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        <div class="gh-section-heading-{{ section.id }}" data-gh-section-heading="releases">
+          <h2 class="gh-section-heading-title-{{ section.id }}">{{ section.settings.releases_heading | default: 'Winery News & Releases' }}</h2>
+        </div>
+        <div class="gh-cards-grid-{{ section.id }}" data-gh-section-group="releases">
+          {% for article in gh_blog.articles %}
+            {% assign tags_joined = article.tags | join: ',' %}
+            {% unless article.id == featured_article.id or article.tags contains 'highlight' or article.tags contains 'list' %}
+              {% if article.tags contains 'release' or article.tags contains 'news' %}
+                <article class="gh-article-card-{{ section.id }}" data-gh-filterable data-tags="{{ tags_joined }}">
+                  <a href="{{ article.url }}" class="gh-card-img-wrap-{{ section.id }}">
+                    {% if article.image %}{{ article.image | image_url: width: 600 | image_tag: loading: 'lazy', alt: article.image.alt | default: article.title }}{% endif %}
+                  </a>
+                  <div class="gh-card-body-{{ section.id }}">
+                    {% for tag in article.tags %}{% if tag != 'featured' and tag != 'highlight' and tag != 'list' %}{% render 'gh-blog-tag-pill', tag: tag %}{% break %}{% endif %}{% endfor %}
+                    <p class="gh-card-meta-{{ section.id }}">{{ article.published_at | date: '%d %B %Y' }}</p>
+                    <h3 class="gh-card-title-{{ section.id }}"><a href="{{ article.url }}">{{ article.title }}</a></h3>
+                    <p class="gh-card-excerpt-{{ section.id }}">{{ article.excerpt_or_content | strip_html | truncate: 140 }}</p>
+                    <a href="{{ article.url }}" class="gh-card-read-{{ section.id }}">Read more →</a>
+                  </div>
+                </article>
+              {% endif %}
+            {% endunless %}
+          {% endfor %}
+        </div>
+
+        {% if paginate.pages > 1 %}
+          <nav class="gh-pagination" aria-label="Pagination">
+            {% for part in paginate.parts %}
+              {% if part.is_link %}
+                <a href="{{ part.url }}" class="gh-page-btn">{{ part.title }}</a>
+              {% elsif part.title == paginate.current_page %}
+                <span class="gh-page-btn gh-page-active">{{ part.title }}</span>
+              {% else %}
+                <span class="gh-page-btn">{{ part.title }}</span>
+              {% endif %}
+            {% endfor %}
+          </nav>
+        {% endif %}
+      {% endpaginate %}
+    {% else %}
+      {%- assign static_titles = "Longest Lunch on Adelaide Riverbank Footbridge|GOD'S HILL WINES sponsor DAVE LOEW|Lunch with a Barossa Legend Charity Auction|MENZEL SHIRAZ WINS DOUBLE GOLD|Christmas at Scalzi Winery|Wine maker experience $229 P/P|A taste of Italy $129 P/P|Womens Market Day raising money for Queensland Floods" | split: "|" -%}
+      {%- assign static_dates = "14 November 2018|14 November 2018|14 November 2018|14 November 2018|3 December 2021|21 February 2022|21 February 2022|4 March 2022" | split: "|" -%}
+      {%- assign static_tags = "featured,events|events,awards|events,charity|highlight,awards,news|list,events|list,news|release,news|charity,news" | split: "|" -%}
+      {%- assign static_excerpts = "This October, guests join together in an iconic setting at Adelaide Riverbank to enjoy premium South Australian food and wine while raising funds for the community.|Renowned winemaker Charlie Scalzi teams up with international cellist Dave Loew for an evening of wine tasting and live music classics.|Bid online for seats with Barossa legends and support their chosen charities at the famous auction lunch event.|Menzel Shiraz 2008 wins Double Gold at CWSA, one of the largest and most prestigious competitions in Hong Kong and China.|Enjoy the taste of South Italy with a festive package including food, wine and live music at Scalzi Winery.|Wine tasting experience with Charlie the winemaker paired with food, available by booking for small groups.|Three authentic Italian dishes paired with Scalzi Estate wines, with a take-home bottle included in the package.|Fundraising afternoon with finger food, bubbly and fashion parade to support Queensland flood victims." | split: "|" -%}
+
+      <div class="gh-featured-wrap-{{ section.id }}">
+        <article class="gh-featured-article-{{ section.id }}" data-gh-filterable data-tags="{{ static_tags[0] }}">
+          <a href="#" class="gh-featured-img-wrap-{{ section.id }}"><div class="gh-card-img-wrap-{{ section.id }}"></div></a>
+          <div class="gh-featured-content-{{ section.id }}">
+            <span class="gh-featured-eyebrow-{{ section.id }}">Latest</span>
+            <h2 class="gh-featured-title-{{ section.id }}"><a href="#">{{ static_titles[0] }}</a></h2>
+            <div class="gh-featured-divider-{{ section.id }}"></div>
+            <p class="gh-featured-date-{{ section.id }}">{{ static_dates[0] }}</p>
+            <p class="gh-featured-excerpt-{{ section.id }}">{{ static_excerpts[0] }}</p>
+          </div>
+        </article>
+      </div>
+
+      <div class="gh-section-heading-{{ section.id }}" data-gh-section-heading="events"><h2 class="gh-section-heading-title-{{ section.id }}">{{ section.settings.events_heading | default: 'Upcoming & Past Events' }}</h2></div>
+      <div class="gh-cards-grid-{{ section.id }}" data-gh-section-group="events">
+        {% for i in (1..2) %}
+          <article class="gh-article-card-{{ section.id }}" data-gh-filterable data-tags="{{ static_tags[i] }}">
+            <a href="#" class="gh-card-img-wrap-{{ section.id }}"></a>
+            <div class="gh-card-body-{{ section.id }}">
+              {% assign first_tag = static_tags[i] | split: ',' | first %}{% render 'gh-blog-tag-pill', tag: first_tag %}
+              <p class="gh-card-meta-{{ section.id }}">{{ static_dates[i] }}</p>
+              <h3 class="gh-card-title-{{ section.id }}"><a href="#">{{ static_titles[i] }}</a></h3>
+              <p class="gh-card-excerpt-{{ section.id }}">{{ static_excerpts[i] }}</p>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+
+      <div class="gh-highlight-{{ section.id }}" data-gh-filterable data-tags="{{ static_tags[3] }}">
+        <div class="gh-highlight-inner-{{ section.id }}">
+          <div>
+            <span class="gh-highlight-eyebrow-{{ section.id }}">Awards · 2018</span>
+            <h2 class="gh-highlight-title-{{ section.id }}"><a href="#">{{ static_titles[3] }}</a></h2>
+            <p class="gh-highlight-body-{{ section.id }}">{{ static_excerpts[3] }}</p>
+            <div class="gh-highlight-stats-{{ section.id }}">
+              <div><span class="gh-highlight-stat-val-{{ section.id }}">{{ section.settings.hl_stat1_val | default: '9th' }}</span><span class="gh-highlight-stat-lbl-{{ section.id }}">{{ section.settings.hl_stat1_label | default: 'Major award won' }}</span></div>
+              <div><span class="gh-highlight-stat-val-{{ section.id }}">{{ section.settings.hl_stat2_val | default: 'CWSA' }}</span><span class="gh-highlight-stat-lbl-{{ section.id }}">{{ section.settings.hl_stat2_label | default: 'Double Gold Medal' }}</span></div>
+              <div><span class="gh-highlight-stat-val-{{ section.id }}">{{ section.settings.hl_stat3_val | default: '2008' }}</span><span class="gh-highlight-stat-lbl-{{ section.id }}">{{ section.settings.hl_stat3_label | default: 'Vintage' }}</span></div>
+            </div>
+          </div>
+          <div class="gh-highlight-img-{{ section.id }}"></div>
+        </div>
+      </div>
+
+      <div class="gh-section-heading-{{ section.id }}" data-gh-section-heading="list"><h2 class="gh-section-heading-title-{{ section.id }}">{{ section.settings.charity_heading | default: 'Charity & Community' }}</h2></div>
+      <div class="gh-list-articles-{{ section.id }}" data-gh-section-group="list">
+        {% for i in (4..5) %}
+          <div class="gh-list-article-{{ section.id }}" data-gh-filterable data-tags="{{ static_tags[i] }}">
+            <a href="#" class="gh-list-img-{{ section.id }}"></a>
+            <div>
+              {% assign first_tag = static_tags[i] | split: ',' | first %}{% render 'gh-blog-tag-pill', tag: first_tag %}
+              <div class="gh-list-meta-{{ section.id }}">{{ static_dates[i] }}</div>
+              <h3 class="gh-list-title-{{ section.id }}"><a href="#">{{ static_titles[i] }}</a></h3>
+              <p class="gh-list-excerpt-{{ section.id }}">{{ static_excerpts[i] }}</p>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="gh-section-heading-{{ section.id }}" data-gh-section-heading="releases"><h2 class="gh-section-heading-title-{{ section.id }}">{{ section.settings.releases_heading | default: 'Winery News & Releases' }}</h2></div>
+      <div class="gh-cards-grid-{{ section.id }}" data-gh-section-group="releases">
+        {% for i in (6..7) %}
+          <article class="gh-article-card-{{ section.id }}" data-gh-filterable data-tags="{{ static_tags[i] }}">
+            <a href="#" class="gh-card-img-wrap-{{ section.id }}"></a>
+            <div class="gh-card-body-{{ section.id }}">
+              {% assign first_tag = static_tags[i] | split: ',' | first %}{% render 'gh-blog-tag-pill', tag: first_tag %}
+              <p class="gh-card-meta-{{ section.id }}">{{ static_dates[i] }}</p>
+              <h3 class="gh-card-title-{{ section.id }}"><a href="#">{{ static_titles[i] }}</a></h3>
+              <p class="gh-card-excerpt-{{ section.id }}">{{ static_excerpts[i] }}</p>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "GH — Blog Feed",
+  "settings": [
+    { "type": "blog", "id": "blog", "label": "Blog to display" },
+    { "type": "range", "id": "articles_per_page", "label": "Articles per page", "min": 6, "max": 24, "step": 3, "default": 12 },
+    { "type": "checkbox", "id": "show_featured", "label": "Show featured hero article", "default": true },
+    { "type": "checkbox", "id": "show_highlight", "label": "Show highlight strip", "default": true },
+    { "type": "text", "id": "events_heading", "label": "Events section heading", "default": "Upcoming & Past Events" },
+    { "type": "url", "id": "events_view_all_url", "label": "Events view all URL" },
+    { "type": "text", "id": "charity_heading", "label": "Charity section heading", "default": "Charity & Community" },
+    { "type": "text", "id": "releases_heading", "label": "Releases section heading", "default": "Winery News & Releases" },
+    { "type": "text", "id": "hl_btn_label", "label": "Highlight button label", "default": "Read more" },
+    { "type": "text", "id": "hl_stat1_val", "label": "Highlight stat 1 value", "default": "9th" },
+    { "type": "text", "id": "hl_stat1_label", "label": "Highlight stat 1 label", "default": "Major award won" },
+    { "type": "text", "id": "hl_stat2_val", "label": "Highlight stat 2 value", "default": "CWSA" },
+    { "type": "text", "id": "hl_stat2_label", "label": "Highlight stat 2 label", "default": "Double Gold Medal" },
+    { "type": "text", "id": "hl_stat3_val", "label": "Highlight stat 3 value", "default": "2008" },
+    { "type": "text", "id": "hl_stat3_label", "label": "Highlight stat 3 label", "default": "Vintage" },
+    { "type": "color", "id": "bg_color", "label": "Page background", "default": "#FDF8F2" }
+  ],
+  "presets": [
+    { "name": "GH — Blog Feed" }
+  ]
+}
+{% endschema %}
