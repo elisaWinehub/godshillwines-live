@@ -85,7 +85,8 @@
       <p class="gh-nl-sub-{{ section.id }}">{{ section.settings.subheading }}</p>
     {% endif %}
 
-    {% form 'customer', id: 'gh-nl-form-{{ section.id }}', class: 'gh-nl-form-' | append: section.id %}
+    {%- assign gh_nl_form_class = 'gh-nl-form-' | append: section.id -%}
+    {% form 'customer', id: 'gh-blog-nl-form', class: gh_nl_form_class %}
       <input type="hidden" name="contact[tags]" value="newsletter">
       {% if form.posted_successfully? %}
         <p class="gh-nl-success-{{ section.id }}">{{ section.settings.success_message | default: "Thanks for subscribing! We'll be in touch soon." }}</p>

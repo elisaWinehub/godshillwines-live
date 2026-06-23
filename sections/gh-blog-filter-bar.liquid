@@ -1,13 +1,13 @@
 <style>
-  .gh-blog-filter-bar-{{ section.id }} {
+  .gh-filter-bar-wrap-{{ section.id }} {
     width: 100%;
-    background: {{ section.settings.bg_color | default: '#FDF8F2' }};
+    background: #FDF8F2;
     border-bottom: 0.5px solid rgba(28, 43, 26, 0.1);
     position: sticky;
-    top: var(--gh-header-height, 70px);
+    top: var(--gh-sticky-top, 70px);
     z-index: 50;
   }
-  .gh-blog-filter-bar-{{ section.id }} .gh-filter-bar-inner-{{ section.id }} {
+  .gh-filter-bar-wrap-{{ section.id }} .gh-filter-bar-inner-{{ section.id }} {
     max-width: 1280px;
     margin: 0 auto;
     padding: 0 40px;
@@ -17,11 +17,12 @@
     height: 54px;
     overflow-x: auto;
     scrollbar-width: none;
+    -ms-overflow-style: none;
   }
-  .gh-blog-filter-bar-{{ section.id }} .gh-filter-bar-inner-{{ section.id }}::-webkit-scrollbar { display: none; }
-  .gh-blog-filter-bar-{{ section.id }} .gh-filter-btn-{{ section.id }} {
+  .gh-filter-bar-wrap-{{ section.id }} .gh-filter-bar-inner-{{ section.id }}::-webkit-scrollbar { display: none; }
+  .gh-filter-bar-wrap-{{ section.id }} .gh-filter-btn-{{ section.id }} {
     padding: 6px 16px;
-    border: 0.5px solid rgba(28, 43, 26, 0.12);
+    border: 0.5px solid rgba(28, 43, 26, 0.18);
     border-radius: 20px;
     font-size: 11px;
     letter-spacing: 0.1em;
@@ -33,19 +34,20 @@
     transition: all 0.2s;
     white-space: nowrap;
     flex-shrink: 0;
+    line-height: 1;
   }
-  .gh-blog-filter-bar-{{ section.id }} .gh-filter-btn-{{ section.id }}:hover { border-color: #1C2B1A; color: #1C2B1A; }
-  .gh-blog-filter-bar-{{ section.id }} .gh-filter-btn-{{ section.id }}.is-active {
+  .gh-filter-bar-wrap-{{ section.id }} .gh-filter-btn-{{ section.id }}:hover { border-color: #1C2B1A; color: #1C2B1A; }
+  .gh-filter-bar-wrap-{{ section.id }} .gh-filter-btn-{{ section.id }}.is-active {
     background: #1C2B1A;
     color: #F5EFE3;
     border-color: #1C2B1A;
   }
   @media (max-width: 768px) {
-    .gh-blog-filter-bar-{{ section.id }} .gh-filter-bar-inner-{{ section.id }} { padding: 0 20px; }
+    .gh-filter-bar-wrap-{{ section.id }} .gh-filter-bar-inner-{{ section.id }} { padding: 0 20px; }
   }
 </style>
 
-<div class="gh-blog-filter-bar-{{ section.id }}" id="gh-filter-bar-{{ section.id }}">
+<div class="gh-filter-bar-wrap-{{ section.id }}" id="gh-filter-bar-{{ section.id }}">
   <div class="gh-filter-bar-inner-{{ section.id }}">
     <button class="gh-filter-btn-{{ section.id }} is-active" data-filter="all" aria-pressed="true">
       {{ section.settings.all_label | default: 'All' }}
