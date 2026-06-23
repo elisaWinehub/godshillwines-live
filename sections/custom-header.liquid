@@ -252,7 +252,7 @@
     height: 100%;
     box-sizing: border-box;
     display: grid;
-    grid-template-columns: minmax(auto,280px) 1fr minmax(auto,{{ section.settings.utilities_width_px }}px);
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
     gap: clamp(14px, 3vw, 34px);
     padding-block: clamp(12px, 2vw, 18px);
@@ -262,7 +262,7 @@
   #GhHdr-{{ section.id }} .gh-hdr-logo img {
     max-width: {{ section.settings.logo_image_width_px }}px;
     width: 100%;
-    max-height: calc(max(var(--hdr-h-desktop), 100px) - 18px);
+    max-height: 85px;
     height: auto;
     object-fit: contain;
     display: block;
@@ -302,6 +302,11 @@
   }
 
   #GhHdr-{{ section.id }} .gh-hdr-nav {
+    justify-self: center;
+    width: 100%;
+    max-width: 920px;
+    padding-inline: clamp(12px, 2vw, 40px);
+    box-sizing: border-box;
     overflow: visible;
   }
   #GhHdr-{{ section.id }} .gh-hdr-ul {
@@ -321,6 +326,7 @@
   #GhHdr-{{ section.id }} .gh-hdr-ul > li > .gh-drop > a {
     text-decoration: none;
     text-transform: uppercase;
+    font-family: 'Inter', sans-serif;
     color: {{ section.settings.nav_color | default: '#000000' }};
     font-size: 12px;
     font-weight: 400;
@@ -455,7 +461,7 @@
 
   @media screen and (max-width: 1180px) and (min-width: {{ section.settings.mobile_breakpoint | plus: 1 }}px) {
     #GhHdr-{{ section.id }} .gh-hdr-bar {
-      grid-template-columns: minmax(auto, 220px) 1fr minmax(auto, 108px);
+      grid-template-columns: auto minmax(0, 1fr) auto;
       gap: clamp(10px, 2vw, 22px);
       padding-inline: clamp(18px, 3vw, 40px);
     }
