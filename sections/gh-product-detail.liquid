@@ -160,7 +160,7 @@
   }
 
   .gh-product-detail-{{ section.id }} .gh-product-main-img {
-    background: var(--gh-cream);
+    background: #fff;
     border-radius: 4px;
     min-height: 540px;
     display: grid;
@@ -582,21 +582,45 @@
     <div class="gh-product-detail-grid">
       <div class="gh-product-media-col">
         {% assign featured = variant.featured_image | default: product.featured_image %}
-        {% assign main_img_id = 'gh-main-img-tag-' | append: section.id %}
-        <div class="gh-product-main-img">
+        <div class="gh-product-main-img" id="gh-product-main-img-wrap">
           {% if featured %}
-            {{ featured | image_url: width: 1000 | image_tag: id: main_img_id, loading: 'eager' }}
+            <img
+              id="gh-main-img-tag"
+              src="{{ featured | image_url: width: 1200 }}"
+              alt="{{ featured.alt | default: product.title }}"
+              loading="eager"
+              width="1200"
+              height="1200">
           {% endif %}
-          <button type="button" class="gh-product-zoom-btn" aria-label="Zoom image">+</button>
+          <button class="gh-product-zoom-btn" aria-label="Zoom image" type="button">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+            </svg>
+          </button>
+          {% if product.images.size > 1 %}
+            <button class="gh-img-nav gh-img-nav--prev" id="gh-img-prev" aria-label="Previous image" type="button" disabled>
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <button class="gh-img-nav gh-img-nav--next" id="gh-img-next" aria-label="Next image" type="button">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <div class="gh-img-counter" id="gh-img-counter" aria-live="polite">1 / {{ product.images.size }}</div>
+          {% endif %}
         </div>
-        {% if section.settings.show_thumbnails %}
-          <div class="gh-product-thumbs">
-            {% for image in product.images limit: 5 %}
+        {% if section.settings.show_thumbnails and product.images.size > 1 %}
+          <div class="gh-product-thumbs" id="gh-product-thumbs">
+            {% for image in product.images %}
               <button
                 type="button"
                 class="gh-product-thumb {% if forloop.first %}active{% endif %}"
-                data-src="{{ image | image_url: width: 1000 }}"
-                onclick="document.getElementById('{{ main_img_id }}').src=this.dataset.src;this.parentElement.querySelectorAll('.gh-product-thumb').forEach(function(t){t.classList.remove('active')});this.classList.add('active');"
+                data-src="{{ image | image_url: width: 1200 }}"
+                data-index="{{ forloop.index0 }}"
+                aria-label="View image {{ forloop.index }} of {{ product.images.size }}"
+                aria-pressed="{{ forloop.first | json }}"
               >
                 {{ image | image_url: width: 160 | image_tag: loading: 'lazy' }}
               </button>
@@ -734,6 +758,68 @@
 
             {% when 'tab' %}
               {% if block.settings.show_block %}
+                {%- assign tab_key = block.settings.title | downcase | strip -%}
+                {%- assign mf_body = '' -%}
+
+                {%- if tab_key == 'tasting notes' -%}
+                  {%- capture mf_body -%}
+                    {%- if product.metafields.custom.colour != blank -%}
+                      <div class="gh-mf-row">
+                        <span class="gh-mf-label">Colour</span>
+                        <span class="gh-mf-value">{{ product.metafields.custom.colour }}</span>
+                      </div>
+                    {%- endif -%}
+                    {%- if product.metafields.custom.nose != blank -%}
+                      <div class="gh-mf-row">
+                        <span class="gh-mf-label">Nose</span>
+                        <span class="gh-mf-value">{{ product.metafields.custom.nose }}</span>
+                      </div>
+                    {%- endif -%}
+                    {%- if product.metafields.custom.palate != blank -%}
+                      <div class="gh-mf-row">
+                        <span class="gh-mf-label">Palate</span>
+                        <span class="gh-mf-value">{{ product.metafields.custom.palate }}</span>
+                      </div>
+                    {%- endif -%}
+                    {%- if product.metafields.custom.fruit != blank -%}
+                      <div class="gh-mf-row">
+                        <span class="gh-mf-label">Fruit</span>
+                        <span class="gh-mf-value">{{ product.metafields.custom.fruit }}</span>
+                      </div>
+                    {%- endif -%}
+                    {%- if product.metafields.custom.comments != blank -%}
+                      <div class="gh-mf-row gh-mf-row--full">
+                        <span class="gh-mf-label">Comments</span>
+                        <span class="gh-mf-value">{{ product.metafields.custom.comments }}</span>
+                      </div>
+                    {%- endif -%}
+                  {%- endcapture -%}
+                {%- elsif tab_key == 'wine details' -%}
+                  {%- capture mf_body -%}
+                    {%- if product.metafields.custom.alcohol != blank -%}
+                      <div class="gh-mf-row">
+                        <span class="gh-mf-label">Alcohol</span>
+                        <span class="gh-mf-value">{{ product.metafields.custom.alcohol }}</span>
+                      </div>
+                    {%- endif -%}
+                    {%- if product.metafields.custom.size != blank -%}
+                      <div class="gh-mf-row">
+                        <span class="gh-mf-label">Size</span>
+                        <span class="gh-mf-value">{{ product.metafields.custom.size }}</span>
+                      </div>
+                    {%- endif -%}
+                    {%- if product.metafields.custom.produced_and_packed_by != blank -%}
+                      <div class="gh-mf-row gh-mf-row--full">
+                        <span class="gh-mf-label">Produced &amp; Packed by</span>
+                        <span class="gh-mf-value">{{ product.metafields.custom.produced_and_packed_by }}</span>
+                      </div>
+                    {%- endif -%}
+                  {%- endcapture -%}
+                {%- endif -%}
+
+                {%- assign mf_body_trimmed = mf_body | strip -%}
+                {%- assign static_content = block.settings.content | strip -%}
+
                 <div class="gh-accordion gh-accordion--single" {{ block.shopify_attributes }}>
                   <div class="gh-accordion-item">
                     <button class="gh-accordion-header" aria-expanded="false" aria-controls="gh-acc-{{ block.id }}" type="button" onclick="ghToggleAccordion(this)">
@@ -743,10 +829,17 @@
                       </svg>
                     </button>
                     <div class="gh-accordion-body" id="gh-acc-{{ block.id }}" hidden>
-                      {% if block.settings.content != blank %}
-                        {{ block.settings.content }}
+                      {% if mf_body_trimmed != blank %}
+                        <div class="gh-mf-table">
+                          {{ mf_body }}
+                        </div>
+                        {% if static_content != blank %}
+                          <div class="gh-accordion-extra">{{ static_content }}</div>
+                        {% endif %}
+                      {% elsif static_content != blank %}
+                        {{ static_content }}
                       {% else %}
-                        <p class="gh-accordion-placeholder">No content added yet. Edit this section in the theme editor to add content.</p>
+                        <p class="gh-accordion-placeholder">No content added yet. Edit this product in Shopify Admin to add details.</p>
                       {% endif %}
                     </div>
                   </div>
@@ -783,18 +876,23 @@
   }
 
   .gh-product-detail-{{ section.id }} .gh-product-main-img {
-    background: var(--gh-cream);
+    background: #fff;
     border-radius: 4px;
     min-height: 540px;
     display: grid;
     place-items: center;
     position: relative;
+    overflow: hidden;
   }
 
   .gh-product-detail-{{ section.id }} .gh-product-main-img img {
     width: 100%;
     height: 100%;
     object-fit: contain;
+  }
+
+  .gh-product-detail-{{ section.id }} #gh-main-img-tag {
+    transition: opacity 0.2s ease;
   }
 
   .gh-product-detail-{{ section.id }} .gh-product-zoom-btn {
@@ -821,17 +919,78 @@
     border-radius: 3px;
     padding: 0;
     overflow: hidden;
-    background: var(--gh-cream);
+    background: none;
+    cursor: pointer;
+    transition: border-color 0.2s, opacity 0.2s;
+    opacity: 0.65;
   }
 
   .gh-product-detail-{{ section.id }} .gh-product-thumb.active {
     border-color: var(--gh-gold);
+    opacity: 1;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-product-thumb:hover {
+    opacity: 1;
   }
 
   .gh-product-detail-{{ section.id }} .gh-product-thumb img {
+    display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-img-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(253,248,242,0.92);
+    border: 0.5px solid rgba(28,43,26,0.15);
+    color: #1C2B1A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    transition: background 0.2s, opacity 0.2s, box-shadow 0.2s;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-img-nav:hover:not(:disabled) {
+    background: #fff;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.16);
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-img-nav:disabled {
+    opacity: 0.3;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-img-nav--prev {
+    left: 12px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-img-nav--next {
+    right: 12px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-img-counter {
+    position: absolute;
+    bottom: 12px;
+    right: 14px;
+    background: rgba(28,43,26,0.55);
+    color: rgba(245,239,227,0.85);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    font-family: 'Inter', sans-serif;
+    padding: 3px 10px;
+    border-radius: 20px;
+    pointer-events: none;
   }
 
   .gh-product-detail-{{ section.id }} .gh-breadcrumbs {
@@ -887,6 +1046,7 @@
 
   .gh-product-detail-{{ section.id }} .gh-description {
     color: var(--gh-muted);
+    margin-bottom: 28px;
   }
 
   .gh-product-detail-{{ section.id }} .gh-purchase-options {
@@ -904,6 +1064,7 @@
 
   .gh-product-detail-{{ section.id }} .gh-mpc__purchase-title {
     margin: 0 0 10px;
+    padding-top: 4px;
     font: 500 11px/1.3 'Inter', sans-serif;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -1102,6 +1263,62 @@
     font-size: 12px;
   }
 
+  /* Metafield row table inside accordion */
+  .gh-product-detail-{{ section.id }} .gh-mf-table {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin-bottom: 4px;
+  }
+  .gh-product-detail-{{ section.id }} .gh-mf-row {
+    display: contents;
+  }
+  .gh-product-detail-{{ section.id }} .gh-mf-row--full {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    grid-column: 1 / -1;
+    padding: 12px 0;
+    border-top: 0.5px solid rgba(28,43,26,0.08);
+  }
+  .gh-product-detail-{{ section.id }} .gh-mf-row .gh-mf-label,
+  .gh-product-detail-{{ section.id }} .gh-mf-row .gh-mf-value {
+    padding: 11px 0;
+    border-bottom: 0.5px solid rgba(28,43,26,0.08);
+  }
+  .gh-product-detail-{{ section.id }} .gh-mf-row:last-of-type .gh-mf-label,
+  .gh-product-detail-{{ section.id }} .gh-mf-row:last-of-type .gh-mf-value {
+    border-bottom: none;
+  }
+  .gh-product-detail-{{ section.id }} .gh-mf-label {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #6B7668;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    padding-right: 16px;
+    align-self: start;
+  }
+  .gh-product-detail-{{ section.id }} .gh-mf-value {
+    font-size: 14px;
+    color: #1C2B1A;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.5;
+  }
+  .gh-product-detail-{{ section.id }} .gh-mf-row--full .gh-mf-value {
+    white-space: normal;
+    line-height: 1.7;
+  }
+  .gh-product-detail-{{ section.id }} .gh-accordion-extra {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 0.5px solid rgba(28,43,26,0.08);
+    font-size: 13.5px;
+    color: #6B7668;
+    line-height: 1.7;
+  }
+
   .gh-product-detail-{{ section.id }} .gh-lightbox {
     position: fixed;
     inset: 0;
@@ -1180,6 +1397,23 @@
       gap: 10px;
     }
   }
+  @media (max-width: 600px) {
+    .gh-product-detail-{{ section.id }} .gh-mf-table {
+      grid-template-columns: 1fr;
+    }
+    .gh-product-detail-{{ section.id }} .gh-mf-row {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding: 10px 0;
+      border-bottom: 0.5px solid rgba(28,43,26,0.08);
+    }
+    .gh-product-detail-{{ section.id }} .gh-mf-row .gh-mf-label,
+    .gh-product-detail-{{ section.id }} .gh-mf-row .gh-mf-value {
+      padding: 0;
+      border-bottom: none;
+    }
+  }
 </style>
 
 <script>
@@ -1228,6 +1462,101 @@
       refreshPurchaseState();
     });
 
+    (function () {
+      var mainImg = sectionRoot.querySelector('#gh-main-img-tag');
+      var thumbWrap = sectionRoot.querySelector('#gh-product-thumbs');
+      if (!mainImg || !thumbWrap) return;
+
+      var thumbs = Array.from(thumbWrap.querySelectorAll('.gh-product-thumb'));
+      var currentIndex = 0;
+      var prevBtn = sectionRoot.querySelector('#gh-img-prev');
+      var nextBtn = sectionRoot.querySelector('#gh-img-next');
+      var counter = sectionRoot.querySelector('#gh-img-counter');
+
+      function updateNavButtons() {
+        if (!prevBtn || !nextBtn) return;
+        prevBtn.disabled = currentIndex === 0;
+        prevBtn.style.opacity = currentIndex === 0 ? '0.3' : '1';
+        nextBtn.disabled = currentIndex === thumbs.length - 1;
+        nextBtn.style.opacity = currentIndex === thumbs.length - 1 ? '0.3' : '1';
+      }
+
+      function goToIndex(index) {
+        if (index < 0 || index >= thumbs.length) return;
+        currentIndex = index;
+
+        var thumb = thumbs[index];
+        var newSrc = thumb.getAttribute('data-src');
+        if (!newSrc) return;
+
+        mainImg.style.opacity = '0';
+        var tempImg = new Image();
+        tempImg.onload = function () {
+          mainImg.src = newSrc;
+          mainImg.alt = thumb.querySelector('img') ? thumb.querySelector('img').alt : '';
+          mainImg.style.opacity = '1';
+        };
+        tempImg.onerror = function () {
+          mainImg.src = newSrc;
+          mainImg.style.opacity = '1';
+        };
+        tempImg.src = newSrc;
+
+        thumbs.forEach(function (t, i) {
+          t.classList.toggle('active', i === index);
+          t.setAttribute('aria-pressed', i === index ? 'true' : 'false');
+        });
+
+        if (counter) {
+          counter.textContent = (index + 1) + ' / ' + thumbs.length;
+        }
+
+        updateNavButtons();
+      }
+
+      thumbWrap.addEventListener('click', function (e) {
+        var btn = e.target.closest('.gh-product-thumb');
+        if (!btn) return;
+        var idx = parseInt(btn.getAttribute('data-index'), 10);
+        if (!isNaN(idx)) goToIndex(idx);
+      });
+
+      if (prevBtn) {
+        prevBtn.addEventListener('click', function () {
+          goToIndex(currentIndex - 1);
+        });
+      }
+
+      if (nextBtn) {
+        nextBtn.addEventListener('click', function () {
+          goToIndex(currentIndex + 1);
+        });
+      }
+
+      var mainWrap = sectionRoot.querySelector('#gh-product-main-img-wrap');
+      if (mainWrap) {
+        mainWrap.setAttribute('tabindex', '0');
+        mainWrap.addEventListener('keydown', function (e) {
+          if (e.key === 'ArrowLeft') { e.preventDefault(); goToIndex(currentIndex - 1); }
+          if (e.key === 'ArrowRight') { e.preventDefault(); goToIndex(currentIndex + 1); }
+        });
+
+        var touchStartX = 0;
+        mainWrap.addEventListener('touchstart', function (e) {
+          touchStartX = e.touches[0].clientX;
+        }, { passive: true });
+        mainWrap.addEventListener('touchend', function (e) {
+          var diff = touchStartX - e.changedTouches[0].clientX;
+          if (Math.abs(diff) > 40) {
+            if (diff > 0) goToIndex(currentIndex + 1);
+            else goToIndex(currentIndex - 1);
+          }
+        }, { passive: true });
+      }
+
+      updateNavButtons();
+    })();
+
     var zoomBtn = sectionRoot.querySelector('.gh-product-zoom-btn');
     if (!zoomBtn) return;
 
@@ -1247,10 +1576,10 @@
     var closeBtn = overlay.querySelector('.gh-lightbox-close');
 
     function openLightbox() {
-      var mainImg = document.getElementById('{{ main_img_id }}') || sectionRoot.querySelector('.gh-product-main-img img');
-      if (!mainImg || !lightboxImg) return;
-      lightboxImg.src = mainImg.src;
-      lightboxImg.alt = mainImg.alt || '';
+      var mainImage = sectionRoot.querySelector('#gh-main-img-tag') || sectionRoot.querySelector('.gh-product-main-img img');
+      if (!mainImage || !lightboxImg) return;
+      lightboxImg.src = mainImage.src;
+      lightboxImg.alt = mainImage.alt || '';
       overlay.classList.add('gh-lightbox-open');
       document.body.style.overflow = 'hidden';
     }
@@ -1392,9 +1721,11 @@
         { "type": "description" },
         { "type": "purchase_options" },
         { "type": "buy_row" },
-        { "type": "tab" },
-        { "type": "tab" },
-        { "type": "tab" }
+        { "type": "tab", "settings": { "title": "Wine Details", "content": "" } },
+        { "type": "tab", "settings": { "title": "Vineyard", "content": "" } },
+        { "type": "tab", "settings": { "title": "Tasting Notes", "content": "" } },
+        { "type": "tab", "settings": { "title": "Winemaking", "content": "" } },
+        { "type": "tab", "settings": { "title": "Awards", "content": "" } }
       ]
     }
   ]

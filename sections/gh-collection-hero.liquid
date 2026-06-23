@@ -1,11 +1,12 @@
 {%- render 'gh-tokens' -%}
 
 <section class="gh-collection-hero-{{ section.id }}">
+  {%- assign gh_collection_hero_image = collection.image | default: section.settings.hero_image -%}
   {%- render 'gh-page-hero',
     eyebrow: section.settings.hero_eyebrow,
     title: section.settings.hero_title,
     subheading: section.settings.hero_subheading,
-    image: section.settings.hero_image,
+    image: gh_collection_hero_image,
     height: section.settings.hero_height,
     overlay_opacity: section.settings.overlay_opacity
   -%}
