@@ -144,6 +144,9 @@
 
   {% if menu_obj != blank %}
     <div id="GhHdrDrawer-{{ section.id }}" class="gh-drawer" aria-hidden="true">
+      <div class="gh-drawer-head">
+        <button class="gh-drawer-close js-ghdrawer-close" type="button" aria-label="Close menu">✕</button>
+      </div>
       {% for link in menu_obj.links %}
         <div class="gh-drawer-entry">
           <div class="gh-drawer-parent">
@@ -212,11 +215,23 @@
     background: transparent;
     box-shadow: none;
   }
-  .shopify-section.gh-custom-store-header[data-gh-section-header="{{ section.id }}"][data-gh-sticky='true'] {
-    position: sticky;
+  .shopify-section.gh-custom-store-header[data-gh-section-header="{{ section.id }}"][data-gh-sticky='true'][data-scroll-armed='true'] {
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
     z-index: 80;
     box-shadow: none;
+    transform: translateY(calc(-100% - 8px));
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.28s ease, opacity 0.22s ease, background-color 0.28s ease, box-shadow 0.28s ease;
+  }
+  .shopify-section.gh-custom-store-header[data-gh-section-header="{{ section.id }}"][data-gh-sticky='true'][data-scroll-armed='true'][data-scroll-reveal='true'] {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
   }
   #GhHdr-{{ section.id }}.gh-hdr-shell {
     background: transparent;
@@ -590,6 +605,27 @@
     display: inline-flex;
     width: fit-content;
   }
+  #GhHdrDrawer-{{ section.id }} .gh-drawer-head {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 6px;
+  }
+  #GhHdrDrawer-{{ section.id }} .gh-drawer-close {
+    border: 0;
+    background: transparent;
+    color: {{ section.settings.drawer_link_color }};
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 2px 4px;
+  }
+  @media screen and (max-width: {{ section.settings.mobile_breakpoint }}px) {
+    #GhHdrDrawer-{{ section.id }}.gh-drawer {
+      width: 100vw;
+      max-width: 100vw;
+      padding: calc(var(--hdr-h-mobile) + 8px) 20px 24px;
+    }
+  }
 </style>
 
 <script>
@@ -604,9 +640,18 @@
 
     var lastScrolledState = null;
     var scrollRaf = null;
+    var lastY = window.scrollY || 0;
+    var lastRevealState = null;
+
+    function setRevealState(nextState) {
+      if (!sectionRoot || lastRevealState === nextState) return;
+      lastRevealState = nextState;
+      sectionRoot.setAttribute('data-scroll-reveal', nextState ? 'true' : 'false');
+    }
 
     function syncScrollState() {
-      var scrolled = window.scrollY > scrollThreshold;
+      var currentY = window.scrollY || 0;
+      var scrolled = currentY > scrollThreshold;
       if (scrolled === lastScrolledState) return;
       lastScrolledState = scrolled;
       rootWrapper.setAttribute('data-scrolled', scrolled ? 'true' : 'false');
@@ -615,11 +660,35 @@
       }
     }
 
+    function syncRevealState() {
+      if (!sectionRoot) return;
+      if (sectionRoot.getAttribute('data-gh-sticky') !== 'true') return;
+
+      var currentY = window.scrollY || 0;
+      var armThreshold = scrollThreshold + 24;
+      var delta = currentY - lastY;
+
+      if (currentY <= armThreshold) {
+        sectionRoot.setAttribute('data-scroll-armed', 'false');
+        setRevealState(false);
+      } else {
+        sectionRoot.setAttribute('data-scroll-armed', 'true');
+        if (delta <= -8) {
+          setRevealState(true);
+        } else if (delta >= 4) {
+          setRevealState(false);
+        }
+      }
+
+      lastY = currentY;
+    }
+
     function requestScrollSync() {
       if (scrollRaf) return;
       scrollRaf = window.requestAnimationFrame(function () {
         scrollRaf = null;
         syncScrollState();
+        syncRevealState();
       });
     }
 
@@ -627,11 +696,12 @@
       sectionRoot.setAttribute('data-gh-section-header', '{{ section.id }}');
       sectionRoot.setAttribute('data-gh-overlay', rootWrapper.getAttribute('data-gh-overlay') === 'true' ? 'true' : 'false');
       sectionRoot.setAttribute('data-gh-sticky', rootWrapper.classList.contains('gh-ch-wrap--sticky') ? 'true' : 'false');
+      sectionRoot.setAttribute('data-scroll-armed', 'false');
+      sectionRoot.setAttribute('data-scroll-reveal', 'false');
     }
 
     if (rootWrapper.getAttribute('data-gh-overlay') === 'true') {
       syncScrollState();
-      window.addEventListener('scroll', requestScrollSync, { passive: true });
     } else {
       rootWrapper.setAttribute('data-scrolled', 'true');
       if (sectionRoot) {
@@ -639,17 +709,38 @@
       }
     }
 
+    syncRevealState();
+    window.addEventListener('scroll', requestScrollSync, { passive: true });
+
     var burger = shell.querySelector('.js-ghburger');
     var drawer = document.getElementById('GhHdrDrawer-{{ section.id }}');
+    var closeBtn = drawer ? drawer.querySelector('.js-ghdrawer-close') : null;
+
+    function setDrawerState(next) {
+      rootWrapper.setAttribute('data-drawer-open', next ? 'true' : 'false');
+      if (drawer) drawer.setAttribute('aria-hidden', next ? 'false' : 'true');
+      if (burger) burger.setAttribute('aria-expanded', next ? 'true' : 'false');
+      document.documentElement.style.overflow = next ? 'hidden' : '';
+    }
 
     if (burger && drawer) {
       burger.addEventListener('click', function () {
         var open = rootWrapper.getAttribute('data-drawer-open') === 'true';
-        var next = !open;
-        rootWrapper.setAttribute('data-drawer-open', next ? 'true' : 'false');
-        drawer.setAttribute('aria-hidden', next ? 'false' : 'true');
-        burger.setAttribute('aria-expanded', next ? 'true' : 'false');
-        document.documentElement.style.overflow = next ? 'hidden' : '';
+        setDrawerState(!open);
+      });
+    }
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function () {
+        setDrawerState(false);
+      });
+    }
+
+    if (drawer) {
+      drawer.querySelectorAll('a').forEach(function (link) {
+        link.addEventListener('click', function () {
+          setDrawerState(false);
+        });
       });
     }
 

@@ -84,7 +84,21 @@
       padding: 56px 20px;
     }
     .gh-related-products-{{ section.id }} .gh-related-grid {
-      grid-template-columns: 1fr 1fr;
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 100%;
+      grid-template-columns: none;
+      overflow-x: auto;
+      gap: 12px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 4px;
+    }
+    .gh-related-products-{{ section.id }} .gh-related-grid::-webkit-scrollbar {
+      display: none;
+    }
+    .gh-related-products-{{ section.id }} .gh-related-grid > * {
+      scroll-snap-align: start;
     }
   }
 </style>
