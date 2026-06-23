@@ -1,3 +1,368 @@
+{% comment %}
+{% render 'gh-tokens' %}
+
+<footer class="gh-footer gh-footer-{{ section.id }}" {{ section.shopify_attributes }}>
+  <div class="gh-footer-inner">
+    <div class="gh-footer-top">
+      <div class="gh-footer-brand">
+        <a href="{{ routes.root_url }}" class="gh-footer-logo">
+          {% if section.settings.logo %}
+            {{ section.settings.logo | image_url: width: 260 | image_tag: alt: section.settings.logo_text }}
+          {% else %}
+            <span class="gh-footer-wordmark">{{ section.settings.logo_text | default: "God's Hill Wines" }}</span>
+          {% endif %}
+        </a>
+        <p class="gh-footer-subline">{{ section.settings.logo_subtext | default: 'Barossa Valley · Australia' }}</p>
+        <p class="gh-footer-brand-desc">{{ section.settings.brand_desc | default: 'A family-owned business producing premium quality red and white wines, situated in the famous Barossa Valley. Our style continues a tradition practiced since Roman times in Central Italy.' }}</p>
+        <div class="gh-footer-social">
+          <a class="gh-footer-social-link" href="{{ section.settings.instagram_url }}" aria-label="Instagram">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+              <circle cx="12" cy="12" r="4"></circle>
+              <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"></circle>
+            </svg>
+          </a>
+          <a class="gh-footer-social-link" href="{{ section.settings.facebook_url }}" aria-label="Facebook">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="gh-footer-col">
+        <h3 class="gh-footer-heading">{{ section.settings.quick_links_heading | default: 'Quick links' }}</h3>
+        <ul class="gh-footer-links">
+          {% if section.settings.quick_links_menu != blank %}
+            {% for link in section.settings.quick_links_menu.links %}
+              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+            {% endfor %}
+          {% endif %}
+        </ul>
+      </div>
+
+      <div class="gh-footer-col">
+        <h3 class="gh-footer-heading">{{ section.settings.cellar_heading | default: 'Cellar door' }}</h3>
+        <div class="gh-footer-visit-row">
+          <span class="gh-footer-visit-icon">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+          </span>
+          <span>{{ section.settings.address | default: '34 Moppert Rd, Lyndoch SA 5351' }}</span>
+        </div>
+        <div class="gh-footer-visit-row">
+          <span class="gh-footer-visit-icon">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 3.07 9.63 19.79 19.79 0 0 1 .63 2 2 2 0 0 1 2.62 0h3.01a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 7.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+          </span>
+          <span>{{ section.settings.phone | default: '+61 408 838 004' }}</span>
+        </div>
+        <div class="gh-footer-visit-row">
+          <span class="gh-footer-visit-icon">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+          </span>
+          <span>{{ section.settings.hours | default: 'Open Thu – Sun, 11am – 5pm' }}</span>
+        </div>
+      </div>
+
+      <div class="gh-footer-col">
+        <h3 class="gh-footer-heading">{{ section.settings.newsletter_heading | default: 'Stay in the loop' }}</h3>
+        <p class="gh-footer-news-blurb">{{ section.settings.newsletter_blurb | default: 'Subscribe to hear about new releases, events & offers.' }}</p>
+        {% form 'customer', id: 'gh-footer-newsletter' %}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          <div class="gh-footer-mail-row">
+            <input
+              type="email"
+              name="contact[email]"
+              placeholder="{{ section.settings.newsletter_placeholder | default: 'Enter your email' }}"
+              class="gh-footer-mail-input"
+              autocomplete="email"
+              required>
+            <button type="submit" class="gh-footer-mail-btn" aria-label="Subscribe">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </button>
+          </div>
+          {% if form.posted_successfully? %}
+            <p class="gh-footer-success">Thanks for subscribing!</p>
+          {% endif %}
+        {% endform %}
+      </div>
+    </div>
+
+    <div class="gh-footer-bottom">
+      <p class="gh-footer-legal">{{ section.settings.legal_text | default: "Under the Liquor Licensing Act it is an offence for liquor to be delivered to a person under the age of 18 years. Please drink God's Hill Wines responsibly. God's Hill Vineyard / Cantina Scalzi Affiliates Pty Ltd producer's licence 50609784. © 2026 God's Hill Wines." }}</p>
+      {% if section.settings.show_afterpay %}
+        <div class="gh-footer-afterpay">
+          <span>{{ section.settings.afterpay_label | default: 'Payments via' }}</span>
+          <span class="gh-afterpay-badge">Afterpay</span>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</footer>
+
+<style>
+  .gh-footer-{{ section.id }} {
+    background: #111B10;
+    padding: 64px 40px 32px;
+    color: rgba(245, 239, 227, 0.55);
+  }
+
+  .gh-footer-{{ section.id }} .gh-footer-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  .gh-footer-{{ section.id }} .gh-footer-top {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1.2fr;
+    gap: 48px;
+    border-bottom: 0.5px solid rgba(245, 239, 227, 0.1);
+    padding-bottom: 36px;
+    margin-bottom: 20px;
+  }
+
+  .gh-footer-{{ section.id }} .gh-footer-logo {
+    text-decoration: none;
+    color: #F5EFE3;
+  }
+
+  .gh-footer-{{ section.id }} .gh-footer-logo img {
+    max-height: 44px;
+    width: auto;
+  }
+
+  .gh-footer-{{ section.id }} .gh-footer-wordmark {
+    font: 400 30px/1 'EB Garamond', Georgia, serif;
+    color: #F5EFE3;
+  }
+
+  .gh-footer-{{ section.id }} .gh-footer-subline {
+    margin: 8px 0 14px;
+    font: 500 9px/1.2 'Inter', sans-serif;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #C8A98A;
+  }
+
+  .gh-footer-{{ section.id }} .gh-footer-brand-desc,
+  .gh-footer-{{ section.id }} .gh-footer-news-blurb {
+    margin: 0 0 14px;
+    font: 400 13px/1.7 'Inter', sans-serif;
+    color: rgba(245, 239, 227, 0.55);
+  }
+
+  .gh-footer-{{ section.id }} .gh-footer-social {
+    display: flex;
+    gap: 10px;
+  }
+
+  .gh-footer-{{ section.id }} .gh-footer-social-link {
+    width: 34px;
+    height: 34px;
+    border: 0.5px solid rgba(245, 239, 227, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(245, 239, 227, 0.5);
+  }
+
+  .gh-footer-{{ section.id }} .gh-footer-heading {
+    margin: 0 0 16px;
+    font: 500 10px/1.3 'Inter', sans-serif;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(245, 239, 227, 0.35);
+  }
+
+  .gh-footer-{{ section.id }} .gh-footer-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .gh-footer-{{ section.id }} .gh-footer-links a {
+    font: 400 13px/1.4 'Inter', sans-serif;
+    color: rgba(245, 239, 227, 0.5);
+    text-decoration: none;
+  }
+
+  .gh-footer-{{ section.id }} .gh-footer-visit-row {
+    display: flex;
+    gap: 10px;
+    font-size: 12.5px;
+    line-height: 1.5;
+    margin-bottom: 12px;
+    align-items: flex-start;
+    color: rgba(245, 239, 227, 0.55);
+  }
+
+  .gh-footer-{{ section.id }} .gh-footer-visit-icon {
+    color: #B8913A;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .gh-footer-{{ section.id }} .gh-footer-mail-row {
+    display: flex;
+  }
+
+  .gh-footer-{{ section.id }} .gh-footer-mail-input {
+    flex: 1;
+    padding: 10px 14px;
+    background: rgba(253, 248, 242, 0.06);
+    border: 0.5px solid rgba(245, 239, 227, 0.18);
+    border-right: none;
+    color: #F5EFE3;
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    border-radius: 2px 0 0 2px;
+    outline: none;
+  }
+
+  .gh-footer-{{ section.id }} .gh-footer-mail-input::placeholder {
+    color: rgba(245, 239, 227, 0.3);
+  }
+
+  .gh-footer-{{ section.id }} .gh-footer-mail-input:focus {
+    border-color: rgba(184, 145, 58, 0.5);
+  }
+
+  .gh-footer-{{ section.id }} .gh-footer-mail-btn {
+    padding: 10px 14px;
+    background: #B8913A;
+    color: #FDF8F2;
+    border: none;
+    cursor: pointer;
+    border-radius: 0 2px 2px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .gh-footer-{{ section.id }} .gh-footer-success {
+    font-size: 11px;
+    color: #B8913A;
+    margin-top: 8px;
+  }
+
+  .gh-footer-{{ section.id }} .gh-footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .gh-footer-{{ section.id }} .gh-footer-legal {
+    font-size: 11px;
+    color: rgba(245, 239, 227, 0.22);
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0;
+  }
+
+  .gh-footer-{{ section.id }} .gh-footer-afterpay {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: rgba(245, 239, 227, 0.3);
+    white-space: nowrap;
+  }
+
+  .gh-footer-{{ section.id }} .gh-afterpay-badge {
+    background: rgba(245, 239, 227, 0.08);
+    border: 0.5px solid rgba(245, 239, 227, 0.15);
+    border-radius: 3px;
+    padding: 4px 10px;
+    font-size: 11px;
+    color: rgba(245, 239, 227, 0.4);
+    letter-spacing: 0.05em;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .gh-footer-{{ section.id }} .gh-footer-social-link,
+    .gh-footer-{{ section.id }} .gh-footer-links a,
+    .gh-footer-{{ section.id }} .gh-footer-mail-btn {
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+    }
+
+    .gh-footer-{{ section.id }} .gh-footer-social-link:hover {
+      border-color: #B8913A;
+      color: #B8913A;
+    }
+
+    .gh-footer-{{ section.id }} .gh-footer-links a:hover {
+      color: #F5EFE3;
+    }
+
+    .gh-footer-{{ section.id }} .gh-footer-mail-btn:hover {
+      background: #9A7A30;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .gh-footer-{{ section.id }} .gh-footer-top {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .gh-footer-{{ section.id }} {
+      padding: 48px 20px 24px;
+    }
+
+    .gh-footer-{{ section.id }} .gh-footer-bottom {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "GH — Footer",
+  "settings": [
+    { "type": "image_picker", "id": "logo", "label": "Footer logo" },
+    { "type": "text", "id": "logo_text", "label": "Logo text fallback", "default": "God's Hill Wines" },
+    { "type": "text", "id": "logo_subtext", "label": "Logo subline", "default": "Barossa Valley · Australia" },
+    { "type": "textarea", "id": "brand_desc", "label": "Brand description", "default": "A family-owned business producing premium quality red and white wines, situated in the famous Barossa Valley. Our style continues a tradition practiced since Roman times in Central Italy." },
+    { "type": "url", "id": "instagram_url", "label": "Instagram URL" },
+    { "type": "url", "id": "facebook_url", "label": "Facebook URL" },
+    { "type": "link_list", "id": "quick_links_menu", "label": "Quick links menu", "default": "footer" },
+    { "type": "text", "id": "quick_links_heading", "label": "Quick links heading", "default": "Quick links" },
+    { "type": "text", "id": "cellar_heading", "label": "Cellar door column heading", "default": "Cellar door" },
+    { "type": "text", "id": "address", "label": "Address", "default": "34 Moppert Rd, Lyndoch SA 5351" },
+    { "type": "text", "id": "phone", "label": "Phone", "default": "+61 408 838 004" },
+    { "type": "text", "id": "hours", "label": "Opening hours", "default": "Open Thu – Sun, 11am – 5pm" },
+    { "type": "text", "id": "newsletter_heading", "label": "Newsletter column heading", "default": "Stay in the loop" },
+    { "type": "text", "id": "newsletter_blurb", "label": "Newsletter blurb", "default": "Subscribe to hear about new releases, events & offers." },
+    { "type": "text", "id": "newsletter_placeholder", "label": "Newsletter placeholder", "default": "Enter your email" },
+    { "type": "textarea", "id": "legal_text", "label": "Legal / disclaimer", "default": "Under the Liquor Licensing Act it is an offence for liquor to be delivered to a person under the age of 18 years. Please drink God's Hill Wines responsibly. God's Hill Vineyard / Cantina Scalzi Affiliates Pty Ltd producer's licence 50609784. © 2026 God's Hill Wines." },
+    { "type": "checkbox", "id": "show_afterpay", "label": "Show Afterpay badge", "default": true },
+    { "type": "text", "id": "afterpay_label", "label": "Afterpay label", "default": "Payments via" },
+    { "type": "color", "id": "bg_color", "label": "Background colour", "default": "#111B10" },
+    { "type": "color", "id": "text_color", "label": "Body text colour", "default": "#F5EFE3" },
+    { "type": "color", "id": "accent_color", "label": "Accent / icon colour", "default": "#B8913A" }
+  ],
+  "presets": [{ "name": "GH — Footer" }]
+}
+{% endschema %}
+{% endcomment %}
 {% render 'gh-tokens' %}
 
 <footer class="gh-footer gh-footer-{{ section.id }}" {{ section.shopify_attributes }}>

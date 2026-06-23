@@ -1,97 +1,895 @@
-{%- render 'gh-tokens' -%}
-<section class="gh-gallery-grid-{{ section.id }}" style="background: {{ section.settings.bg_color | default: '#FDF8F2' }};">
-  <div class="gh-gallery-shell">
+<style>
+/* Wrapper */
+.gh-gallery-{{ section.id }} {
+  padding: {{ section.settings.padding_top | default: 56 }}px 40px {{ section.settings.padding_bottom | default: 80 }}px;
+  background: {{ section.settings.bg_color | default: '#FDF8F2' }};
+}
+.gh-gallery-{{ section.id }} .gh-gallery-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* Filter tabs */
+.gh-gallery-{{ section.id }} .gh-gallery-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+.gh-gallery-{{ section.id }} .gh-filter-btn {
+  padding: 7px 18px;
+  border: 0.5px solid rgba(28,43,26,0.18);
+  border-radius: 20px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  background: transparent;
+  color: #6B7668;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s;
+  line-height: 1;
+}
+.gh-gallery-{{ section.id }} .gh-filter-btn:hover {
+  border-color: #1C2B1A;
+  color: #1C2B1A;
+}
+.gh-gallery-{{ section.id }} .gh-filter-btn.is-active {
+  background: #1C2B1A;
+  color: #F5EFE3;
+  border-color: #1C2B1A;
+}
+
+/* Grid */
+.gh-gallery-{{ section.id }} .gh-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat({{ section.settings.columns | default: 4 }}, 1fr);
+  auto-rows: {{ section.settings.row_height | default: 200 }}px;
+  gap: {{ section.settings.gap | default: 8 }}px;
+}
+.gh-gallery-{{ section.id }} .gh-gallery-item {
+  position: relative;
+  overflow: hidden;
+  border-radius: 3px;
+  cursor: pointer;
+  display: block;
+  background: #E8E4DC;
+}
+.gh-gallery-{{ section.id }} .gh-gallery-item.is-hidden {
+  display: none;
+}
+.gh-gallery-{{ section.id }} .gh-gallery-item.is-tall {
+  grid-row: span 2;
+}
+.gh-gallery-{{ section.id }} .gh-gallery-item.is-wide {
+  grid-column: span 2;
+}
+.gh-gallery-{{ section.id }} .gh-gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .gh-gallery-{{ section.id }} .gh-gallery-item:hover img {
+    transform: scale(1.06);
+  }
+}
+
+/* Hover overlay */
+.gh-gallery-{{ section.id }} .gh-gallery-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(28,43,26,0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s;
+}
+.gh-gallery-{{ section.id }} .gh-gallery-overlay svg {
+  opacity: 0;
+  transition: opacity 0.3s;
+  color: white;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.4));
+}
+@media (prefers-reduced-motion: no-preference) {
+  .gh-gallery-{{ section.id }} .gh-gallery-item:hover .gh-gallery-overlay {
+    background: rgba(28,43,26,0.38);
+  }
+  .gh-gallery-{{ section.id }} .gh-gallery-item:hover .gh-gallery-overlay svg {
+    opacity: 1;
+  }
+}
+
+/* Caption bar */
+.gh-gallery-{{ section.id }} .gh-gallery-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px 14px;
+  background: linear-gradient(to top, rgba(20,28,18,0.75) 0%, transparent 100%);
+  font-size: 11px;
+  color: rgba(245,239,227,0.85);
+  letter-spacing: 0.04em;
+  transform: translateY(100%);
+  transition: transform 0.3s;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .gh-gallery-{{ section.id }} .gh-gallery-item:hover .gh-gallery-caption {
+    transform: translateY(0);
+  }
+}
+
+/* Category chip */
+.gh-gallery-{{ section.id }} .gh-gallery-cat-chip {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(28,43,26,0.65);
+  color: #D4BC8A;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 2px;
+  pointer-events: none;
+  backdrop-filter: blur(4px);
+}
+
+/* Empty state */
+.gh-gallery-{{ section.id }} .gh-gallery-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: #6B7668;
+  font-size: 14px;
+}
+
+/* Load more */
+.gh-gallery-{{ section.id }} .gh-gallery-load-more {
+  text-align: center;
+  margin-top: 40px;
+}
+.gh-gallery-{{ section.id }} .gh-load-more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 26px;
+  border: 0.5px solid rgba(28,43,26,0.35);
+  border-radius: 2px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: #1C2B1A;
+  background: transparent;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s;
+}
+.gh-gallery-{{ section.id }} .gh-load-more-btn:hover {
+  background: rgba(28,43,26,0.05);
+  border-color: #1C2B1A;
+}
+.gh-gallery-{{ section.id }} .gh-load-more-btn.is-hidden {
+  display: none;
+}
+
+/* Placeholder shimmer */
+.gh-gallery-{{ section.id }} .gh-gallery-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #E8E4DC 0%, #D4CEC4 50%, #E8E4DC 100%);
+  background-size: 200% 200%;
+  animation: ghGalleryShimmer-{{ section.id }} 2s ease infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@keyframes ghGalleryShimmer-{{ section.id }} {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.gh-gallery-{{ section.id }} .gh-gallery-placeholder svg {
+  color: rgba(28,43,26,0.2);
+}
+
+/* Lightbox */
+.gh-lightbox-{{ section.id }} {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,0);
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s;
+}
+.gh-lightbox-{{ section.id }}.is-open {
+  display: flex;
+  background: rgba(0,0,0,0.93);
+}
+.gh-lightbox-{{ section.id }} .gh-lb-inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 90vw;
+  max-height: 90vh;
+}
+.gh-lightbox-{{ section.id }} .gh-lb-img {
+  max-width: 88vw;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: 3px;
+  display: block;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+}
+.gh-lightbox-{{ section.id }} .gh-lb-caption {
+  margin-top: 14px;
+  font-size: 12px;
+  color: rgba(245,239,227,0.6);
+  letter-spacing: 0.06em;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+}
+.gh-lightbox-{{ section.id }} .gh-lb-counter {
+  font-size: 10px;
+  color: rgba(245,239,227,0.35);
+  letter-spacing: 0.1em;
+  margin-top: 6px;
+}
+.gh-lightbox-{{ section.id }} .gh-lb-close {
+  position: fixed;
+  top: 20px;
+  right: 24px;
+  width: 44px;
+  height: 44px;
+  background: rgba(255,255,255,0.08);
+  border: 0.5px solid rgba(255,255,255,0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  transition: background 0.2s;
+  z-index: 10000;
+}
+.gh-lightbox-{{ section.id }} .gh-lb-close:hover {
+  background: rgba(255,255,255,0.15);
+}
+.gh-lightbox-{{ section.id }} .gh-lb-prev,
+.gh-lightbox-{{ section.id }} .gh-lb-next {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  background: rgba(255,255,255,0.08);
+  border: 0.5px solid rgba(255,255,255,0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  transition: background 0.2s;
+  z-index: 10000;
+}
+.gh-lightbox-{{ section.id }} .gh-lb-prev { left: 20px; }
+.gh-lightbox-{{ section.id }} .gh-lb-next { right: 20px; }
+.gh-lightbox-{{ section.id }} .gh-lb-prev:hover,
+.gh-lightbox-{{ section.id }} .gh-lb-next:hover {
+  background: rgba(255,255,255,0.16);
+}
+.gh-lightbox-{{ section.id }} .gh-lb-loader {
+  width: 32px;
+  height: 32px;
+  border: 2px solid rgba(255,255,255,0.15);
+  border-top-color: #B8913A;
+  border-radius: 50%;
+  animation: ghLbSpin-{{ section.id }} 0.8s linear infinite;
+  position: absolute;
+}
+@keyframes ghLbSpin-{{ section.id }} { to { transform: rotate(360deg); } }
+
+/* Mobile */
+@media (max-width: 900px) {
+  .gh-gallery-{{ section.id }} .gh-gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    auto-rows: 180px;
+  }
+  .gh-gallery-{{ section.id }} .gh-gallery-item.is-wide {
+    grid-column: span 1;
+  }
+  .gh-gallery-{{ section.id }} {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+@media (max-width: 480px) {
+  .gh-gallery-{{ section.id }} .gh-gallery-grid {
+    grid-template-columns: 1fr 1fr;
+    auto-rows: 140px;
+  }
+  .gh-gallery-{{ section.id }} .gh-gallery-filters {
+    gap: 6px;
+  }
+  .gh-gallery-{{ section.id }} .gh-filter-btn {
+    font-size: 10px;
+    padding: 6px 12px;
+  }
+}
+</style>
+
+<section
+  class="gh-gallery-{{ section.id }}"
+  id="gh-gallery-{{ section.id }}"
+  data-section-id="{{ section.id }}"
+  aria-label="Gallery">
+  <div class="gh-gallery-inner">
     {% if section.settings.show_filters %}
-      <div class="gh-gallery-filters">
-        <button class="gh-gallery-filter-btn active" data-cat="all" type="button">All</button>
-        <button class="gh-gallery-filter-btn" data-cat="vineyard" type="button">Vineyard</button>
-        <button class="gh-gallery-filter-btn" data-cat="cellar_door" type="button">Cellar door</button>
-        <button class="gh-gallery-filter-btn" data-cat="restaurant" type="button">Restaurant</button>
-        <button class="gh-gallery-filter-btn" data-cat="events" type="button">Events</button>
-        <button class="gh-gallery-filter-btn" data-cat="wines" type="button">Wines</button>
+      <div class="gh-gallery-filters" role="tablist" aria-label="Filter gallery by category">
+        <button
+          class="gh-filter-btn is-active"
+          data-filter="all"
+          role="tab"
+          aria-selected="true"
+          aria-controls="gh-gallery-grid-{{ section.id }}">
+          {{ section.settings.filter_all_label | default: 'All' }}
+        </button>
+        {%- assign seen_cats = '' -%}
+        {%- for block in section.blocks -%}
+          {%- assign cat = block.settings.category -%}
+          {%- unless seen_cats contains cat or cat == blank -%}
+            {%- assign seen_cats = seen_cats | append: cat | append: ',' -%}
+            {%- assign cat_label = cat | replace: '_', ' ' | capitalize -%}
+            <button
+              class="gh-filter-btn"
+              data-filter="{{ cat }}"
+              role="tab"
+              aria-selected="false"
+              aria-controls="gh-gallery-grid-{{ section.id }}">
+              {{ cat_label }}
+            </button>
+          {%- endunless -%}
+        {%- endfor -%}
       </div>
     {% endif %}
-    <div class="gh-gallery-items">
-      {% for block in section.blocks %}
-        {% if block.type == 'photo' %}
-          <article
-            class="gh-gallery-item{% if block.settings.is_tall %} is-tall{% endif %}{% if block.settings.is_wide %} is-wide{% endif %}"
-            data-category="{{ block.settings.category | default: 'vineyard' }}"
-            {{ block.shopify_attributes }}
-          >
-            {% if block.settings.link != blank %}<a href="{{ block.settings.link }}">{% endif %}
-            {% if block.settings.image %}
-              {{ block.settings.image | image_url: width: 1200 | image_tag: loading: 'lazy', alt: block.settings.alt }}
+
+    <div class="gh-gallery-grid" id="gh-gallery-grid-{{ section.id }}" role="list">
+      {%- if section.blocks.size == 0 -%}
+        {%- assign placeholders = "vineyard|wines|restaurant|wines|accommodation|cellar_door|wines|vineyard|wines" | split: "|" -%}
+        {%- assign placeholder_alts = "Barossa vineyard rows at sunset|God's Hill wine bottles|Ennia Cucina dining experience|Wine glasses at cellar door|Villa Scalzi accommodation|Cellar door tasting room|Shiraz bottle close-up|Vineyard early morning|Red wines lined up" | split: "|" -%}
+        {%- assign placeholder_urls = "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=800&q=80|https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=800&q=80|https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80|https://images.unsplash.com/photo-1568213816046-0ee1c42bd559?w=800&q=80|https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80|https://images.unsplash.com/photo-1474722883778-792e7990302f?w=800&q=80|https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=800&q=80|https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=800&q=80|https://images.unsplash.com/photo-1568213816046-0ee1c42bd559?w=800&q=80" | split: "|" -%}
+        {%- assign placeholder_spans = "tall||||wide|tall|||" | split: "|" -%}
+
+        {%- for i in (0..8) -%}
+          {%- assign cat = placeholders[i] -%}
+          {%- assign alt = placeholder_alts[i] -%}
+          {%- assign url = placeholder_urls[i] -%}
+          {%- assign span = placeholder_spans[i] -%}
+          {%- assign cat_label = cat | replace: '_', ' ' | capitalize -%}
+          <div
+            class="gh-gallery-item{% if span == 'tall' %} is-tall{% elsif span == 'wide' %} is-wide{% endif %}"
+            data-category="{{ cat }}"
+            data-img-src="{{ url }}"
+            data-img-alt="{{ alt }}"
+            data-caption="{{ alt }}"
+            role="listitem"
+            tabindex="0"
+            aria-label="View {{ alt }} in full screen">
+            <img
+              src="{{ url }}"
+              alt="{{ alt }}"
+              loading="lazy"
+              width="800"
+              height="600">
+            <div class="gh-gallery-overlay" aria-hidden="true">
+              <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"></path>
+              </svg>
+            </div>
+            {% if section.settings.show_category_chips %}
+              <span class="gh-gallery-cat-chip" aria-hidden="true">{{ cat_label }}</span>
             {% endif %}
-            <span class="gh-overlay">⤢</span>
-            {% if block.settings.link != blank %}</a>{% endif %}
-          </article>
-        {% endif %}
-      {% endfor %}
+            <div class="gh-gallery-caption" aria-hidden="true">{{ alt }}</div>
+          </div>
+        {%- endfor -%}
+      {%- else -%}
+        {%- for block in section.blocks -%}
+          {%- assign cat = block.settings.category | default: 'vineyard' -%}
+          {%- assign cat_label = cat | replace: '_', ' ' | capitalize -%}
+          {%- assign alt_text = block.settings.alt | default: cat_label -%}
+          {%- assign caption = block.settings.caption | default: alt_text -%}
+          {%- assign img_url = blank -%}
+          {%- assign img_thumb = blank -%}
+          {% if block.settings.image %}
+            {%- assign img_url = block.settings.image | image_url: width: 1600 -%}
+            {%- assign img_thumb = block.settings.image | image_url: width: 800 -%}
+          {% endif %}
+          <div
+            class="gh-gallery-item{% if block.settings.is_tall %} is-tall{% endif %}{% if block.settings.is_wide %} is-wide{% endif %}"
+            data-category="{{ cat }}"
+            data-img-src="{{ img_url }}"
+            data-img-alt="{{ alt_text }}"
+            data-caption="{{ caption }}"
+            role="listitem"
+            tabindex="0"
+            aria-label="View {{ alt_text }} in full screen"
+            {{ block.shopify_attributes }}>
+            {% if block.settings.image %}
+              <img
+                src="{{ img_thumb }}"
+                alt="{{ alt_text }}"
+                loading="lazy"
+                width="{{ block.settings.image.width }}"
+                height="{{ block.settings.image.height }}">
+            {% else %}
+              <div class="gh-gallery-placeholder">
+                <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                  <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+              </div>
+            {% endif %}
+            <div class="gh-gallery-overlay" aria-hidden="true">
+              <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"></path>
+              </svg>
+            </div>
+            {% if section.settings.show_category_chips %}
+              <span class="gh-gallery-cat-chip" aria-hidden="true">{{ cat_label }}</span>
+            {% endif %}
+            <div class="gh-gallery-caption" aria-hidden="true">{{ caption }}</div>
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+
+      <div class="gh-gallery-empty" id="gh-gallery-empty-{{ section.id }}" style="display:none;" aria-live="polite">
+        No photos in this category yet.
+      </div>
     </div>
+
+    {% if section.settings.show_load_more %}
+      <div class="gh-gallery-load-more">
+        <button class="gh-load-more-btn" id="gh-load-more-{{ section.id }}" aria-label="Load more photos">
+          {{ section.settings.load_more_label | default: 'Load more' }}
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+      </div>
+    {% endif %}
   </div>
 </section>
+
+<div
+  class="gh-lightbox-{{ section.id }}"
+  id="gh-lightbox-{{ section.id }}"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Image viewer"
+  aria-hidden="true">
+  <button class="gh-lb-close" id="gh-lb-close-{{ section.id }}" aria-label="Close image viewer">
+    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"></path>
+    </svg>
+  </button>
+
+  <button class="gh-lb-prev" id="gh-lb-prev-{{ section.id }}" aria-label="Previous image">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>
+  </button>
+
+  <div class="gh-lb-inner" id="gh-lb-inner-{{ section.id }}">
+    <div class="gh-lb-loader" id="gh-lb-loader-{{ section.id }}" style="display:none;"></div>
+    <img class="gh-lb-img" id="gh-lb-img-{{ section.id }}" src="" alt="" style="display:none;">
+    <p class="gh-lb-caption" id="gh-lb-caption-{{ section.id }}"></p>
+    <p class="gh-lb-counter" id="gh-lb-counter-{{ section.id }}"></p>
+  </div>
+
+  <button class="gh-lb-next" id="gh-lb-next-{{ section.id }}" aria-label="Next image">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>
+  </button>
+</div>
+
 <script>
-  (function () {
-    var root = document.querySelector('.gh-gallery-grid-{{ section.id }}');
-    if (!root) return;
-    root.querySelectorAll('.gh-gallery-filter-btn').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var cat = btn.dataset.cat;
-        root.querySelectorAll('.gh-gallery-filter-btn').forEach(function (b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-        root.querySelectorAll('.gh-gallery-item').forEach(function (item) {
-          item.style.display = cat === 'all' || item.dataset.category === cat ? '' : 'none';
-        });
-      });
+(function () {
+  'use strict';
+
+  const SECTION_ID = '{{ section.id }}';
+  const ITEMS_PER_PAGE = {{ section.settings.items_per_page | default: 12 }};
+
+  const section = document.getElementById('gh-gallery-' + SECTION_ID);
+  const grid = document.getElementById('gh-gallery-grid-' + SECTION_ID);
+  const emptyState = document.getElementById('gh-gallery-empty-' + SECTION_ID);
+  const lightbox = document.getElementById('gh-lightbox-' + SECTION_ID);
+  const lbImg = document.getElementById('gh-lb-img-' + SECTION_ID);
+  const lbCaption = document.getElementById('gh-lb-caption-' + SECTION_ID);
+  const lbCounter = document.getElementById('gh-lb-counter-' + SECTION_ID);
+  const lbLoader = document.getElementById('gh-lb-loader-' + SECTION_ID);
+  const lbClose = document.getElementById('gh-lb-close-' + SECTION_ID);
+  const lbPrev = document.getElementById('gh-lb-prev-' + SECTION_ID);
+  const lbNext = document.getElementById('gh-lb-next-' + SECTION_ID);
+  const loadMoreBtn = document.getElementById('gh-load-more-' + SECTION_ID);
+
+  if (!section || !grid) return;
+
+  let allItems = [];
+  let filteredItems = [];
+  let currentFilter = 'all';
+  let lightboxIndex = 0;
+  let visibleCount = ITEMS_PER_PAGE;
+
+  function buildItems() {
+    allItems = Array.from(grid.querySelectorAll('.gh-gallery-item'));
+  }
+
+  function updateLoadMore() {
+    if (!loadMoreBtn) return;
+    if (filteredItems.length > visibleCount) loadMoreBtn.classList.remove('is-hidden');
+    else loadMoreBtn.classList.add('is-hidden');
+  }
+
+  function applyFilter(cat) {
+    currentFilter = cat;
+    visibleCount = ITEMS_PER_PAGE;
+
+    filteredItems = cat === 'all'
+      ? allItems.slice()
+      : allItems.filter(function (item) { return item.dataset.category === cat; });
+
+    allItems.forEach(function (item) { item.classList.add('is-hidden'); });
+    filteredItems.forEach(function (item, i) {
+      if (i < visibleCount) item.classList.remove('is-hidden');
     });
-  })();
+
+    if (emptyState) emptyState.style.display = filteredItems.length === 0 ? 'block' : 'none';
+    updateLoadMore();
+  }
+
+  section.addEventListener('click', function (e) {
+    const btn = e.target.closest('.gh-filter-btn');
+    if (!btn) return;
+
+    section.querySelectorAll('.gh-filter-btn').forEach(function (b) {
+      b.classList.remove('is-active');
+      b.setAttribute('aria-selected', 'false');
+    });
+
+    btn.classList.add('is-active');
+    btn.setAttribute('aria-selected', 'true');
+    applyFilter(btn.dataset.filter);
+  });
+
+  if (loadMoreBtn) {
+    loadMoreBtn.addEventListener('click', function () {
+      const prevCount = visibleCount;
+      visibleCount += ITEMS_PER_PAGE;
+      filteredItems.slice(prevCount, visibleCount).forEach(function (item) {
+        item.classList.remove('is-hidden');
+      });
+      updateLoadMore();
+      if (filteredItems[prevCount]) {
+        filteredItems[prevCount].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    });
+  }
+
+  function updateLbNav() {
+    if (lbPrev) lbPrev.style.opacity = lightboxIndex === 0 ? '0.25' : '1';
+    if (lbNext) lbNext.style.opacity = lightboxIndex === filteredItems.length - 1 ? '0.25' : '1';
+  }
+
+  function openLightbox(index) {
+    lightboxIndex = index;
+    const item = filteredItems[index];
+    if (!item) return;
+
+    const img = item.querySelector('img');
+    const src = item.dataset.imgSrc || (img ? img.src : '');
+    const alt = item.dataset.imgAlt || (img ? img.alt : '');
+    const caption = item.dataset.caption || alt;
+
+    if (!src) return;
+
+    lightbox.classList.add('is-open');
+    lightbox.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    lbLoader.style.display = 'block';
+    lbImg.style.display = 'none';
+    lbCaption.textContent = caption;
+    lbCounter.textContent = (index + 1) + ' / ' + filteredItems.length;
+
+    const tempImg = new Image();
+    tempImg.onload = function () {
+      lbLoader.style.display = 'none';
+      lbImg.src = src;
+      lbImg.alt = alt;
+      lbImg.style.display = 'block';
+    };
+    tempImg.onerror = function () {
+      lbLoader.style.display = 'none';
+      lbCaption.textContent = 'Could not load image.';
+    };
+    tempImg.src = src;
+
+    updateLbNav();
+    lbClose.focus();
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove('is-open');
+    lightbox.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    lbImg.src = '';
+    if (filteredItems[lightboxIndex]) filteredItems[lightboxIndex].focus();
+  }
+
+  function prevImage() {
+    if (lightboxIndex > 0) openLightbox(lightboxIndex - 1);
+  }
+
+  function nextImage() {
+    if (lightboxIndex < filteredItems.length - 1) openLightbox(lightboxIndex + 1);
+  }
+
+  if (lbClose) lbClose.addEventListener('click', closeLightbox);
+  if (lbPrev) lbPrev.addEventListener('click', prevImage);
+  if (lbNext) lbNext.addEventListener('click', nextImage);
+
+  if (lightbox) {
+    lightbox.addEventListener('click', function (e) {
+      if (e.target === lightbox) closeLightbox();
+    });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (!lightbox || !lightbox.classList.contains('is-open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') prevImage();
+    if (e.key === 'ArrowRight') nextImage();
+  });
+
+  let touchStartX = 0;
+  if (lightbox) {
+    lightbox.addEventListener('touchstart', function (e) {
+      touchStartX = e.touches[0].clientX;
+    }, { passive: true });
+    lightbox.addEventListener('touchend', function (e) {
+      const diff = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) nextImage();
+        else prevImage();
+      }
+    }, { passive: true });
+  }
+
+  if (grid) {
+    grid.addEventListener('click', function (e) {
+      const item = e.target.closest('.gh-gallery-item');
+      if (!item) return;
+      const index = filteredItems.indexOf(item);
+      if (index !== -1) openLightbox(index);
+    });
+
+    grid.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      const item = e.target.closest('.gh-gallery-item');
+      if (!item) return;
+      e.preventDefault();
+      const index = filteredItems.indexOf(item);
+      if (index !== -1) openLightbox(index);
+    });
+  }
+
+  buildItems();
+  applyFilter('all');
+
+  if (window.Shopify && Shopify.designMode) {
+    document.addEventListener('shopify:block:select', function (e) {
+      if (e.detail.sectionId !== SECTION_ID) return;
+      buildItems();
+      applyFilter(currentFilter);
+    });
+    document.addEventListener('shopify:section:load', function (e) {
+      if (e.detail.sectionId !== SECTION_ID) return;
+      buildItems();
+      applyFilter(currentFilter);
+    });
+  }
+})();
 </script>
-<style>
-  .gh-gallery-grid-{{ section.id }} { padding: 56px 40px 80px; }
-  .gh-gallery-grid-{{ section.id }} .gh-gallery-shell { width: min(1280px, 100%); margin: 0 auto; }
-  .gh-gallery-grid-{{ section.id }} .gh-gallery-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
-  .gh-gallery-grid-{{ section.id }} .gh-gallery-filter-btn { border: 0.5px solid var(--gh-border); background: #fff; color: var(--gh-vine); border-radius: 999px; padding: 8px 14px; font-size: 12px; cursor: pointer; }
-  .gh-gallery-grid-{{ section.id }} .gh-gallery-filter-btn.active { background: var(--gh-vine); color: #fff; }
-  .gh-gallery-grid-{{ section.id }} .gh-gallery-items { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 200px; gap: 8px; }
-  .gh-gallery-grid-{{ section.id }} .gh-gallery-item { border-radius: 3px; overflow: hidden; position: relative; cursor: pointer; background: var(--gh-cream); }
-  .gh-gallery-grid-{{ section.id }} .gh-gallery-item.is-tall { grid-row: span 2; }
-  .gh-gallery-grid-{{ section.id }} .gh-gallery-item.is-wide { grid-column: span 2; }
-  .gh-gallery-grid-{{ section.id }} .gh-gallery-item img { width: 100%; height: 100%; object-fit: cover; }
-  .gh-gallery-grid-{{ section.id }} .gh-overlay { position: absolute; inset: 0; display: grid; place-items: center; font-size: 22px; color: #fff; background: rgba(28,43,26,0); }
-  @media (prefers-reduced-motion: no-preference) {
-    .gh-gallery-grid-{{ section.id }} .gh-gallery-item img { transition: transform 0.4s ease; }
-    .gh-gallery-grid-{{ section.id }} .gh-overlay { transition: background-color 0.3s ease; }
-    .gh-gallery-grid-{{ section.id }} .gh-gallery-item:hover img { transform: scale(1.06); }
-    .gh-gallery-grid-{{ section.id }} .gh-gallery-item:hover .gh-overlay { background: rgba(28,43,26,0.35); }
-  }
-  @media (max-width: 768px) {
-    .gh-gallery-grid-{{ section.id }} { padding: 56px 20px; }
-    .gh-gallery-grid-{{ section.id }} .gh-gallery-items { grid-template-columns: repeat(2, 1fr); }
-  }
-</style>
+
 {% schema %}
 {
   "name": "GH — Gallery Grid",
+  "tag": "div",
+  "class": "gh-gallery-section",
   "settings": [
-    { "type": "checkbox", "id": "show_filters", "label": "Show category filter tabs", "default": true },
-    { "type": "text", "id": "load_more_label", "label": "Load more button label", "default": "Load more →" },
-    { "type": "color", "id": "bg_color", "label": "Background", "default": "#FDF8F2" }
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "Columns (desktop)",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "row_height",
+      "label": "Row height (px)",
+      "min": 140,
+      "max": 400,
+      "step": 10,
+      "default": 200
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Gap between photos (px)",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top (px)",
+      "min": 0,
+      "max": 120,
+      "step": 8,
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom (px)",
+      "min": 0,
+      "max": 120,
+      "step": 8,
+      "default": 80
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background colour",
+      "default": "#FDF8F2"
+    },
+    {
+      "type": "header",
+      "content": "Filters"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filters",
+      "label": "Show category filter tabs",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "filter_all_label",
+      "label": "\"All\" tab label",
+      "default": "All"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_category_chips",
+      "label": "Show category chip on each photo",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Load more"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_load_more",
+      "label": "Show load more button",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "items_per_page",
+      "label": "Photos shown initially (and per load more)",
+      "min": 4,
+      "max": 48,
+      "step": 4,
+      "default": 12
+    },
+    {
+      "type": "text",
+      "id": "load_more_label",
+      "label": "Load more button label",
+      "default": "Load more"
+    }
   ],
   "blocks": [
     {
       "type": "photo",
       "name": "Photo",
       "settings": [
-        { "type": "image_picker", "id": "image", "label": "Photo" },
-        { "type": "text", "id": "alt", "label": "Alt text" },
-        { "type": "select", "id": "category", "label": "Category", "default": "vineyard", "options": [{ "value": "vineyard", "label": "Vineyard" }, { "value": "cellar_door", "label": "Cellar door" }, { "value": "restaurant", "label": "Restaurant" }, { "value": "events", "label": "Events" }, { "value": "wines", "label": "Wines" }] },
-        { "type": "checkbox", "id": "is_tall", "label": "Tall (double height)", "default": false },
-        { "type": "checkbox", "id": "is_wide", "label": "Wide (double width)", "default": false },
-        { "type": "url", "id": "link", "label": "Optional lightbox/link URL" }
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Photo",
+          "info": "Recommended minimum: 1200 × 900px. Leave empty to use a placeholder."
+        },
+        {
+          "type": "text",
+          "id": "alt",
+          "label": "Alt text",
+          "info": "Describe the image for screen readers and SEO.",
+          "placeholder": "e.g. Barossa vineyard at sunset"
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Caption (shown in lightbox)",
+          "placeholder": "e.g. Barossa vineyard at sunset"
+        },
+        {
+          "type": "select",
+          "id": "category",
+          "label": "Category (used for filter tabs)",
+          "options": [
+            { "value": "vineyard", "label": "Vineyard" },
+            { "value": "cellar_door", "label": "Cellar Door" },
+            { "value": "restaurant", "label": "Restaurant" },
+            { "value": "events", "label": "Events" },
+            { "value": "wines", "label": "Wines" },
+            { "value": "accommodation", "label": "Accommodation" },
+            { "value": "team", "label": "Team" }
+          ],
+          "default": "vineyard"
+        },
+        {
+          "type": "checkbox",
+          "id": "is_tall",
+          "label": "Tall (spans 2 rows)",
+          "default": false,
+          "info": "Makes this photo twice as tall in the grid."
+        },
+        {
+          "type": "checkbox",
+          "id": "is_wide",
+          "label": "Wide (spans 2 columns)",
+          "default": false,
+          "info": "Makes this photo twice as wide in the grid."
+        }
       ]
     }
   ],
-  "presets": [{ "name": "GH — Gallery Grid" }]
+  "presets": [
+    {
+      "name": "GH — Gallery Grid",
+      "blocks": [
+        { "type": "photo", "settings": { "category": "vineyard", "is_tall": true, "alt": "Barossa vineyard rows at sunset" } },
+        { "type": "photo", "settings": { "category": "wines", "alt": "God's Hill wine bottles" } },
+        { "type": "photo", "settings": { "category": "restaurant", "alt": "Ennia Cucina dining experience" } },
+        { "type": "photo", "settings": { "category": "wines", "alt": "Wine glasses at cellar door" } },
+        { "type": "photo", "settings": { "category": "accommodation", "is_wide": true, "alt": "Villa Scalzi accommodation" } },
+        { "type": "photo", "settings": { "category": "cellar_door", "is_tall": true, "alt": "Cellar door tasting room" } },
+        { "type": "photo", "settings": { "category": "wines", "alt": "Shiraz bottle close-up" } },
+        { "type": "photo", "settings": { "category": "vineyard", "alt": "Vineyard early morning" } },
+        { "type": "photo", "settings": { "category": "events", "alt": "Wine event at God's Hill" } }
+      ]
+    }
+  ]
 }
 {% endschema %}

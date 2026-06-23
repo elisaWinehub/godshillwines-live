@@ -1,3 +1,4 @@
+{% comment %}
 {%- render 'gh-tokens' -%}
 
 <section class="gh-product-detail-{{ section.id }}" style="background: {{ section.settings.bg_color | default: '#FDF8F2' }};">
@@ -570,5 +571,832 @@
     }
   ],
   "presets": [{ "name": "GH — Product Info" }]
+}
+{% endschema %}
+{% endcomment %}
+{%- render 'gh-tokens' -%}
+{% assign variant = product.selected_or_first_available_variant %}
+
+<section class="gh-product-detail-{{ section.id }}" style="background: {{ section.settings.bg_color | default: '#FDF8F2' }};">
+  <div class="gh-product-detail-shell">
+    <div class="gh-product-detail-grid">
+      <div class="gh-product-media-col">
+        {% assign featured = variant.featured_image | default: product.featured_image %}
+        {% assign main_img_id = 'gh-main-img-tag-' | append: section.id %}
+        <div class="gh-product-main-img">
+          {% if featured %}
+            {{ featured | image_url: width: 1000 | image_tag: id: main_img_id, loading: 'eager' }}
+          {% endif %}
+          <button type="button" class="gh-product-zoom-btn" aria-label="Zoom image">+</button>
+        </div>
+        {% if section.settings.show_thumbnails %}
+          <div class="gh-product-thumbs">
+            {% for image in product.images limit: 5 %}
+              <button
+                type="button"
+                class="gh-product-thumb {% if forloop.first %}active{% endif %}"
+                data-src="{{ image | image_url: width: 1000 }}"
+                onclick="document.getElementById('{{ main_img_id }}').src=this.dataset.src;this.parentElement.querySelectorAll('.gh-product-thumb').forEach(function(t){t.classList.remove('active')});this.classList.add('active');"
+              >
+                {{ image | image_url: width: 160 | image_tag: loading: 'lazy' }}
+              </button>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="gh-product-info-col">
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when '@app' %}
+              <div class="gh-block gh-app-block" {{ block.shopify_attributes }}>
+                {% render block %}
+              </div>
+
+            {% when 'breadcrumbs' %}
+              {% if block.settings.show_block %}
+                <nav class="gh-breadcrumbs" {{ block.shopify_attributes }}>
+                  {% if block.settings.show_home %}
+                    <a href="{{ routes.root_url }}">{{ block.settings.home_label | default: 'Home' }}</a>
+                  {% endif %}
+                  {% if block.settings.show_all_products and block.settings.all_products_collection != blank %}
+                    <span>/</span>
+                    <a href="{{ block.settings.all_products_collection.url }}">{{ block.settings.all_products_label | default: 'All products' }}</a>
+                  {% endif %}
+                  {% if block.settings.show_collection and collection %}
+                    <span>/</span>
+                    <a href="{{ collection.url }}">{{ collection.title }}</a>
+                  {% endif %}
+                  <span>/</span><span>{{ product.title }}</span>
+                </nav>
+              {% endif %}
+
+            {% when 'vendor' %}
+              {% if block.settings.show_block %}
+                <p class="gh-vendor" {{ block.shopify_attributes }}>{{ block.settings.text | default: product.vendor }}</p>
+              {% endif %}
+
+            {% when 'title' %}
+              {% if block.settings.show_block %}
+                <h1 class="gh-title" {{ block.shopify_attributes }}>{{ product.title }}</h1>
+              {% endif %}
+
+            {% when 'rating' %}
+              {% if block.settings.show_block and product.metafields.reviews.rating %}
+                <p class="gh-rating" {{ block.shopify_attributes }}>★★★★★ <span>{{ product.metafields.reviews.rating }}</span></p>
+              {% endif %}
+
+            {% when 'price' %}
+              {% if block.settings.show_block %}
+                <div class="gh-price-row" {{ block.shopify_attributes }}>
+                  <span class="gh-detail-price">{{ variant.price | money }}</span>
+                  {% if variant.compare_at_price > variant.price %}
+                    <span class="gh-detail-price-old">{{ variant.compare_at_price | money }}</span>
+                    {% assign saving = variant.compare_at_price | minus: variant.price | times: 100 | divided_by: variant.compare_at_price %}
+                    <span class="gh-price-save">You save {{ saving }}%</span>
+                  {% endif %}
+                </div>
+              {% endif %}
+
+            {% when 'description' %}
+              {% if block.settings.show_block %}
+                <div class="gh-description" {{ block.shopify_attributes }}>
+                  {% if block.settings.use_first_paragraph %}
+                    {{ product.description | split: '</p>' | first | append: '</p>' }}
+                  {% else %}
+                    {{ product.description }}
+                  {% endif %}
+                </div>
+              {% endif %}
+
+            {% when 'purchase_options' %}
+              {% if block.settings.show_block %}
+                <div class="gh-mpc__purchase" data-mpc-purchase {{ block.shopify_attributes }}>
+                  <p class="gh-mpc__purchase-title">{{ block.settings.title | default: 'CHOOSE YOUR PURCHASE OPTION' }}</p>
+                  <div class="gh-mpc__purchase-options" role="radiogroup" aria-label="{{ block.settings.title | default: 'CHOOSE YOUR PURCHASE OPTION' }}">
+                    <label class="gh-mpc__purchase-option is-selected" data-mpc-purchase-option>
+                      <input type="radio" name="purchase-type-{{ section.id }}-{{ block.id }}" value="one-time" checked data-mpc-purchase-radio>
+                      <span class="gh-mpc__purchase-label">{{ block.settings.one_time_label | default: 'One-time purchase' }}</span>
+                      <span class="gh-mpc__purchase-price">{{ block.settings.one_time_price | default: variant.price | money }}</span>
+                    </label>
+
+                    {% if block.settings.show_subscribe %}
+                      <div class="gh-mpc__purchase-subscribe">
+                        <label class="gh-mpc__purchase-option" data-mpc-purchase-option>
+                          <input type="radio" name="purchase-type-{{ section.id }}-{{ block.id }}" value="subscribe" data-mpc-purchase-radio>
+                          <span class="gh-mpc__purchase-label">{{ block.settings.subscribe_label | default: 'Subscribe & Save' }}</span>
+                        </label>
+                        <div class="gh-mpc__purchase-plans" hidden data-mpc-purchase-plans>
+                          <label class="gh-mpc__purchase-plan">
+                            <input type="radio" name="selling-plan-{{ section.id }}-{{ block.id }}" value="plan-1" data-mpc-selling-plan checked>
+                            <span>{{ block.settings.plan_1_label | default: 'Every 1 month – 20% off' }}</span>
+                            <span class="gh-mpc__purchase-price">{{ block.settings.plan_1_price | default: '$32.00' }}</span>
+                          </label>
+                          <label class="gh-mpc__purchase-plan">
+                            <input type="radio" name="selling-plan-{{ section.id }}-{{ block.id }}" value="plan-2" data-mpc-selling-plan>
+                            <span>{{ block.settings.plan_2_label | default: 'Every 2 months – 15% off' }}</span>
+                            <span class="gh-mpc__purchase-price">{{ block.settings.plan_2_price | default: '$34.00' }}</span>
+                          </label>
+                          <label class="gh-mpc__purchase-plan">
+                            <input type="radio" name="selling-plan-{{ section.id }}-{{ block.id }}" value="plan-3" data-mpc-selling-plan>
+                            <span>{{ block.settings.plan_3_label | default: 'Every 3 months – 10% off' }}</span>
+                            <span class="gh-mpc__purchase-price">{{ block.settings.plan_3_price | default: '$36.00' }}</span>
+                          </label>
+                        </div>
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              {% endif %}
+
+            {% when 'buy_row' %}
+              {% if block.settings.show_block and block.settings.show_qty_add %}
+                {% form 'product', product, id: 'gh-product-form', class: 'gh-product-form-row', data-gh: 'product-form' %}
+                  <input type="hidden" name="id" value="{{ variant.id }}">
+                  <div class="gh-qty-add-row" {{ block.shopify_attributes }}>
+                    <div class="gh-qty-control gh-qty-stepper">
+                      <button type="button" class="gh-qty-btn gh-qty-minus" aria-label="Decrease quantity">-</button>
+                      <input type="number" name="quantity" value="1" min="1" class="gh-qty-input" aria-label="Quantity">
+                      <button type="button" class="gh-qty-btn gh-qty-plus" aria-label="Increase quantity">+</button>
+                    </div>
+                    <button
+                      type="submit"
+                      class="gh-add-cart-btn"
+                      name="add"
+                      data-cart-trigger
+                      {% unless variant.available %}disabled aria-disabled="true"{% endunless %}
+                    >
+                      Add to cart
+                    </button>
+                  </div>
+                {% endform %}
+              {% endif %}
+
+            {% when 'tab' %}
+              {% if block.settings.show_block %}
+                <div class="gh-accordion gh-accordion--single" {{ block.shopify_attributes }}>
+                  <div class="gh-accordion-item">
+                    <button class="gh-accordion-header" aria-expanded="false" aria-controls="gh-acc-{{ block.id }}" type="button" onclick="ghToggleAccordion(this)">
+                      <span class="gh-accordion-title">{{ block.settings.title | default: 'Tab' }}</span>
+                      <svg class="gh-accordion-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                      </svg>
+                    </button>
+                    <div class="gh-accordion-body" id="gh-acc-{{ block.id }}" hidden>
+                      {% if block.settings.content != blank %}
+                        {{ block.settings.content }}
+                      {% else %}
+                        <p class="gh-accordion-placeholder">No content added yet. Edit this section in the theme editor to add content.</p>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+
+            {% when 'custom_liquid' %}
+              {% if block.settings.show_block and block.settings.custom_liquid != blank %}
+                <div class="gh-custom-liquid" {{ block.shopify_attributes }}>
+                  {{ block.settings.custom_liquid }}
+                </div>
+              {% endif %}
+          {% endcase %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .gh-product-detail-{{ section.id }} {
+    padding: 56px 40px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-product-detail-shell {
+    width: min(1280px, 100%);
+    margin: 0 auto;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-product-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 52px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-product-main-img {
+    background: var(--gh-cream);
+    border-radius: 4px;
+    min-height: 540px;
+    display: grid;
+    place-items: center;
+    position: relative;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-product-main-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-product-zoom-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: #fff;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-product-thumbs {
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-product-thumb {
+    width: 72px;
+    height: 72px;
+    border: 1.5px solid transparent;
+    border-radius: 3px;
+    padding: 0;
+    overflow: hidden;
+    background: var(--gh-cream);
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-product-thumb.active {
+    border-color: var(--gh-gold);
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-product-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-breadcrumbs {
+    margin: 0 0 14px;
+    font: 400 11px/1.5 'Inter', sans-serif;
+    color: var(--gh-muted);
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-breadcrumbs a {
+    color: var(--gh-gold);
+    text-decoration: none;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-vendor {
+    margin: 0 0 8px;
+    font: 600 10px/1.3 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--gh-gold);
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-title {
+    margin: 0 0 12px;
+    font: 400 clamp(28px, 3.5vw, 42px)/1.1 'EB Garamond', Georgia, serif;
+    color: var(--gh-vine);
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-rating {
+    color: var(--gh-gold);
+    margin: 0 0 16px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-detail-price {
+    font: 400 32px/1 'EB Garamond', Georgia, serif;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-detail-price-old {
+    text-decoration: line-through;
+    color: var(--gh-muted);
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-price-save {
+    color: #bc3d35;
+    font-size: 12px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-description {
+    color: var(--gh-muted);
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-purchase-options {
+    border: 0.5px solid var(--gh-border);
+    border-radius: 4px;
+    padding: 12px;
+    display: grid;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-mpc__purchase {
+    margin-bottom: 16px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-mpc__purchase-title {
+    margin: 0 0 10px;
+    font: 500 11px/1.3 'Inter', sans-serif;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #1C2B1A;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-mpc__purchase-options {
+    display: grid;
+    gap: 8px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-mpc__purchase-option {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 8px;
+    align-items: center;
+    border: 0.5px solid rgba(28, 43, 26, 0.2);
+    border-radius: 2px;
+    padding: 10px 12px;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-mpc__purchase-option.is-selected {
+    border-color: #B8913A;
+    background: #F5EFE3;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-mpc__purchase-option input[type='radio'] {
+    margin: 0;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-mpc__purchase-label {
+    font: 400 13px/1.4 'Inter', sans-serif;
+    color: #1C2B1A;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-mpc__purchase-price {
+    font: 500 12px/1.4 'Inter', sans-serif;
+    color: #1C2B1A;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-mpc__purchase-plans {
+    margin-top: 8px;
+    display: grid;
+    gap: 8px;
+    padding-left: 20px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-mpc__purchase-plan {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 8px;
+    align-items: center;
+    font-size: 12px;
+    color: #1C2B1A;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-qty-add-row {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    align-items: stretch;
+    margin-bottom: 24px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-qty-control {
+    display: flex;
+    align-items: center;
+    border: 0.5px solid rgba(28, 43, 26, 0.25);
+    border-radius: 2px;
+    overflow: hidden;
+    flex-shrink: 0;
+    height: 46px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-qty-control button {
+    width: 36px;
+    height: 100%;
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #1C2B1A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-qty-control input[type='number'] {
+    width: 44px;
+    text-align: center;
+    font-size: 14px;
+    border: none;
+    border-left: 0.5px solid rgba(28, 43, 26, 0.15);
+    border-right: 0.5px solid rgba(28, 43, 26, 0.15);
+    height: 100%;
+    outline: none;
+    font-family: 'Inter', sans-serif;
+    background: #fff;
+    color: #1C2B1A;
+    -moz-appearance: textfield;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-qty-control input::-webkit-outer-spin-button,
+  .gh-product-detail-{{ section.id }} .gh-qty-control input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-add-cart-btn {
+    flex: 1;
+    height: 46px;
+    padding: 0 24px;
+    background: #B8913A;
+    color: #FDF8F2;
+    border: none;
+    border-radius: 2px;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-add-cart-btn:disabled {
+    background: rgba(28, 43, 26, 0.12);
+    color: var(--gh-muted);
+    cursor: not-allowed;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-accordion {
+    border-top: 0.5px solid var(--gh-border);
+    margin-top: 8px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-accordion--single {
+    margin-top: 0;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-accordion-item {
+    border-bottom: 0.5px solid var(--gh-border);
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-accordion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 16px 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: #1C2B1A;
+    font-family: 'Inter', sans-serif;
+    gap: 12px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-accordion-title {
+    flex: 1;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-accordion-chevron {
+    flex-shrink: 0;
+    color: #6B7668;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-accordion-header[aria-expanded='true'] .gh-accordion-chevron {
+    transform: rotate(180deg);
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-accordion-body {
+    padding-bottom: 16px;
+    font-size: 13.5px;
+    color: #6B7668;
+    line-height: 1.7;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-accordion-body[hidden] {
+    display: none;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-accordion-placeholder {
+    font-style: italic;
+    color: rgba(107, 118, 104, 0.6);
+    font-size: 12px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.92);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-lightbox.gh-lightbox-open {
+    display: flex;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-lightbox-inner {
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-lightbox-img {
+    max-width: 90vw;
+    max-height: 85vh;
+    object-fit: contain;
+    border-radius: 3px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-lightbox-close {
+    position: absolute;
+    top: -44px;
+    right: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .gh-product-detail-{{ section.id }} .gh-qty-control button {
+      transition: background 0.15s;
+    }
+
+    .gh-product-detail-{{ section.id }} .gh-qty-control button:hover {
+      background: #F5EFE3;
+    }
+
+    .gh-product-detail-{{ section.id }} .gh-add-cart-btn {
+      transition: background 0.2s;
+    }
+
+    .gh-product-detail-{{ section.id }} .gh-add-cart-btn:hover:not(:disabled) {
+      background: #9A7A30;
+    }
+
+    .gh-product-detail-{{ section.id }} .gh-accordion-chevron {
+      transition: transform 0.25s ease;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .gh-product-detail-{{ section.id }} {
+      padding: 56px 20px;
+    }
+
+    .gh-product-detail-{{ section.id }} .gh-product-detail-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .gh-product-detail-{{ section.id }} .gh-qty-add-row {
+      flex-direction: row;
+      gap: 10px;
+    }
+  }
+</style>
+
+<script>
+  function ghToggleAccordion(btn) {
+    var container = btn.closest('.gh-accordion');
+    if (!container) return;
+    var isOpen = btn.getAttribute('aria-expanded') === 'true';
+    var target = document.getElementById(btn.getAttribute('aria-controls'));
+
+    container.querySelectorAll('.gh-accordion-header').forEach(function (header) {
+      header.setAttribute('aria-expanded', 'false');
+      var body = document.getElementById(header.getAttribute('aria-controls'));
+      if (body) body.hidden = true;
+    });
+
+    if (!isOpen) {
+      btn.setAttribute('aria-expanded', 'true');
+      if (target) target.hidden = false;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var sectionRoot = document.querySelector('.gh-product-detail-{{ section.id }}');
+    if (!sectionRoot) return;
+
+    sectionRoot.querySelectorAll('[data-mpc-purchase]').forEach(function (wrapper) {
+      var radios = wrapper.querySelectorAll('[data-mpc-purchase-radio]');
+      var plans = wrapper.querySelector('[data-mpc-purchase-plans]');
+      var options = wrapper.querySelectorAll('[data-mpc-purchase-option]');
+
+      function refreshPurchaseState() {
+        options.forEach(function (option) { option.classList.remove('is-selected'); });
+        radios.forEach(function (radio) {
+          if (radio.checked) {
+            var selected = radio.closest('[data-mpc-purchase-option]');
+            if (selected) selected.classList.add('is-selected');
+          }
+        });
+        var subscribe = wrapper.querySelector('[data-mpc-purchase-radio][value="subscribe"]');
+        if (plans) plans.hidden = !(subscribe && subscribe.checked);
+      }
+
+      radios.forEach(function (radio) {
+        radio.addEventListener('change', refreshPurchaseState);
+      });
+      refreshPurchaseState();
+    });
+
+    var zoomBtn = sectionRoot.querySelector('.gh-product-zoom-btn');
+    if (!zoomBtn) return;
+
+    var overlay = document.createElement('div');
+    overlay.className = 'gh-lightbox';
+    overlay.innerHTML =
+      '<div class="gh-lightbox-inner">' +
+      '<button class="gh-lightbox-close" aria-label="Close zoom">' +
+      '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2L18 18M18 2L2 18" stroke="white" stroke-width="2" stroke-linecap="round"></path></svg>' +
+      '</button>' +
+      '<img class="gh-lightbox-img" src="" alt="">' +
+      '</div>';
+
+    sectionRoot.appendChild(overlay);
+
+    var lightboxImg = overlay.querySelector('.gh-lightbox-img');
+    var closeBtn = overlay.querySelector('.gh-lightbox-close');
+
+    function openLightbox() {
+      var mainImg = document.getElementById('{{ main_img_id }}') || sectionRoot.querySelector('.gh-product-main-img img');
+      if (!mainImg || !lightboxImg) return;
+      lightboxImg.src = mainImg.src;
+      lightboxImg.alt = mainImg.alt || '';
+      overlay.classList.add('gh-lightbox-open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      overlay.classList.remove('gh-lightbox-open');
+      document.body.style.overflow = '';
+    }
+
+    zoomBtn.addEventListener('click', openLightbox);
+    if (closeBtn) closeBtn.addEventListener('click', closeLightbox);
+    overlay.addEventListener('click', function (event) {
+      if (event.target === overlay) closeLightbox();
+    });
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') closeLightbox();
+    });
+  });
+</script>
+
+{%- render 'gh-cart-js' -%}
+
+{% schema %}
+{
+  "name": "GH — Product Info",
+  "settings": [
+    { "type": "checkbox", "id": "show_subscribe_option", "label": "Show Subscribe & Save option", "default": true },
+    { "type": "text", "id": "subscribe_discount_label", "label": "Subscribe discount label", "default": "Save 10%" },
+    { "type": "checkbox", "id": "show_thumbnails", "label": "Show thumbnails", "default": true },
+    { "type": "color", "id": "bg_color", "label": "Section background", "default": "#FDF8F2" }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "breadcrumbs",
+      "name": "Breadcrumbs",
+      "settings": [
+        { "type": "checkbox", "id": "show_block", "label": "Show block", "default": true },
+        { "type": "checkbox", "id": "show_home", "label": "Show home link", "default": true },
+        { "type": "text", "id": "home_label", "label": "Home label", "default": "Home" },
+        { "type": "checkbox", "id": "show_all_products", "label": "Show all products collection", "default": false },
+        { "type": "collection", "id": "all_products_collection", "label": "All products collection" },
+        { "type": "text", "id": "all_products_label", "label": "All products label", "default": "All products" },
+        { "type": "checkbox", "id": "show_collection", "label": "Show current collection", "default": true }
+      ]
+    },
+    {
+      "type": "vendor",
+      "name": "Vendor",
+      "settings": [
+        { "type": "checkbox", "id": "show_block", "label": "Show block", "default": true },
+        { "type": "text", "id": "text", "label": "Vendor text override" }
+      ]
+    },
+    {
+      "type": "title",
+      "name": "Title",
+      "settings": [
+        { "type": "checkbox", "id": "show_block", "label": "Show block", "default": true }
+      ]
+    },
+    {
+      "type": "rating",
+      "name": "Rating",
+      "settings": [
+        { "type": "checkbox", "id": "show_block", "label": "Show block", "default": true }
+      ]
+    },
+    {
+      "type": "price",
+      "name": "Price",
+      "settings": [
+        { "type": "checkbox", "id": "show_block", "label": "Show block", "default": true }
+      ]
+    },
+    {
+      "type": "description",
+      "name": "Description",
+      "settings": [
+        { "type": "checkbox", "id": "show_block", "label": "Show block", "default": true },
+        { "type": "checkbox", "id": "use_first_paragraph", "label": "Use first paragraph only", "default": true }
+      ]
+    },
+    {
+      "type": "purchase_options",
+      "name": "Purchase options",
+      "settings": [
+        { "type": "checkbox", "id": "show_block", "label": "Show block", "default": true },
+        { "type": "text", "id": "title", "label": "Heading", "default": "CHOOSE YOUR PURCHASE OPTION" },
+        { "type": "text", "id": "one_time_label", "label": "One-time label", "default": "One-time purchase" },
+        { "type": "text", "id": "one_time_price", "label": "One-time price", "default": "$85.00" },
+        { "type": "checkbox", "id": "show_subscribe", "label": "Show subscribe option", "default": true },
+        { "type": "text", "id": "subscribe_label", "label": "Subscribe label", "default": "Subscribe & Save" },
+        { "type": "text", "id": "plan_1_label", "label": "Plan 1 label", "default": "Every 1 month – 20% off" },
+        { "type": "text", "id": "plan_1_price", "label": "Plan 1 price", "default": "$32.00" },
+        { "type": "text", "id": "plan_2_label", "label": "Plan 2 label", "default": "Every 2 months – 15% off" },
+        { "type": "text", "id": "plan_2_price", "label": "Plan 2 price", "default": "$34.00" },
+        { "type": "text", "id": "plan_3_label", "label": "Plan 3 label", "default": "Every 3 months – 10% off" },
+        { "type": "text", "id": "plan_3_price", "label": "Plan 3 price", "default": "$36.00" }
+      ]
+    },
+    {
+      "type": "buy_row",
+      "name": "Qty + Add to cart",
+      "settings": [
+        { "type": "checkbox", "id": "show_block", "label": "Show block", "default": true },
+        { "type": "checkbox", "id": "show_qty_add", "label": "Show quantity + add to cart", "default": true }
+      ]
+    },
+    {
+      "type": "tab",
+      "name": "Tab",
+      "settings": [
+        { "type": "checkbox", "id": "show_block", "label": "Show block", "default": true },
+        { "type": "text", "id": "title", "label": "Tab title", "default": "Wine Details" },
+        { "type": "richtext", "id": "content", "label": "Tab content", "default": "<p>Add tab content here.</p>" }
+      ]
+    },
+    {
+      "type": "custom_liquid",
+      "name": "Custom liquid",
+      "settings": [
+        { "type": "checkbox", "id": "show_block", "label": "Show block", "default": true },
+        { "type": "liquid", "id": "custom_liquid", "label": "Custom Liquid" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "GH — Product Info",
+      "blocks": [
+        { "type": "breadcrumbs" },
+        { "type": "vendor" },
+        { "type": "title" },
+        { "type": "rating" },
+        { "type": "price" },
+        { "type": "description" },
+        { "type": "purchase_options" },
+        { "type": "buy_row" },
+        { "type": "tab" },
+        { "type": "tab" },
+        { "type": "tab" }
+      ]
+    }
+  ]
 }
 {% endschema %}

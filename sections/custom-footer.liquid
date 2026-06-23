@@ -50,13 +50,30 @@
                 %}
                   <div class="gh-ft__brand-soc-row">
                     {% if block.settings.facebook_url != blank %}
-                      <a class="gh-ft__brand-soc" href="{{ block.settings.facebook_url }}" target="_blank" rel="noopener" aria-label="Facebook">f</a>
+                      <a class="gh-ft__brand-soc" href="{{ block.settings.facebook_url }}" target="_blank" rel="noopener" aria-label="Facebook">
+                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                          <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        </svg>
+                      </a>
                     {% endif %}
                     {% if block.settings.instagram_url != blank %}
-                      <a class="gh-ft__brand-soc" href="{{ block.settings.instagram_url }}" target="_blank" rel="noopener" aria-label="Instagram">◎</a>
+                      <a class="gh-ft__brand-soc" href="{{ block.settings.instagram_url }}" target="_blank" rel="noopener" aria-label="Instagram">
+                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                          <circle cx="12" cy="12" r="4"></circle>
+                          <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"></circle>
+                        </svg>
+                      </a>
                     {% endif %}
                     {% if block.settings.tripadvisor_url != blank %}
-                      <a class="gh-ft__brand-soc" href="{{ block.settings.tripadvisor_url }}" target="_blank" rel="noopener" aria-label="TripAdvisor">ⓣ</a>
+                      <a class="gh-ft__brand-soc" href="{{ block.settings.tripadvisor_url }}" target="_blank" rel="noopener" aria-label="TripAdvisor">
+                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                          <circle cx="12" cy="12" r="9"></circle>
+                          <circle cx="8.5" cy="12" r="2"></circle>
+                          <circle cx="15.5" cy="12" r="2"></circle>
+                          <path d="M6 8h12"></path>
+                        </svg>
+                      </a>
                     {% endif %}
                   </div>
                 {% endif %}
@@ -79,8 +96,41 @@
                 {% if block.settings.heading != blank %}
                   <h4 class="gh-ft__col-title">{{ block.settings.heading }}</h4>
                 {% endif %}
-                {% if block.settings.body != blank %}
-                  <div class="gh-ft__body rte">{{ block.settings.body }}</div>
+                {% if block.settings.address != blank or block.settings.phone != blank or block.settings.hours != blank %}
+                  {% if block.settings.address != blank %}
+                    <div class="gh-ft__visit-row">
+                      <span class="gh-ft__visit-icon" aria-hidden="true">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                          <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                      </span>
+                      <span>{{ block.settings.address }}</span>
+                    </div>
+                  {% endif %}
+                  {% if block.settings.phone != blank %}
+                    <div class="gh-ft__visit-row">
+                      <span class="gh-ft__visit-icon" aria-hidden="true">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 3.07 9.63 19.79 19.79 0 0 1 .63 2 2 2 0 0 1 2.62 0h3.01a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 7.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                      </span>
+                      <span>{{ block.settings.phone }}</span>
+                    </div>
+                  {% endif %}
+                  {% if block.settings.hours != blank %}
+                    <div class="gh-ft__visit-row">
+                      <span class="gh-ft__visit-icon" aria-hidden="true">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                      </span>
+                      <span>{{ block.settings.hours }}</span>
+                    </div>
+                  {% endif %}
+                {% elsif block.settings.body != blank %}
+                  <div class="gh-ft__body rte gh-ft__body--contact">{{ block.settings.body }}</div>
                 {% endif %}
               </div>
             {% when 'rich_text' %}
@@ -125,7 +175,9 @@
                         autocomplete="email"
                       >
                       <button type="submit" class="gh-ft__nw-btn" aria-label="{{ block.settings.newsletter_button_label | default: 'Subscribe' }}">
-                        {{ block.settings.newsletter_button_label | default: '→' }}
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                          <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
                       </button>
                     </div>
                   </form>
@@ -138,13 +190,28 @@
                 {% endif %}
                 <div class="gh-ft__social-row">
                   {% if block.settings.facebook_url != blank %}
-                    <a class="gh-ft__soc-item" href="{{ block.settings.facebook_url }}" target="_blank" rel="noopener" aria-label="Facebook">f</a>
+                    <a class="gh-ft__soc-item" href="{{ block.settings.facebook_url }}" target="_blank" rel="noopener" aria-label="Facebook">
+                      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                      </svg>
+                    </a>
                   {% endif %}
                   {% if block.settings.instagram_url != blank %}
-                    <a class="gh-ft__soc-item" href="{{ block.settings.instagram_url }}" target="_blank" rel="noopener" aria-label="Instagram">◎</a>
+                    <a class="gh-ft__soc-item" href="{{ block.settings.instagram_url }}" target="_blank" rel="noopener" aria-label="Instagram">
+                      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                        <circle cx="12" cy="12" r="4"></circle>
+                        <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"></circle>
+                      </svg>
+                    </a>
                   {% endif %}
                   {% if block.settings.email_address != blank %}
-                    <a class="gh-ft__soc-item" href="mailto:{{ block.settings.email_address }}" aria-label="Email">✉</a>
+                    <a class="gh-ft__soc-item" href="mailto:{{ block.settings.email_address }}" aria-label="Email">
+                      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                      </svg>
+                    </a>
                   {% endif %}
                 </div>
               </div>
@@ -180,67 +247,62 @@
   <style>
     #GhFoot-{{ section.id }}.gh-ft {
       background: var(--bg);
-      color: var(--txt);
+      color: rgba(245, 239, 227, 0.55);
       padding-top: var(--pt);
     }
     #GhFoot-{{ section.id }} .gh-ft__main {
       width: min(100%, var(--mw));
       margin: 0 auto;
-      padding: 0 clamp(16px, 4vw, 28px);
+      padding: 0 clamp(20px, 4vw, 40px);
     }
     #GhFoot-{{ section.id }} .gh-ft__cols {
       display: grid;
       gap: var(--gap);
       padding-bottom: var(--pb);
+      border-bottom: 0.5px solid rgba(245, 239, 227, 0.1);
     }
     @media screen and (min-width: 750px) {
-      #GhFoot-{{ section.id }} .gh-ft__cols--1 {
-        grid-template-columns: minmax(0, 1fr);
-      }
-      #GhFoot-{{ section.id }} .gh-ft__cols--2 {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-      #GhFoot-{{ section.id }} .gh-ft__cols--3 {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-      #GhFoot-{{ section.id }} .gh-ft__cols--4 {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-      }
+      #GhFoot-{{ section.id }} .gh-ft__cols--1 { grid-template-columns: minmax(0, 1fr); }
+      #GhFoot-{{ section.id }} .gh-ft__cols--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      #GhFoot-{{ section.id }} .gh-ft__cols--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      #GhFoot-{{ section.id }} .gh-ft__cols--4 { grid-template-columns: 2fr 1fr 1fr 1.2fr; }
     }
     @media screen and (max-width: 749px) {
-      #GhFoot-{{ section.id }} .gh-ft__cols {
-        grid-template-columns: 1fr;
+      #GhFoot-{{ section.id }}.gh-ft { padding-top: 48px; }
+      #GhFoot-{{ section.id }} .gh-ft__cols { grid-template-columns: 1fr; }
+      #GhFoot-{{ section.id }} .gh-ft__bottom-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
       }
     }
     #GhFoot-{{ section.id }} .gh-ft__col-title {
-      color: var(--head);
+      color: rgba(245, 239, 227, 0.35);
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-size: 13px;
+      letter-spacing: 0.18em;
+      font-size: 10px;
       margin: 0 0 16px;
     }
     #GhFoot-{{ section.id }} .gh-ft__link {
       display: block;
-      color: var(--link);
+      color: rgba(245, 239, 227, 0.5);
       text-decoration: none;
-      margin-bottom: 8px;
-      font-size: 14px;
+      margin-bottom: 10px;
+      font-size: 13px;
+      line-height: 1.4;
     }
-    #GhFoot-{{ section.id }} .gh-ft__link:hover {
-      color: var(--gold);
-      text-decoration: underline;
-    }
+    #GhFoot-{{ section.id }} .gh-ft__link:hover { color: #F5EFE3; }
     #GhFoot-{{ section.id }} .gh-ft__body,
     #GhFoot-{{ section.id }} .gh-ft__tag {
-      font-size: 14px;
-      line-height: 1.58;
-      color: var(--link);
+      font-size: 13px;
+      line-height: 1.7;
+      color: rgba(245, 239, 227, 0.55);
     }
     #GhFoot-{{ section.id }} .gh-ft__logo-img {
       max-width: min(var(--brand-logo-w, var(--logo-w)), 250px);
       width: 100%;
       height: auto;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       display: block;
     }
     #GhFoot-{{ section.id }} .gh-ft__crest {
@@ -254,73 +316,99 @@
     }
     #GhFoot-{{ section.id }} .gh-ft__brand-soc-row {
       display: flex;
-      gap: 12px;
-      margin-top: 16px;
+      gap: 10px;
+      margin-top: 14px;
       flex-wrap: wrap;
       align-items: center;
     }
-    #GhFoot-{{ section.id }} .gh-ft__brand-soc {
-      color: var(--link);
+    #GhFoot-{{ section.id }} .gh-ft__brand-soc,
+    #GhFoot-{{ section.id }} .gh-ft__soc-item {
+      width: 34px;
+      height: 34px;
+      border: 0.5px solid rgba(245, 239, 227, 0.2);
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(245, 239, 227, 0.5);
       text-decoration: none;
-      font-size: 14px;
-      line-height: 1;
+      transition: color 0.2s, border-color 0.2s;
     }
-    #GhFoot-{{ section.id }} .gh-ft__brand-soc:hover {
+    #GhFoot-{{ section.id }} .gh-ft__brand-soc:hover,
+    #GhFoot-{{ section.id }} .gh-ft__soc-item:hover {
       color: var(--gold);
+      border-color: var(--gold);
+    }
+    #GhFoot-{{ section.id }} .gh-ft__visit-row {
+      display: flex;
+      gap: 10px;
+      font-size: 12.5px;
+      line-height: 1.5;
+      margin-bottom: 12px;
+      align-items: flex-start;
+      color: rgba(245, 239, 227, 0.55);
+    }
+    #GhFoot-{{ section.id }} .gh-ft__visit-icon {
+      color: var(--gold);
+      flex-shrink: 0;
+      margin-top: 1px;
     }
     #GhFoot-{{ section.id }} .gh-ft__newsletter-static,
-    #GhFoot-{{ section.id }} .gh-ft__newsletter-embed {
-      margin-top: 17px;
-    }
-    #GhFoot-{{ section.id }} .gh-ft__newsletter {
-      display: flex;
-    }
+    #GhFoot-{{ section.id }} .gh-ft__newsletter-embed { margin-top: 14px; }
+    #GhFoot-{{ section.id }} .gh-ft__newsletter { display: flex; }
     #GhFoot-{{ section.id }} .gh-ft__newsletter input {
       flex: 1;
       min-width: 0;
-      padding: 14px;
-      border: 0;
-      font-size: 14px;
+      padding: 10px 14px;
+      border: 0.5px solid rgba(245, 239, 227, 0.18);
+      border-right: none;
+      border-radius: 2px 0 0 2px;
+      font-size: 12px;
+      font-family: 'Inter', sans-serif;
+      background: rgba(253, 248, 242, 0.06);
+      color: #F5EFE3;
+      outline: none;
     }
+    #GhFoot-{{ section.id }} .gh-ft__newsletter input::placeholder { color: rgba(245, 239, 227, 0.3); }
+    #GhFoot-{{ section.id }} .gh-ft__newsletter input:focus { border-color: rgba(184, 145, 58, 0.5); }
     #GhFoot-{{ section.id }} .gh-ft__nw-btn {
       flex-shrink: 0;
-      min-width: 50px;
-      padding: 0 14px;
+      min-width: 48px;
+      padding: 10px 14px;
       border: 0;
       background: var(--gold);
-      color: #fff;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    #GhFoot-{{ section.id }} .footer-newsletter-embed :is(input, button) {
-      max-width: 100%;
-    }
-    #GhFoot-{{ section.id }} .gh-ft__soc-item {
-      color: var(--link);
-      text-decoration: none;
-      margin-right: 14px;
+      color: #FDF8F2;
+      border-radius: 0 2px 2px 0;
       font-size: 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
+    #GhFoot-{{ section.id }} .footer-newsletter-embed :is(input, button) { max-width: 100%; }
+    #GhFoot-{{ section.id }} .gh-ft__social-row { display: flex; gap: 10px; flex-wrap: wrap; }
     #GhFoot-{{ section.id }} .gh-ft__bottom {
-      border-top: 1px solid rgb(255 255 255 / 0.12);
-      padding: 18px 0;
+      border-top: none;
+      padding: 20px 0 24px;
     }
     #GhFoot-{{ section.id }} .gh-ft__bottom-inner {
       width: min(100%, var(--mw));
       margin: 0 auto;
-      padding: 0 clamp(16px, 4vw, 28px);
+      padding: 0 clamp(20px, 4vw, 40px);
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       gap: 12px;
-      font-size: 12px;
-      color: {{ section.settings.bottom_text_color }};
+      font-size: 11px;
+      color: rgba(245, 239, 227, 0.22);
     }
     #GhFoot-{{ section.id }} .gh-ft__bottom-links a {
-      color: var(--gold);
+      color: rgba(245, 239, 227, 0.3);
       text-decoration: none;
       margin-left: 14px;
     }
+    #GhFoot-{{ section.id }} .gh-ft__bottom-left,
+    #GhFoot-{{ section.id }} .gh-ft__credit { color: rgba(245, 239, 227, 0.22); }
     #GhFoot-{{ section.id }} .visually-hidden {
       position: absolute !important;
       height: 1px;
@@ -384,6 +472,9 @@
       "name": "Contact / RTE",
       "settings": [
         { "type": "text", "id": "heading", "label": "Heading", "default": "Cellar Door" },
+        { "type": "text", "id": "address", "label": "Address", "default": "7A Morphett Rd, Lyndoch SA 5351, Australia" },
+        { "type": "text", "id": "phone", "label": "Phone", "default": "+61412836004" },
+        { "type": "text", "id": "hours", "label": "Hours", "default": "Open Thu - Sun, 11am - 5pm" },
         {
           "type": "richtext",
           "id": "body",
@@ -432,7 +523,7 @@
           "type": "text",
           "id": "newsletter_button_label",
           "label": "Button label",
-          "default": "→"
+          "default": "Subscribe"
         },
         {
           "type": "checkbox",

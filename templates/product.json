@@ -12,13 +12,21 @@
     "gh_product_detail": {
       "type": "gh-product-detail",
       "blocks": {
+        "breadcrumbs": { "type": "breadcrumbs", "settings": { "show_block": true, "show_home": true, "home_label": "Home", "show_all_products": false, "all_products_label": "All products", "show_collection": true } },
+        "vendor": { "type": "vendor", "settings": { "show_block": true, "text": "" } },
+        "title": { "type": "title", "settings": { "show_block": true } },
+        "rating": { "type": "rating", "settings": { "show_block": true } },
+        "price": { "type": "price", "settings": { "show_block": true } },
+        "description": { "type": "description", "settings": { "show_block": true, "use_first_paragraph": true } },
+        "purchase_options": { "type": "purchase_options", "settings": { "show_block": true } },
+        "buy_row": { "type": "buy_row", "settings": { "show_block": true, "show_qty_add": true } },
         "tab_1": { "type": "tab", "settings": { "title": "Wine Details", "content": "<p></p>" } },
         "tab_2": { "type": "tab", "settings": { "title": "Vineyard", "content": "<p></p>" } },
         "tab_3": { "type": "tab", "settings": { "title": "Tasting Notes", "content": "<p></p>" } },
         "tab_4": { "type": "tab", "settings": { "title": "Winemaking", "content": "<p></p>" } },
         "tab_5": { "type": "tab", "settings": { "title": "Awards", "content": "<p></p>" } }
       },
-      "block_order": ["tab_1", "tab_2", "tab_3", "tab_4", "tab_5"],
+      "block_order": ["breadcrumbs", "vendor", "title", "rating", "price", "description", "purchase_options", "buy_row", "tab_1", "tab_2", "tab_3", "tab_4", "tab_5"],
       "settings": {}
     },
     "gh_related_products": { "type": "gh-related-products", "settings": {} }
