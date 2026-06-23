@@ -384,7 +384,7 @@
   }
 
   .gh-product-detail-{{ section.id }} .gh-accordion-body {
-    padding-bottom: 16px;
+    padding: 4px 0 16px 0;
     font-size: 13.5px;
     color: #6B7668;
     line-height: 1.7;
@@ -684,7 +684,7 @@
 
             {% when 'description' %}
               {% if block.settings.show_block %}
-                <div class="gh-description" {{ block.shopify_attributes }}>
+                <div class="gh-description gh-product-desc" {{ block.shopify_attributes }}>
                   {% if block.settings.use_first_paragraph %}
                     {{ product.description | split: '</p>' | first | append: '</p>' }}
                   {% else %}
@@ -788,7 +788,7 @@
                       </div>
                     {%- endif -%}
                     {%- if product.metafields.custom.comments != blank -%}
-                      <div class="gh-mf-row gh-mf-row--full">
+                      <div class="gh-mf-row">
                         <span class="gh-mf-label">Comments</span>
                         <span class="gh-mf-value">{{ product.metafields.custom.comments }}</span>
                       </div>
@@ -809,7 +809,7 @@
                       </div>
                     {%- endif -%}
                     {%- if product.metafields.custom.produced_and_packed_by != blank -%}
-                      <div class="gh-mf-row gh-mf-row--full">
+                      <div class="gh-mf-row">
                         <span class="gh-mf-label">Produced &amp; Packed by</span>
                         <span class="gh-mf-value">{{ product.metafields.custom.produced_and_packed_by }}</span>
                       </div>
@@ -892,7 +892,8 @@
   }
 
   .gh-product-detail-{{ section.id }} #gh-main-img-tag {
-    transition: opacity 0.2s ease;
+    transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity;
   }
 
   .gh-product-detail-{{ section.id }} .gh-product-zoom-btn {
@@ -1059,6 +1060,7 @@
   }
 
   .gh-product-detail-{{ section.id }} .gh-mpc__purchase {
+    margin-top: 28px;
     margin-bottom: 16px;
   }
 
@@ -1263,53 +1265,55 @@
     font-size: 12px;
   }
 
-  /* Metafield row table inside accordion */
+  /* Metafield table inside accordion body */
   .gh-product-detail-{{ section.id }} .gh-mf-table {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    margin-bottom: 4px;
+    width: 100%;
+    display: table;
+    border-collapse: collapse;
+    margin: 0;
+    padding: 0;
   }
+
   .gh-product-detail-{{ section.id }} .gh-mf-row {
-    display: contents;
+    display: table-row;
   }
-  .gh-product-detail-{{ section.id }} .gh-mf-row--full {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    grid-column: 1 / -1;
-    padding: 12px 0;
-    border-top: 0.5px solid rgba(28,43,26,0.08);
-  }
+
   .gh-product-detail-{{ section.id }} .gh-mf-row .gh-mf-label,
   .gh-product-detail-{{ section.id }} .gh-mf-row .gh-mf-value {
+    display: table-cell;
     padding: 11px 0;
     border-bottom: 0.5px solid rgba(28,43,26,0.08);
+    vertical-align: top;
   }
-  .gh-product-detail-{{ section.id }} .gh-mf-row:last-of-type .gh-mf-label,
-  .gh-product-detail-{{ section.id }} .gh-mf-row:last-of-type .gh-mf-value {
+
+  .gh-product-detail-{{ section.id }} .gh-mf-row:last-child .gh-mf-label,
+  .gh-product-detail-{{ section.id }} .gh-mf-row:last-child .gh-mf-value {
     border-bottom: none;
   }
+
   .gh-product-detail-{{ section.id }} .gh-mf-label {
+    width: 35%;
+    min-width: 140px;
     font-size: 10px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: #6B7668;
+    color: #6B7668 !important;
     font-family: 'Inter', sans-serif;
     font-weight: 500;
-    padding-right: 16px;
-    align-self: start;
-  }
-  .gh-product-detail-{{ section.id }} .gh-mf-value {
-    font-size: 14px;
-    color: #1C2B1A;
-    font-family: 'Inter', sans-serif;
+    padding-right: 20px;
     line-height: 1.5;
+    -webkit-text-fill-color: #6B7668;
   }
-  .gh-product-detail-{{ section.id }} .gh-mf-row--full .gh-mf-value {
-    white-space: normal;
-    line-height: 1.7;
+
+  .gh-product-detail-{{ section.id }} .gh-mf-value {
+    width: 65%;
+    font-size: 14px;
+    color: #1C2B1A !important;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.65;
+    -webkit-text-fill-color: #1C2B1A;
   }
+
   .gh-product-detail-{{ section.id }} .gh-accordion-extra {
     margin-top: 16px;
     padding-top: 16px;
@@ -1398,21 +1402,66 @@
     }
   }
   @media (max-width: 600px) {
-    .gh-product-detail-{{ section.id }} .gh-mf-table {
-      grid-template-columns: 1fr;
+    .gh-product-detail-{{ section.id }} .gh-mf-table,
+    .gh-product-detail-{{ section.id }} .gh-mf-row,
+    .gh-product-detail-{{ section.id }} .gh-mf-row .gh-mf-label,
+    .gh-product-detail-{{ section.id }} .gh-mf-row .gh-mf-value {
+      display: block;
+      width: 100%;
     }
     .gh-product-detail-{{ section.id }} .gh-mf-row {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
       padding: 10px 0;
       border-bottom: 0.5px solid rgba(28,43,26,0.08);
     }
-    .gh-product-detail-{{ section.id }} .gh-mf-row .gh-mf-label,
+    .gh-product-detail-{{ section.id }} .gh-mf-row .gh-mf-label {
+      padding: 0 0 4px 0;
+      border-bottom: none;
+    }
     .gh-product-detail-{{ section.id }} .gh-mf-row .gh-mf-value {
       padding: 0;
       border-bottom: none;
     }
+    .gh-product-detail-{{ section.id }} .gh-mf-row:last-child {
+      border-bottom: none;
+    }
+  }
+
+  /* Force metafield value colour — override any inherited/Horizon colour */
+  .gh-product-detail-{{ section.id }} .gh-accordion-body .gh-mf-value,
+  .gh-product-detail-{{ section.id }} .gh-accordion-body .gh-mf-table .gh-mf-value {
+    color: #1C2B1A !important;
+    -webkit-text-fill-color: #1C2B1A !important;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-accordion-body .gh-mf-label,
+  .gh-product-detail-{{ section.id }} .gh-accordion-body .gh-mf-table .gh-mf-label {
+    color: #6B7668 !important;
+    -webkit-text-fill-color: #6B7668 !important;
+  }
+
+  /* Description -> Purchase option gap — catches common wrapper class names */
+  .gh-product-detail-{{ section.id }} .gh-product-desc,
+  .gh-product-detail-{{ section.id }} .product__description,
+  .gh-product-detail-{{ section.id }} .product-description,
+  .gh-product-detail-{{ section.id }} .rte.product-description,
+  .gh-product-detail-{{ section.id }} [class*="product-desc"],
+  .gh-product-detail-{{ section.id }} [class*="product__desc"] {
+    margin-bottom: 28px !important;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-purchase-box,
+  .gh-product-detail-{{ section.id }} .purchase-option,
+  .gh-product-detail-{{ section.id }} .selling-plan-group,
+  .gh-product-detail-{{ section.id }} [class*="purchase-option"],
+  .gh-product-detail-{{ section.id }} [class*="selling-plan"] {
+    margin-top: 28px !important;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-purchase-box-title,
+  .gh-product-detail-{{ section.id }} .purchase-box-title,
+  .gh-product-detail-{{ section.id }} [class*="purchase_option"] {
+    margin-top: 0 !important;
+    padding-top: 4px !important;
   }
 </style>
 
@@ -1473,19 +1522,25 @@
       var nextBtn = sectionRoot.querySelector('#gh-img-next');
       var counter = sectionRoot.querySelector('#gh-img-counter');
 
+      function normalizeIndex(index) {
+        if (!thumbs.length) return 0;
+        return (index % thumbs.length + thumbs.length) % thumbs.length;
+      }
+
       function updateNavButtons() {
         if (!prevBtn || !nextBtn) return;
-        prevBtn.disabled = currentIndex === 0;
-        prevBtn.style.opacity = currentIndex === 0 ? '0.3' : '1';
-        nextBtn.disabled = currentIndex === thumbs.length - 1;
-        nextBtn.style.opacity = currentIndex === thumbs.length - 1 ? '0.3' : '1';
+        var hasMultiple = thumbs.length > 1;
+        prevBtn.disabled = !hasMultiple;
+        nextBtn.disabled = !hasMultiple;
+        prevBtn.style.opacity = hasMultiple ? '1' : '0.3';
+        nextBtn.style.opacity = hasMultiple ? '1' : '0.3';
       }
 
       function goToIndex(index) {
-        if (index < 0 || index >= thumbs.length) return;
-        currentIndex = index;
+        if (!thumbs.length) return;
+        currentIndex = normalizeIndex(index);
 
-        var thumb = thumbs[index];
+        var thumb = thumbs[currentIndex];
         var newSrc = thumb.getAttribute('data-src');
         if (!newSrc) return;
 
@@ -1503,12 +1558,12 @@
         tempImg.src = newSrc;
 
         thumbs.forEach(function (t, i) {
-          t.classList.toggle('active', i === index);
-          t.setAttribute('aria-pressed', i === index ? 'true' : 'false');
+          t.classList.toggle('active', i === currentIndex);
+          t.setAttribute('aria-pressed', i === currentIndex ? 'true' : 'false');
         });
 
         if (counter) {
-          counter.textContent = (index + 1) + ' / ' + thumbs.length;
+          counter.textContent = (currentIndex + 1) + ' / ' + thumbs.length;
         }
 
         updateNavButtons();
