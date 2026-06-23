@@ -442,6 +442,51 @@
     justify-content: center;
   }
 
+  .gh-product-detail-{{ section.id }} .gh-lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    border: 0.5px solid rgba(255,255,255,0.4);
+    background: rgba(0,0,0,0.35);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease, opacity 0.2s ease;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-lightbox-nav:hover {
+    background: rgba(0,0,0,0.55);
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-lightbox-nav:disabled {
+    opacity: 0.3;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-lightbox-nav--prev {
+    left: -56px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-lightbox-nav--next {
+    right: -56px;
+  }
+
+  @media (max-width: 768px) {
+    .gh-product-detail-{{ section.id }} .gh-lightbox-nav--prev {
+      left: 8px;
+    }
+
+    .gh-product-detail-{{ section.id }} .gh-lightbox-nav--next {
+      right: 8px;
+    }
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     .gh-product-detail-{{ section.id }} .gh-qty-control button {
       transition: background 0.15s;
@@ -1276,7 +1321,7 @@
     width: 100%;
     display: table;
     border-collapse: collapse;
-    margin: 0;
+    margin: 0 0 0 20px;
     padding: 0;
   }
 
@@ -1445,6 +1490,11 @@
     -webkit-text-fill-color: #6B7668 !important;
   }
 
+  .gh-product-detail-{{ section.id }} .gh-mf-row .gh-mf-label,
+  .gh-product-detail-{{ section.id }} .gh-mf-row .gh-mf-value {
+    border-bottom: none !important;
+  }
+
   /* Description -> Purchase option gap — catches common wrapper class names */
   .gh-product-detail-{{ section.id }} .gh-product-desc,
   .gh-product-detail-{{ section.id }} .product__description,
@@ -1542,6 +1592,19 @@
         nextBtn.style.opacity = hasMultiple ? '1' : '0.3';
       }
 
+      function getCurrentItem() {
+        if (!thumbs.length) return null;
+        var thumb = thumbs[currentIndex];
+        if (!thumb) return null;
+        var thumbImg = thumb.querySelector('img');
+        return {
+          index: currentIndex,
+          src: thumb.getAttribute('data-src') || '',
+          alt: thumbImg ? thumbImg.alt : '',
+          total: thumbs.length
+        };
+      }
+
       function goToIndex(index) {
         if (!thumbs.length) return;
         currentIndex = normalizeIndex(index);
@@ -1549,11 +1612,11 @@
         var thumb = thumbs[currentIndex];
         var newSrc = thumb.getAttribute('data-src');
         if (!newSrc) return;
+        var nextAlt = thumb.querySelector('img') ? thumb.querySelector('img').alt : '';
 
         mainImg.classList.add('is-fading');
         var tempImg = new Image();
         tempImg.onload = function () {
-          var nextAlt = thumb.querySelector('img') ? thumb.querySelector('img').alt : '';
           window.requestAnimationFrame(function () {
             mainImg.src = newSrc;
             mainImg.alt = nextAlt;
@@ -1583,6 +1646,13 @@
 
         updateNavButtons();
       }
+
+      sectionRoot.__ghGalleryApi = {
+        goToIndex: goToIndex,
+        getCurrentIndex: function () { return currentIndex; },
+        getLength: function () { return thumbs.length; },
+        getCurrentItem: getCurrentItem
+      };
 
       thumbWrap.addEventListener('click', function (e) {
         var btn = e.target.closest('.gh-product-thumb');
@@ -1634,6 +1704,12 @@
     overlay.className = 'gh-lightbox';
     overlay.innerHTML =
       '<div class="gh-lightbox-inner">' +
+      '<button class="gh-lightbox-nav gh-lightbox-nav--prev" aria-label="Previous image" type="button">' +
+      '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"></path></svg>' +
+      '</button>' +
+      '<button class="gh-lightbox-nav gh-lightbox-nav--next" aria-label="Next image" type="button">' +
+      '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"></path></svg>' +
+      '</button>' +
       '<button class="gh-lightbox-close" aria-label="Close zoom">' +
       '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2L18 18M18 2L2 18" stroke="white" stroke-width="2" stroke-linecap="round"></path></svg>' +
       '</button>' +
@@ -1644,12 +1720,51 @@
 
     var lightboxImg = overlay.querySelector('.gh-lightbox-img');
     var closeBtn = overlay.querySelector('.gh-lightbox-close');
+    var lightboxPrev = overlay.querySelector('.gh-lightbox-nav--prev');
+    var lightboxNext = overlay.querySelector('.gh-lightbox-nav--next');
 
-    function openLightbox() {
+    function getGalleryApi() {
+      return sectionRoot.__ghGalleryApi || null;
+    }
+
+    function updateLightboxNav() {
+      var api = getGalleryApi();
+      var hasMultiple = !!(api && api.getLength() > 1);
+      if (lightboxPrev) {
+        lightboxPrev.hidden = !hasMultiple;
+        lightboxPrev.disabled = !hasMultiple;
+      }
+      if (lightboxNext) {
+        lightboxNext.hidden = !hasMultiple;
+        lightboxNext.disabled = !hasMultiple;
+      }
+    }
+
+    function syncLightboxImage() {
+      var api = getGalleryApi();
+      var current = api && api.getCurrentItem ? api.getCurrentItem() : null;
+      if (current && lightboxImg) {
+        lightboxImg.src = current.src;
+        lightboxImg.alt = current.alt || '';
+        return;
+      }
       var mainImage = sectionRoot.querySelector('#gh-main-img-tag') || sectionRoot.querySelector('.gh-product-main-img img');
       if (!mainImage || !lightboxImg) return;
       lightboxImg.src = mainImage.src;
       lightboxImg.alt = mainImage.alt || '';
+    }
+
+    function navigateLightbox(step) {
+      var api = getGalleryApi();
+      if (!api || api.getLength() <= 1) return;
+      api.goToIndex(api.getCurrentIndex() + step);
+      syncLightboxImage();
+    }
+
+    function openLightbox() {
+      if (!lightboxImg) return;
+      syncLightboxImage();
+      updateLightboxNav();
       overlay.classList.add('gh-lightbox-open');
       document.body.style.overflow = 'hidden';
     }
@@ -1661,11 +1776,16 @@
 
     zoomBtn.addEventListener('click', openLightbox);
     if (closeBtn) closeBtn.addEventListener('click', closeLightbox);
+    if (lightboxPrev) lightboxPrev.addEventListener('click', function () { navigateLightbox(-1); });
+    if (lightboxNext) lightboxNext.addEventListener('click', function () { navigateLightbox(1); });
     overlay.addEventListener('click', function (event) {
       if (event.target === overlay) closeLightbox();
     });
     document.addEventListener('keydown', function (event) {
+      if (!overlay.classList.contains('gh-lightbox-open')) return;
       if (event.key === 'Escape') closeLightbox();
+      if (event.key === 'ArrowLeft') { event.preventDefault(); navigateLightbox(-1); }
+      if (event.key === 'ArrowRight') { event.preventDefault(); navigateLightbox(1); }
     });
   });
 </script>
