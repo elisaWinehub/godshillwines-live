@@ -199,8 +199,11 @@
   }
   div[data-gh-custom-header="{{ section.id }}"][data-gh-overlay='true'][data-scrolled='true'],
   div[data-gh-custom-header="{{ section.id }}"]:not([data-gh-overlay='true']) {
-    background: var(--gh-header-bg-scrolled);
+    background-color: {{ section.settings.scrolled_bg_color | default: '#1c2b1af7' }};
     box-shadow: 0 {{ section.settings.border_width_below }}px 16px rgb(0 0 0 / {{ section.settings.shadow_strength | divided_by: 100.0 }});
+  }
+  div[data-gh-custom-header="{{ section.id }}"]:not([data-gh-overlay='true']) {
+    background-color: {{ section.settings.header_bg_color | default: '#ffffff' }};
   }
   div[data-gh-custom-header="{{ section.id }}"][data-gh-overlay='true']:not([data-scrolled='true']) {
     background: transparent;
