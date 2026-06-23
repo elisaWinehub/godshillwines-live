@@ -6,132 +6,48 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */{
+ */
+{
   "sections": {
-    "godshill_page_hero": {
-      "type": "godshill-page-hero",
-      "blocks": {
-        "ph_eyebrow": {
-          "type": "eyebrow",
-          "settings": {
-            "text": "God's Hill Wines",
-            "alignment": "center",
-            "text_color": "#c49a52"
-          }
-        },
-        "ph_heading": {
-          "type": "heading",
-          "settings": {
-            "use_auto_title": true,
-            "alignment": "center",
-            "text_color": "#ffffff"
-          }
-        },
-        "ph_divider": {
-          "type": "divider",
-          "settings": {
-            "alignment": "center",
-            "line_color": "#a67b22",
-            "line_width_px": 48,
-            "line_thickness_px": 2
-          }
-        },
-        "ph_text": {
-          "type": "text",
-          "settings": {
-            "alignment": "center",
-            "text_color": "#f0ebe4"
-          }
-        }
-      },
-      "block_order": ["ph_eyebrow", "ph_heading", "ph_divider", "ph_text"],
-      "settings": {}
-    },
-    "section": {
-      "type": "main-blog-post",
-      "blocks": {
-        "blog-post-title": {
-          "type": "text",
-          "name": "Title",
-          "static": true,
-          "settings": {
-            "text": "<h1>{{ article.title }}</h1>",
-            "width": "100%",
-            "max_width": "normal",
-            "alignment": "center",
-            "type_preset": "h2",
-            "font": "var(--font-primary--family)",
-            "font_size": "",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "color": "",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
-        "blog-post-details": {
-          "type": "_blog-post-info-text",
-          "name": "Details",
-          "static": true,
-          "settings": {
-            "show_date": true,
-            "show_author": false,
-            "type_preset": "",
-            "alignment": "center",
-            "show_alignment": true,
-            "padding-block-start": 24,
-            "padding-block-end": 0
-          },
-          "blocks": {}
-        },
-        "blog-post-image": {
-          "type": "image",
-          "name": "Featured image",
-          "static": true,
-          "settings": {
-            "image_ratio": "landscape",
-            "width": "fill",
-            "custom_width": 100,
-            "width_mobile": "fill",
-            "custom_width_mobile": 100,
-            "height": "fit",
-            "border": "none",
-            "border_width": 1,
-            "border_opacity": 100,
-            "border_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
-        "blog-post-content": {
-          "type": "_blog-post-content",
-          "static": true,
-          "settings": {},
-          "blocks": {}
-        }
-      },
+    "gh_article_hero": {
+      "type": "gh-article-hero",
       "settings": {
-        "content_direction": "column",
-        "gap": 32,
-        "color_scheme": "",
-        "padding-block-start": 40,
-        "padding-block-end": 80
+        "hero_height": 520,
+        "overlay_opacity": 70
+      }
+    },
+    "gh_article_body": {
+      "type": "gh-article-body",
+      "settings": {
+        "cta_enabled": true,
+        "cta_eyebrow": "Experience",
+        "cta_title": "Join us at the cellar door",
+        "cta_body": "Wine tastings run Thursday to Sunday, 11am to 5pm. Groups of 6 or more, please book ahead.",
+        "cta_btn_label": "Book a tasting",
+        "cta_btn_url": "/pages/book"
+      }
+    },
+    "gh_article_related": {
+      "type": "gh-article-related",
+      "settings": {
+        "heading": "More from News & Events",
+        "view_all_label": "View all →"
+      }
+    },
+    "gh_article_newsletter": {
+      "type": "gh-article-newsletter",
+      "settings": {
+        "eyebrow": "Stay in the loop",
+        "title": "<p>New releases, events <em>&amp; offers</em></p>",
+        "subheading": "Be first to hear about new vintages, cellar door events and exclusive offers from God's Hill Wines.",
+        "btn_label": "Subscribe"
       }
     }
   },
   "order": [
-    "godshill_page_hero",
-    "section"
+    "gh_article_hero",
+    "gh_article_body",
+    "gh_article_related",
+    "gh_article_newsletter"
   ]
 }

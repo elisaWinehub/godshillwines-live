@@ -610,17 +610,6 @@
         {% endif %}
 
         <div class="gh-collection-products">
-            <div class="gh-collection-toolbar">
-              <p class="gh-products-count"><strong>{{ collection.products_count }}</strong> products</p>
-              <div class="gh-sort-row">
-                <label for="gh-sort-select-{{ section.id }}" class="gh-sort-label">Sort by</label>
-                <select id="gh-sort-select-{{ section.id }}" class="gh-sort-select" onchange="location='{{ collection.url }}?sort_by='+this.value+'{{ collection.filter_query }}'">
-                  {% for option in collection.sort_options %}
-                    <option value="{{ option.value }}" {% if collection.sort_by == option.value %}selected{% endif %}>{{ option.name }}</option>
-                  {% endfor %}
-                </select>
-              </div>
-            </div>
 
             <div class="gh-product-grid">
               {% for product in collection.products %}

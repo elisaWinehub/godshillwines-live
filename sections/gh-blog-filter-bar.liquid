@@ -20,7 +20,8 @@
     -ms-overflow-style: none;
   }
   .gh-filter-bar-wrap-{{ section.id }} .gh-filter-bar-inner-{{ section.id }}::-webkit-scrollbar { display: none; }
-  .gh-filter-bar-wrap-{{ section.id }} .gh-filter-btn-{{ section.id }} {
+  .gh-filter-bar-wrap-{{ section.id }} .gh-filter-btn-{{ section.id }},
+  .gh-filter-bar-wrap-{{ section.id }} .gh-filter-btn {
     padding: 6px 16px;
     border: 0.5px solid rgba(28, 43, 26, 0.18);
     border-radius: 20px;
@@ -36,8 +37,10 @@
     flex-shrink: 0;
     line-height: 1;
   }
-  .gh-filter-bar-wrap-{{ section.id }} .gh-filter-btn-{{ section.id }}:hover { border-color: #1C2B1A; color: #1C2B1A; }
-  .gh-filter-bar-wrap-{{ section.id }} .gh-filter-btn-{{ section.id }}.is-active {
+  .gh-filter-bar-wrap-{{ section.id }} .gh-filter-btn-{{ section.id }}:hover,
+  .gh-filter-bar-wrap-{{ section.id }} .gh-filter-btn:hover { border-color: #1C2B1A; color: #1C2B1A; }
+  .gh-filter-bar-wrap-{{ section.id }} .gh-filter-btn-{{ section.id }}.is-active,
+  .gh-filter-bar-wrap-{{ section.id }} .gh-filter-btn.is-active {
     background: #1C2B1A;
     color: #F5EFE3;
     border-color: #1C2B1A;
@@ -49,13 +52,13 @@
 
 <div class="gh-filter-bar-wrap-{{ section.id }}" id="gh-filter-bar-{{ section.id }}">
   <div class="gh-filter-bar-inner-{{ section.id }}">
-    <button class="gh-filter-btn-{{ section.id }} is-active" data-filter="all" aria-pressed="true">
+    <button class="gh-filter-btn-{{ section.id }} gh-filter-btn is-active" data-filter="all" aria-pressed="true">
       {{ section.settings.all_label | default: 'All' }}
     </button>
     {% for block in section.blocks %}
       <button
-        class="gh-filter-btn-{{ section.id }}"
-        data-filter="{{ block.settings.tag_value | downcase | strip }}"
+        class="gh-filter-btn-{{ section.id }} gh-filter-btn"
+        data-filter="{{ block.settings.tag_value | strip }}"
         aria-pressed="false"
         {{ block.shopify_attributes }}>
         {{ block.settings.label }}
@@ -73,7 +76,7 @@
       var btn = e.target.closest('.gh-filter-btn-{{ section.id }}');
       if (!btn) return;
 
-      bar.querySelectorAll('.gh-filter-btn-{{ section.id }}').forEach(function (b) {
+      bar.querySelectorAll('[data-filter]').forEach(function (b) {
         b.classList.remove('is-active');
         b.setAttribute('aria-pressed', 'false');
       });
@@ -87,7 +90,7 @@
           el.removeAttribute('hidden');
           el.style.display = '';
         } else {
-          var tags = (el.dataset.tags || '').split(',').map(function (t) { return t.trim().toLowerCase(); });
+          var tags = (el.getAttribute('data-tags') || '').split(',').map(function (t) { return t.trim(); });
           var show = tags.indexOf(filter) !== -1;
           if (show) {
             el.removeAttribute('hidden');
@@ -122,7 +125,7 @@
       "name": "Filter tab",
       "settings": [
         { "type": "text", "id": "label", "label": "Tab label", "default": "Events" },
-        { "type": "text", "id": "tag_value", "label": "Shopify tag to match", "default": "events" }
+        { "type": "text", "id": "tag_value", "label": "Shopify tag to match", "default": "Events" }
       ]
     }
   ],
@@ -130,11 +133,10 @@
     {
       "name": "GH — Blog Filter Bar",
       "blocks": [
-        { "type": "tab", "settings": { "label": "Events", "tag_value": "events" } },
-        { "type": "tab", "settings": { "label": "Awards", "tag_value": "awards" } },
-        { "type": "tab", "settings": { "label": "New Releases", "tag_value": "release" } },
-        { "type": "tab", "settings": { "label": "Charity", "tag_value": "charity" } },
-        { "type": "tab", "settings": { "label": "Winery News", "tag_value": "news" } }
+        { "type": "tab", "settings": { "label": "Events", "tag_value": "Events" } },
+        { "type": "tab", "settings": { "label": "Awards", "tag_value": "Awards" } },
+        { "type": "tab", "settings": { "label": "Community", "tag_value": "Community" } },
+        { "type": "tab", "settings": { "label": "Winery Stories", "tag_value": "Winery Stories" } }
       ]
     }
   ]

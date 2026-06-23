@@ -1,0 +1,171 @@
+{%- assign gh_art_nl_form_id = 'gh-art-nl-form-' | append: section.id -%}
+
+<section class="gh-art-nl-{{ section.id }}">
+  <div class="gh-art-nl-inner-{{ section.id }}">
+    {% if section.settings.eyebrow != blank %}
+      <span class="gh-art-nl-eyebrow-{{ section.id }}">{{ section.settings.eyebrow }}</span>
+    {% endif %}
+
+    <div class="gh-art-nl-title-{{ section.id }}">{{ section.settings.title }}</div>
+
+    {% if section.settings.subheading != blank %}
+      <p class="gh-art-nl-sub-{{ section.id }}">{{ section.settings.subheading }}</p>
+    {% endif %}
+
+    {% form 'customer', id: gh_art_nl_form_id %}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+      {% if form.posted_successfully? %}
+        <p class="gh-art-nl-success-{{ section.id }}">{{ section.settings.success_msg | default: 'Thanks for subscribing!' }}</p>
+      {% else %}
+        <div class="gh-art-nl-form-{{ section.id }}">
+          <input
+            type="email"
+            name="contact[email]"
+            class="gh-art-nl-input-{{ section.id }}"
+            placeholder="{{ section.settings.placeholder | default: 'Your email address' }}"
+            autocomplete="email"
+            required
+          >
+          <button type="submit" class="gh-art-nl-btn-{{ section.id }}">
+            {{ section.settings.btn_label | default: 'Subscribe' }}
+          </button>
+        </div>
+      {% endif %}
+    {% endform %}
+  </div>
+</section>
+
+<style>
+  .gh-art-nl-{{ section.id }} {
+    --gold: #B8913A;
+    --gold-light: #D4BC8A;
+    background: {{ section.settings.bg_color | default: '#1C2B1A' }};
+    padding: 64px 40px;
+  }
+  .gh-art-nl-inner-{{ section.id }} {
+    max-width: 640px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .gh-art-nl-eyebrow-{{ section.id }} {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    display: block;
+    margin-bottom: 12px;
+  }
+  .gh-art-nl-title-{{ section.id }} p {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: clamp(26px,3vw,36px);
+    font-weight: 400;
+    color: #F5EFE3;
+    margin: 0 0 10px;
+  }
+  .gh-art-nl-title-{{ section.id }} em {
+    color: var(--gold-light);
+    font-style: italic;
+  }
+  .gh-art-nl-sub-{{ section.id }} {
+    font-size: 14px;
+    color: rgba(245,239,227,0.55);
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+  .gh-art-nl-form-{{ section.id }} {
+    display: flex;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+  .gh-art-nl-input-{{ section.id }} {
+    flex: 1;
+    padding: 12px 16px;
+    border: 0.5px solid rgba(245,239,227,0.2);
+    border-right: none;
+    border-radius: 2px 0 0 2px;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    color: #F5EFE3;
+    background: rgba(253,248,242,0.07);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .gh-art-nl-input-{{ section.id }}::placeholder { color: rgba(245,239,227,0.3); }
+  .gh-art-nl-input-{{ section.id }}:focus { border-color: rgba(184,145,58,0.5); }
+  .gh-art-nl-btn-{{ section.id }} {
+    padding: 12px 20px;
+    background: var(--gold);
+    color: #FDF8F2;
+    border: none;
+    border-radius: 0 2px 2px 0;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .gh-art-nl-btn-{{ section.id }}:hover { background: #9A7A30; }
+  .gh-art-nl-success-{{ section.id }} {
+    font-size: 13px;
+    color: var(--gold-light);
+    margin-top: 12px;
+  }
+  @media (max-width: 768px) {
+    .gh-art-nl-{{ section.id }} { padding: 52px 20px; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "GH — Article Newsletter",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Stay in the loop"
+    },
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "Title",
+      "default": "<p>New releases, events <em>&amp; offers</em></p>"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Be first to hear about new vintages, cellar door events and exclusive offers."
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Email placeholder",
+      "default": "Your email address"
+    },
+    {
+      "type": "text",
+      "id": "btn_label",
+      "label": "Button label",
+      "default": "Subscribe"
+    },
+    {
+      "type": "text",
+      "id": "success_msg",
+      "label": "Success message",
+      "default": "Thanks for subscribing!"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background colour",
+      "default": "#1C2B1A"
+    }
+  ],
+  "presets": [
+    { "name": "GH — Article Newsletter" }
+  ]
+}
+{% endschema %}

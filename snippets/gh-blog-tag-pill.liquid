@@ -1,27 +1,32 @@
 {%- comment -%}
   Usage: {%- render 'gh-blog-tag-pill', tag: tag_string -%}
 {%- endcomment -%}
+<style>
+  .gh-tag-pill { display: inline-flex; padding: 3px 10px; border-radius: 2px; font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; font-family: 'Inter', sans-serif; border: 0.5px solid transparent; white-space: nowrap; }
+  .gh-pill-events { background: rgba(45,88,45,0.08); color: #2D6B2D; border-color: rgba(45,107,45,0.2); }
+  .gh-pill-awards { background: rgba(184,145,58,0.1); color: #8A6020; border-color: rgba(184,145,58,0.25); }
+  .gh-pill-community { background: rgba(160,60,60,0.08); color: #8B2020; border-color: rgba(160,60,60,0.2); }
+  .gh-pill-winery { background: rgba(28,43,26,0.07); color: #1C2B1A; border-color: rgba(28,43,26,0.15); }
+  .gh-pill-default { background: #F5EFE3; color: #B8913A; border-color: rgba(184,145,58,0.25); }
+</style>
 {%- liquid
-  assign raw_tag = tag | downcase | strip
+  assign raw_tag = tag | strip
   assign pill_class = 'gh-pill-default'
   assign pill_label = raw_tag | replace: '_', ' ' | capitalize
 
-  case raw_tag
-    when 'events'
+  case tag
+    when 'Events'
       assign pill_class = 'gh-pill-events'
       assign pill_label = 'Events'
-    when 'awards'
+    when 'Awards'
       assign pill_class = 'gh-pill-awards'
       assign pill_label = 'Awards'
-    when 'release'
-      assign pill_class = 'gh-pill-release'
-      assign pill_label = 'New Release'
-    when 'charity'
-      assign pill_class = 'gh-pill-charity'
-      assign pill_label = 'Charity'
-    when 'news'
-      assign pill_class = 'gh-pill-news'
-      assign pill_label = 'Winery News'
+    when 'Community'
+      assign pill_class = 'gh-pill-community'
+      assign pill_label = 'Community'
+    when 'Winery Stories'
+      assign pill_class = 'gh-pill-winery'
+      assign pill_label = 'Winery Stories'
   endcase
 -%}
-<span class="gh-tag-pill {{ pill_class }}" aria-label="{{ pill_label }}">{{ pill_label }}</span>
+<span class="gh-tag-pill {{ pill_class }}">{{ pill_label }}</span>

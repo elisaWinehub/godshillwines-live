@@ -1,0 +1,603 @@
+{%- liquid
+  assign article_category = ''
+  for tag in article.tags
+    unless tag == 'featured'
+      assign article_category = tag
+      break
+    endunless
+  endfor
+-%}
+
+<section class="gh-art-body-{{ section.id }}">
+  <div class="gh-read-progress" id="gh-read-progress-{{ section.id }}"></div>
+
+  <nav class="gh-art-breadcrumb-{{ section.id }}" aria-label="Breadcrumb">
+    <a href="{{ routes.root_url }}">Home</a>
+    <span class="gh-art-bc-sep-{{ section.id }}" aria-hidden="true">›</span>
+    <a href="{{ blog.url }}">{{ blog.title }}</a>
+    <span class="gh-art-bc-sep-{{ section.id }}" aria-hidden="true">›</span>
+    <span>{{ article.title | truncate: 60 }}</span>
+  </nav>
+
+  <div class="gh-art-layout-{{ section.id }}">
+    <article class="gh-art-content-{{ section.id }}">
+      <a href="{{ blog.url }}" class="gh-art-back-{{ section.id }}">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M19 12H5M12 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Back to {{ blog.title }}
+      </a>
+
+      {% if article.excerpt != blank %}
+        <p class="gh-art-lead-{{ section.id }}">{{ article.excerpt | strip_html }}</p>
+      {% endif %}
+
+      <div class="gh-art-prose-{{ section.id }}">
+        {{ article.content }}
+      </div>
+
+      <div style="width:40px;height:1px;background:var(--gold);opacity:0.5;margin:48px 0 36px;"></div>
+
+      <div class="gh-art-share-{{ section.id }}">
+        <span class="gh-art-share-label-{{ section.id }}">Share</span>
+
+        <a
+          href="https://www.facebook.com/sharer/sharer.php?u={{ shop.url }}{{ article.url }}"
+          target="_blank"
+          rel="noopener"
+          class="gh-share-btn-{{ section.id }}"
+          aria-label="Share on Facebook"
+        >
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+          </svg>
+          Facebook
+        </a>
+
+        <a
+          href="mailto:?subject={{ article.title | url_encode }}&body={{ shop.url }}{{ article.url | url_encode }}"
+          class="gh-share-btn-{{ section.id }}"
+          aria-label="Share via email"
+        >
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          Email
+        </a>
+
+        <button class="gh-share-btn-{{ section.id }}" type="button" data-gh-copy-link aria-label="Copy link to clipboard">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+          </svg>
+          Copy link
+        </button>
+      </div>
+    </article>
+
+    <aside class="gh-art-sidebar-{{ section.id }}">
+      <div class="gh-sidebar-card-{{ section.id }}">
+        <p class="gh-sidebar-card-title-{{ section.id }}">About this article</p>
+        <div class="gh-sidebar-info-{{ section.id }}">
+          <div class="gh-sidebar-info-item-{{ section.id }}">
+            <span class="gh-sidebar-info-label-{{ section.id }}">Published</span>
+            <span class="gh-sidebar-info-value-{{ section.id }}">{{ article.published_at | date: '%d %B %Y' }}</span>
+          </div>
+          {% if article.author != blank %}
+            <div class="gh-sidebar-info-item-{{ section.id }}">
+              <span class="gh-sidebar-info-label-{{ section.id }}">Author</span>
+              <span class="gh-sidebar-info-value-{{ section.id }}">{{ article.author }}</span>
+            </div>
+          {% endif %}
+          {% if article.tags.size > 0 %}
+            <div class="gh-sidebar-info-item-{{ section.id }}">
+              <span class="gh-sidebar-info-label-{{ section.id }}">Category</span>
+              <div class="gh-sidebar-tags-{{ section.id }}">
+                {% for tag in article.tags %}
+                  {% unless tag == 'featured' %}
+                    <span class="gh-sidebar-tag-{{ section.id }}">{{ tag }}</span>
+                  {% endunless %}
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if section.settings.cta_enabled %}
+        <div class="gh-sidebar-cta-{{ section.id }}">
+          {% if section.settings.cta_eyebrow != blank %}
+            <span class="gh-sidebar-cta-eyebrow-{{ section.id }}">{{ section.settings.cta_eyebrow }}</span>
+          {% endif %}
+          <p class="gh-sidebar-cta-title-{{ section.id }}">{{ section.settings.cta_title | default: 'Join us at the cellar door' }}</p>
+          <p class="gh-sidebar-cta-body-{{ section.id }}">{{ section.settings.cta_body | default: 'Wine tastings run Thursday to Sunday, 11am to 5pm.' }}</p>
+          {% if section.settings.cta_btn_label != blank %}
+            <a href="{{ section.settings.cta_btn_url | default: '/pages/book' }}" class="gh-sidebar-cta-btn-{{ section.id }}">
+              {{ section.settings.cta_btn_label }}
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {%- assign rel_count = 0 -%}
+      {%- if article_category != blank -%}
+        {%- for a in blog.articles -%}
+          {%- if a.id != article.id and a.tags contains article_category -%}
+            {%- assign rel_count = rel_count | plus: 1 -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+
+      {% if rel_count > 0 %}
+        <div class="gh-sidebar-card-{{ section.id }}">
+          <p class="gh-sidebar-card-title-{{ section.id }}">More stories</p>
+          {% assign rel_rendered = 0 %}
+          {% for ra in blog.articles %}
+            {% if ra.id != article.id and ra.tags contains article_category and rel_rendered < 3 %}
+              {% assign rel_rendered = rel_rendered | plus: 1 %}
+              <a href="{{ ra.url }}" class="gh-sidebar-rel-item-{{ section.id }}">
+                <div class="gh-sidebar-rel-img-{{ section.id }}">
+                  {% if ra.image %}
+                    {{ ra.image | image_url: width: 128 | image_tag: loading: 'lazy', alt: ra.title }}
+                  {% else %}
+                    <div style="width:100%;height:100%;background:var(--cream);"></div>
+                  {% endif %}
+                </div>
+                <div>
+                  <p class="gh-sidebar-rel-tag-{{ section.id }}">{{ article_category }}</p>
+                  <p class="gh-sidebar-rel-title-{{ section.id }}">{{ ra.title | truncate: 70 }}</p>
+                  <p class="gh-sidebar-rel-date-{{ section.id }}">{{ ra.published_at | date: '%d %B %Y' }}</p>
+                </div>
+              </a>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+    </aside>
+  </div>
+</section>
+
+<style>
+  .gh-art-body-{{ section.id }} {
+    --vine: #1C2B1A;
+    --parchment: #FDF8F2;
+    --cream: #F5EFE3;
+    --gold: #B8913A;
+    --gold-light: #D4BC8A;
+    --dust: #C8A98A;
+    --muted: #6B7668;
+    --border: rgba(28,43,26,0.1);
+    background: {{ section.settings.bg_color | default: '#FDF8F2' }};
+  }
+  .gh-read-progress {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background: var(--gold);
+    z-index: 99;
+    transition: width 0.1s linear;
+    pointer-events: none;
+  }
+  .gh-art-breadcrumb-{{ section.id }} {
+    padding: 16px 40px;
+    max-width: 1280px;
+    margin: 0 auto;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .gh-art-breadcrumb-{{ section.id }} a {
+    color: var(--gold);
+    transition: color 0.2s;
+  }
+  .gh-art-breadcrumb-{{ section.id }} a:hover {
+    color: var(--vine);
+  }
+  .gh-art-bc-sep-{{ section.id }} {
+    opacity: 0.4;
+    font-size: 13px;
+  }
+  .gh-art-layout-{{ section.id }} {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 64px;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 56px 40px 80px;
+    align-items: start;
+  }
+  .gh-art-content-{{ section.id }} {
+    max-width: 680px;
+  }
+  .gh-art-back-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 36px;
+    transition: color 0.2s;
+    text-decoration: none;
+  }
+  .gh-art-back-{{ section.id }}:hover {
+    color: var(--vine);
+  }
+  .gh-art-lead-{{ section.id }} {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--vine);
+    line-height: 1.65;
+    margin-bottom: 32px;
+    font-style: italic;
+  }
+  .gh-art-prose-{{ section.id }} p {
+    font-size: 16px;
+    line-height: 1.85;
+    margin-bottom: 22px;
+    color: #2E3E2C;
+  }
+  .gh-art-prose-{{ section.id }} p:last-child { margin-bottom: 0; }
+  .gh-art-prose-{{ section.id }} h2 {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--vine);
+    margin: 40px 0 16px;
+    line-height: 1.2;
+  }
+  .gh-art-prose-{{ section.id }} h3 {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--vine);
+    margin: 32px 0 12px;
+    line-height: 1.25;
+  }
+  .gh-art-prose-{{ section.id }} a {
+    color: var(--gold);
+    border-bottom: 0.5px solid rgba(184,145,58,0.4);
+    transition: color 0.2s;
+    text-decoration: none;
+  }
+  .gh-art-prose-{{ section.id }} a:hover { color: var(--vine); }
+  .gh-art-prose-{{ section.id }} ul,
+  .gh-art-prose-{{ section.id }} ol {
+    padding-left: 20px;
+    margin-bottom: 22px;
+  }
+  .gh-art-prose-{{ section.id }} li {
+    font-size: 16px;
+    line-height: 1.8;
+    margin-bottom: 6px;
+    color: #2E3E2C;
+  }
+  .gh-art-prose-{{ section.id }} blockquote {
+    border-left: 2px solid var(--gold);
+    padding: 4px 0 4px 24px;
+    margin: 36px 0;
+  }
+  .gh-art-prose-{{ section.id }} blockquote p {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 22px;
+    font-style: italic;
+    color: var(--vine);
+    line-height: 1.5;
+    margin-bottom: 0 !important;
+  }
+  .gh-art-prose-{{ section.id }} img {
+    border-radius: 4px;
+    margin: 32px 0;
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .gh-art-prose-{{ section.id }} figcaption {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: -24px;
+    margin-bottom: 32px;
+    font-style: italic;
+    letter-spacing: 0.03em;
+  }
+  .gh-art-prose-{{ section.id }} hr {
+    border: none;
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+    opacity: 0.5;
+    margin: 40px 0;
+  }
+  .gh-art-prose-{{ section.id }} strong {
+    font-weight: 600;
+    color: var(--vine);
+  }
+  .gh-art-prose-{{ section.id }} em { font-style: italic; }
+  .gh-art-share-{{ section.id }} {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-top: 36px;
+    border-top: 0.5px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .gh-art-share-label-{{ section.id }} {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-right: 4px;
+  }
+  .gh-share-btn-{{ section.id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border: 0.5px solid var(--border);
+    border-radius: 2px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+    cursor: pointer;
+    background: white;
+    text-decoration: none;
+  }
+  .gh-share-btn-{{ section.id }}:hover {
+    border-color: var(--vine);
+    color: var(--vine);
+  }
+  .gh-art-sidebar-{{ section.id }} {
+    position: sticky;
+    top: 90px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+  .gh-sidebar-card-{{ section.id }} {
+    background: white;
+    border: 0.5px solid var(--border);
+    border-radius: 4px;
+    padding: 24px;
+  }
+  .gh-sidebar-card-title-{{ section.id }} {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .gh-sidebar-info-{{ section.id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .gh-sidebar-info-item-{{ section.id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .gh-sidebar-info-label-{{ section.id }} {
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .gh-sidebar-info-value-{{ section.id }} {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 16px;
+    color: var(--vine);
+  }
+  .gh-sidebar-tags-{{ section.id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .gh-sidebar-tag-{{ section.id }} {
+    display: inline-flex;
+    padding: 3px 10px;
+    background: var(--cream);
+    border: 0.5px solid rgba(184,145,58,0.2);
+    border-radius: 2px;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .gh-sidebar-cta-{{ section.id }} {
+    background: var(--vine);
+    border-radius: 4px;
+    padding: 28px 24px;
+    text-align: center;
+  }
+  .gh-sidebar-cta-eyebrow-{{ section.id }} {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    display: block;
+    margin-bottom: 10px;
+  }
+  .gh-sidebar-cta-title-{{ section.id }} {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 20px;
+    color: #F5EFE3;
+    line-height: 1.3;
+    margin-bottom: 10px;
+  }
+  .gh-sidebar-cta-body-{{ section.id }} {
+    font-size: 13px;
+    color: rgba(245,239,227,0.55);
+    line-height: 1.65;
+    margin-bottom: 20px;
+  }
+  .gh-sidebar-cta-btn-{{ section.id }} {
+    display: block;
+    width: 100%;
+    padding: 10px 16px;
+    background: var(--gold);
+    color: #FDF8F2;
+    border-radius: 2px;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    text-align: center;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .gh-sidebar-cta-btn-{{ section.id }}:hover { background: #9A7A30; }
+  .gh-sidebar-rel-item-{{ section.id }} {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 0.5px solid var(--border);
+    text-decoration: none;
+    color: inherit;
+    align-items: start;
+  }
+  .gh-sidebar-rel-item-{{ section.id }}:first-of-type { padding-top: 0; }
+  .gh-sidebar-rel-item-{{ section.id }}:last-of-type { border-bottom: none; padding-bottom: 0; }
+  .gh-sidebar-rel-img-{{ section.id }} {
+    height: 48px;
+    overflow: hidden;
+    border-radius: 2px;
+    background: var(--cream);
+  }
+  .gh-sidebar-rel-img-{{ section.id }} img { width: 100%; height: 100%; object-fit: cover; }
+  .gh-sidebar-rel-tag-{{ section.id }} {
+    font-size: 8px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 3px;
+  }
+  .gh-sidebar-rel-title-{{ section.id }} {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 14px;
+    color: var(--vine);
+    line-height: 1.3;
+    transition: color 0.2s;
+  }
+  .gh-sidebar-rel-item-{{ section.id }}:hover .gh-sidebar-rel-title-{{ section.id }} { color: var(--gold); }
+  .gh-sidebar-rel-date-{{ section.id }} {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  @media (max-width: 1024px) {
+    .gh-art-layout-{{ section.id }} { grid-template-columns: 1fr; gap: 48px; }
+    .gh-art-sidebar-{{ section.id }} { position: static; }
+    .gh-art-content-{{ section.id }} { max-width: 100%; }
+  }
+  @media (max-width: 768px) {
+    .gh-art-layout-{{ section.id }} { padding: 36px 20px 60px; }
+    .gh-art-breadcrumb-{{ section.id }} { padding: 14px 20px; }
+    .gh-art-lead-{{ section.id }} { font-size: 19px; }
+    .gh-art-prose-{{ section.id }} p { font-size: 15px; }
+    .gh-art-prose-{{ section.id }} h2 { font-size: 24px; }
+  }
+</style>
+
+<script>
+  (function () {
+    var bar = document.getElementById('gh-read-progress-{{ section.id }}');
+    var articleEl = document.querySelector('.gh-art-content-{{ section.id }}');
+    if (!bar || !articleEl) return;
+    window.addEventListener(
+      'scroll',
+      function () {
+        var rect = articleEl.getBoundingClientRect();
+        var total = articleEl.offsetHeight - window.innerHeight;
+        var scrolled = Math.max(0, -rect.top);
+        var pct = total > 0 ? Math.min(100, (scrolled / total) * 100) : 100;
+        bar.style.width = pct + '%';
+      },
+      { passive: true }
+    );
+  })();
+
+  (function () {
+    var scope = document.querySelector('.gh-art-body-{{ section.id }}');
+    if (!scope) return;
+    var copyBtn = scope.querySelector('[data-gh-copy-link]');
+    if (!copyBtn || !navigator.clipboard) return;
+    copyBtn.addEventListener('click', function () {
+      var originalText = copyBtn.textContent.trim();
+      navigator.clipboard.writeText(window.location.href).then(function () {
+        copyBtn.textContent = 'Copied!';
+        setTimeout(function () {
+          copyBtn.textContent = originalText;
+        }, 1500);
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "GH — Article Body",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "cta_enabled",
+      "label": "Show sidebar CTA card",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "cta_eyebrow",
+      "label": "CTA eyebrow",
+      "default": "Experience"
+    },
+    {
+      "type": "text",
+      "id": "cta_title",
+      "label": "CTA heading",
+      "default": "Join us at the cellar door"
+    },
+    {
+      "type": "textarea",
+      "id": "cta_body",
+      "label": "CTA body",
+      "default": "Wine tastings run Thursday to Sunday, 11am to 5pm. Groups of 6 or more, please book ahead."
+    },
+    {
+      "type": "text",
+      "id": "cta_btn_label",
+      "label": "CTA button label",
+      "default": "Book a tasting"
+    },
+    {
+      "type": "url",
+      "id": "cta_btn_url",
+      "label": "CTA button URL"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background colour",
+      "default": "#FDF8F2"
+    }
+  ],
+  "presets": [
+    { "name": "GH — Article Body" }
+  ]
+}
+{% endschema %}

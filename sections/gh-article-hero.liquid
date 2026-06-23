@@ -1,0 +1,150 @@
+{%- liquid
+  assign article_category = ''
+  for tag in article.tags
+    unless tag == 'featured'
+      assign article_category = tag
+      break
+    endunless
+  endfor
+  assign read_words = article.content | strip_html | split: ' ' | size
+  assign read_mins = read_words | divided_by: 200 | plus: 1
+  assign overlay_alpha = section.settings.overlay_opacity | divided_by: 100.0
+-%}
+
+<section class="gh-art-hero-{{ section.id }}">
+  <div
+    class="gh-art-hero-bg-{{ section.id }}"
+    {% if article.image %}
+      style="background-image: url('{{ article.image | image_url: width: 1600 }}')"
+    {% else %}
+      style="background-color: #1C2B1A;"
+    {% endif %}
+  ></div>
+  <div class="gh-art-hero-overlay-{{ section.id }}"></div>
+  <div class="gh-art-hero-inner-{{ section.id }}">
+    <div class="gh-art-hero-stack-{{ section.id }}">
+      <div class="gh-art-hero-tag-{{ section.id }}">
+        {%- render 'gh-blog-tag-pill', tag: article_category -%}
+      </div>
+      <h1 class="gh-art-hero-title-{{ section.id }}">{{ article.title }}</h1>
+      <div class="gh-art-hero-meta-{{ section.id }}">
+        <span>{{ article.published_at | date: '%d %B %Y' }}</span>
+        <span class="gh-art-meta-sep-{{ section.id }}"></span>
+        <span>{{ article.author }}</span>
+        <span class="gh-art-meta-sep-{{ section.id }}"></span>
+        <span>{{ read_mins }} min read</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .gh-art-hero-{{ section.id }} {
+    position: relative;
+    height: {{ section.settings.hero_height }}px;
+    overflow: hidden;
+  }
+  .gh-art-hero-bg-{{ section.id }} {
+    position: absolute;
+    inset: 0;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+  .gh-art-hero-overlay-{{ section.id }} {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(20, 28, 18, 0.1) 0%,
+      rgba(20, 28, 18, 0.2) 50%,
+      rgba(20, 28, 18, {{ overlay_alpha }}) 100%
+    );
+  }
+  .gh-art-hero-inner-{{ section.id }} {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 40px 52px;
+  }
+  .gh-art-hero-tag-{{ section.id }} {
+    margin-bottom: 14px;
+  }
+  .gh-art-hero-{{ section.id }} .gh-tag-pill {
+    background: rgba(28,43,26,0.7) !important;
+    border-color: rgba(245,239,227,0.2) !important;
+    color: #F5EFE3 !important;
+    backdrop-filter: blur(4px);
+  }
+  .gh-art-hero-title-{{ section.id }} {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 400;
+    color: #F5EFE3;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    max-width: 840px;
+    margin: 0 0 16px;
+  }
+  .gh-art-hero-meta-{{ section.id }} {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 12px;
+    color: rgba(245,239,227,0.6);
+    letter-spacing: 0.04em;
+    flex-wrap: wrap;
+  }
+  .gh-art-meta-sep-{{ section.id }} {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: rgba(245,239,227,0.4);
+    display: inline-block;
+  }
+  @media (max-width: 768px) {
+    .gh-art-hero-{{ section.id }} {
+      height: 380px;
+    }
+    .gh-art-hero-inner-{{ section.id }} {
+      padding: 0 20px 36px;
+    }
+    .gh-art-hero-title-{{ section.id }} {
+      font-size: clamp(28px, 7vw, 44px);
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "GH — Article Hero",
+  "settings": [
+    {
+      "type": "range",
+      "id": "hero_height",
+      "label": "Hero height (px)",
+      "min": 360,
+      "max": 680,
+      "step": 20,
+      "default": 520
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay darkness %",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "default": 70
+    }
+  ],
+  "presets": [
+    { "name": "GH — Article Hero" }
+  ]
+}
+{% endschema %}
