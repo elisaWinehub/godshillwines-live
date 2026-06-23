@@ -195,21 +195,24 @@
   div[data-gh-custom-header="{{ section.id }}"] {
     contain: none;
     min-height: max(var(--hdr-h-desktop), 100px);
+  }
+  .shopify-section.gh-custom-store-header[data-gh-section-header="{{ section.id }}"] {
     transition: background-color 0.28s ease, box-shadow 0.28s ease;
   }
-  div[data-gh-custom-header="{{ section.id }}"][data-gh-overlay='true'][data-scrolled='true'],
-  div[data-gh-custom-header="{{ section.id }}"]:not([data-gh-overlay='true']) {
+  .shopify-section.gh-custom-store-header[data-gh-section-header="{{ section.id }}"][data-gh-overlay='true'][data-scrolled='true'] {
     background-color: {{ section.settings.scrolled_bg_color | default: '#1c2b1af7' }};
     box-shadow: 0 {{ section.settings.border_width_below }}px 16px rgb(0 0 0 / {{ section.settings.shadow_strength | divided_by: 100.0 }});
   }
-  div[data-gh-custom-header="{{ section.id }}"]:not([data-gh-overlay='true']) {
+  .shopify-section.gh-custom-store-header[data-gh-section-header="{{ section.id }}"][data-gh-overlay='false'],
+  .shopify-section.gh-custom-store-header[data-gh-section-header="{{ section.id }}"]:not([data-gh-overlay]) {
     background-color: {{ section.settings.header_bg_color | default: '#ffffff' }};
+    box-shadow: 0 {{ section.settings.border_width_below }}px 16px rgb(0 0 0 / {{ section.settings.shadow_strength | divided_by: 100.0 }});
   }
-  div[data-gh-custom-header="{{ section.id }}"][data-gh-overlay='true']:not([data-scrolled='true']) {
+  .shopify-section.gh-custom-store-header[data-gh-section-header="{{ section.id }}"][data-gh-overlay='true'][data-scrolled='false'] {
     background: transparent;
     box-shadow: none;
   }
-  div[data-gh-custom-header="{{ section.id }}"].gh-ch-wrap--sticky {
+  .shopify-section.gh-custom-store-header[data-gh-section-header="{{ section.id }}"][data-gh-sticky='true'] {
     position: sticky;
     top: 0;
     z-index: 80;
@@ -595,6 +598,7 @@
     if (!rootWrapper) return;
     var shell = rootWrapper.querySelector('#GhHdr-{{ section.id }}');
     if (!shell) return;
+    var sectionRoot = rootWrapper.closest('.shopify-section.gh-custom-store-header');
 
     var scrollThreshold = parseInt(getComputedStyle(shell).getPropertyValue('--gh-scroll-threshold'), 10) || 24;
 
@@ -606,6 +610,9 @@
       if (scrolled === lastScrolledState) return;
       lastScrolledState = scrolled;
       rootWrapper.setAttribute('data-scrolled', scrolled ? 'true' : 'false');
+      if (sectionRoot) {
+        sectionRoot.setAttribute('data-scrolled', scrolled ? 'true' : 'false');
+      }
     }
 
     function requestScrollSync() {
@@ -616,9 +623,20 @@
       });
     }
 
+    if (sectionRoot) {
+      sectionRoot.setAttribute('data-gh-section-header', '{{ section.id }}');
+      sectionRoot.setAttribute('data-gh-overlay', rootWrapper.getAttribute('data-gh-overlay') === 'true' ? 'true' : 'false');
+      sectionRoot.setAttribute('data-gh-sticky', rootWrapper.classList.contains('gh-ch-wrap--sticky') ? 'true' : 'false');
+    }
+
     if (rootWrapper.getAttribute('data-gh-overlay') === 'true') {
       syncScrollState();
       window.addEventListener('scroll', requestScrollSync, { passive: true });
+    } else {
+      rootWrapper.setAttribute('data-scrolled', 'true');
+      if (sectionRoot) {
+        sectionRoot.setAttribute('data-scrolled', 'true');
+      }
     }
 
     var burger = shell.querySelector('.js-ghburger');
