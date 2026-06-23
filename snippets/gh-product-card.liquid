@@ -7,53 +7,218 @@
   if compare_at_price > variant.price and compare_at_price > 0
     assign sale_pct = sale_diff | times: 100 | divided_by: compare_at_price
   endif
+
+  assign now_seconds = 'now' | date: '%s'
+  assign published_seconds = product.published_at | date: '%s'
+  assign age_seconds = now_seconds | minus: published_seconds
+  assign is_new = false
+  if age_seconds < 2592000
+    assign is_new = true
+  endif
 %}
 
 <article class="gh-product-card gh-product-card-{{ card_id }}">
-  <a class="gh-product-card__image-wrap" href="{{ product.url | default: '#' }}">
+  <a class="gh-product-card__image-wrap" href="{{ product.url | default: '#' }}" style="height: 280px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #FFFFFF; position: relative;">
     {% if product.available == false %}
-      <span class="gh-product-card__badge gh-product-card__badge--sold">{{ 'SOLD OUT' | default: 'SOLD OUT' }}</span>
+      <span class="gh-product-card__badge gh-product-card__badge--sold">Sold Out</span>
     {% elsif sale_pct > 0 %}
       <span class="gh-product-card__badge gh-product-card__badge--sale">{{ sale_pct }}% OFF</span>
+    {% elsif is_new %}
+      <span class="gh-product-card__badge gh-product-card__badge--new">New</span>
     {% endif %}
 
     {% if product.featured_media %}
       {{
         product.featured_media
         | image_url: width: 900
-        | image_tag: class: 'gh-product-card__image', loading: 'lazy', alt: product.title
+        | image_tag: class: 'gh-product-card__image', loading: 'lazy', alt: product.title, style: 'width:100%;height:100%;object-fit:contain;padding:24px;'
       }}
     {% else %}
       <div class="gh-product-card__image gh-product-card__image--placeholder"></div>
     {% endif %}
   </a>
 
-  <div class="gh-product-card__body">
-    {% assign variety = product.metafields.custom.variety | default: product.type | default: 'Estate Wine' %}
-    <p class="gh-product-card__variety">{{ variety }}</p>
-    <h3 class="gh-product-card__title"><a href="{{ product.url | default: '#' }}">{{ product.title | default: 'Product title' }}</a></h3>
-
-    <div class="gh-product-card__row">
-      <span class="gh-product-card__price">{{ variant.price | money }}</span>
-      {% if compare_at_price > variant.price %}
-        <span class="gh-product-card__compare">{{ compare_at_price | money }}</span>
-      {% endif %}
+  <div class="gh-product-card__body gh-product-info">
+    <div class="gh-product-info-top">
+      <p class="gh-product-card__variety gh-product-variety">{{ product.vendor | default: 'Gods Hill Wines' }}</p>
+      <h3 class="gh-product-card__title gh-product-name"><a href="{{ product.url | default: '#' }}">{{ product.title | default: 'Product title' }}</a></h3>
     </div>
 
-    {% if product.available %}
-      {% form 'product', product, class: 'gh-product-card__form' %}
+    <div class="gh-product-info-bottom">
+      <div class="gh-product-card__row gh-product-price-row">
+        <span class="gh-product-card__price">{{ variant.price | money }}</span>
+        {% if compare_at_price > variant.price %}
+          <span class="gh-product-card__compare">{{ compare_at_price | money }}</span>
+        {% endif %}
+      </div>
+
+      {% form 'product', product, class: 'gh-card-form' %}
         <input type="hidden" name="id" value="{{ variant.id }}">
-        <div class="gh-product-card__actions">
-          <div class="gh-product-card__qty">
-            <button type="button" aria-label="Decrease quantity" onclick="var i=this.nextElementSibling;i.value=Math.max(1,Number(i.value)-1);">-</button>
-            <input type="number" name="quantity" value="1" min="1">
-            <button type="button" aria-label="Increase quantity" onclick="var i=this.previousElementSibling;i.value=Number(i.value)+1;">+</button>
+        <div class="gh-product-actions gh-product-card__actions">
+          <div class="gh-qty-stepper gh-product-card__qty">
+            <button type="button" class="gh-qty-btn gh-qty-minus" aria-label="Decrease quantity" {% unless product.available %}disabled{% endunless %}>-</button>
+            <input type="number" name="quantity" value="1" min="1" class="gh-qty-input" aria-label="Quantity" {% unless product.available %}disabled{% endunless %}>
+            <button type="button" class="gh-qty-btn gh-qty-plus" aria-label="Increase quantity" {% unless product.available %}disabled{% endunless %}>+</button>
           </div>
-          <button type="submit" class="gh-product-card__btn">{{ 'Add to cart' | default: 'Add to cart' }}</button>
+          <button
+            type="submit"
+            name="add"
+            class="gh-add-to-cart-btn gh-product-card__btn{% unless product.available %} gh-btn-disabled{% endunless %}"
+            {% unless product.available %}disabled aria-disabled="true"{% endunless %}
+            data-cart-trigger>
+            Add to cart
+          </button>
         </div>
       {% endform %}
-    {% else %}
-      <button type="button" class="gh-product-card__btn gh-product-card__btn--sold" disabled>Sold out</button>
-    {% endif %}
+    </div>
   </div>
 </article>
+
+<style>
+  .gh-product-card-{{ card_id }} {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .gh-product-card-{{ card_id }} .gh-product-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 18px 20px 20px;
+  }
+
+  .gh-product-card-{{ card_id }} .gh-product-info-top {
+    flex: 1;
+    margin-bottom: 12px;
+  }
+
+  .gh-product-card-{{ card_id }} .gh-product-variety {
+    margin: 0 0 6px;
+    font: 600 10px/1.2 'Inter', sans-serif;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #6B7668;
+  }
+
+  .gh-product-card-{{ card_id }} .gh-product-name {
+    margin: 0;
+    font: 400 19px/1.2 'EB Garamond', Georgia, serif;
+  }
+
+  .gh-product-card-{{ card_id }} .gh-product-name a {
+    color: #1C2B1A;
+    text-decoration: none;
+  }
+
+  .gh-product-card-{{ card_id }} .gh-product-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .gh-product-card-{{ card_id }} .gh-product-card__price {
+    font: 400 20px/1 'EB Garamond', Georgia, serif;
+    color: #1C2B1A;
+  }
+
+  .gh-product-card-{{ card_id }} .gh-product-card__compare {
+    color: #6B7668;
+    text-decoration: line-through;
+    font-size: 12px;
+  }
+
+  .gh-product-card-{{ card_id }} .gh-product-card__badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 2;
+    font: 600 9px/1 'Inter', sans-serif;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 2px;
+  }
+
+  .gh-product-card-{{ card_id }} .gh-product-card__badge--sold {
+    background: #1C2B1A;
+    color: #F5EFE3;
+  }
+
+  .gh-product-card-{{ card_id }} .gh-product-card__badge--sale {
+    background: #B8913A;
+    color: #FDF8F2;
+  }
+
+  .gh-product-card-{{ card_id }} .gh-product-card__badge--new {
+    background: #2D7A3A;
+    color: #FDF8F2;
+  }
+
+  .gh-product-card-{{ card_id }} .gh-product-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .gh-product-card-{{ card_id }} .gh-qty-stepper {
+    display: flex;
+    border: 0.5px solid rgba(28, 43, 26, 0.2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .gh-product-card-{{ card_id }} .gh-qty-btn {
+    width: 28px;
+    height: 36px;
+    border: none;
+    background: #fff;
+    color: #1C2B1A;
+    cursor: pointer;
+  }
+
+  .gh-product-card-{{ card_id }} .gh-qty-input {
+    width: 36px;
+    border: none;
+    text-align: center;
+    -moz-appearance: textfield;
+  }
+
+  .gh-product-card-{{ card_id }} .gh-qty-input::-webkit-outer-spin-button,
+  .gh-product-card-{{ card_id }} .gh-qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+
+  .gh-product-card-{{ card_id }} .gh-add-to-cart-btn {
+    flex: 1;
+    height: 36px;
+    border: 0.5px solid #B8913A;
+    background: transparent;
+    color: #B8913A;
+    font: 500 11px/1 'Inter', sans-serif;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .gh-product-card-{{ card_id }} .gh-btn-disabled {
+    color: #6B7668;
+    border-color: rgba(28, 43, 26, 0.2);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .gh-product-card-{{ card_id }} .gh-add-to-cart-btn {
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .gh-product-card-{{ card_id }} .gh-add-to-cart-btn:hover:not(:disabled) {
+      background: #B8913A;
+      color: #FDF8F2;
+    }
+  }
+</style>
+
+{%- render 'gh-cart-js' -%}

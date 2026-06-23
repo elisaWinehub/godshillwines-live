@@ -10,7 +10,7 @@
           {% if featured %}
             {{ featured | image_url: width: 1000 | image_tag: id: main_img_id, loading: 'eager' }}
           {% endif %}
-          <button type="button" class="gh-zoom-btn" aria-label="Zoom image">+</button>
+          <button type="button" class="gh-product-zoom-btn" aria-label="Zoom image">+</button>
         </div>
         {% if section.settings.show_thumbnails %}
           <div class="gh-product-thumbs">
@@ -62,23 +62,21 @@
         {% form 'product', product, id: 'gh-product-form' %}
           <input type="hidden" name="id" value="{{ variant.id }}">
           <div class="gh-qty-add-row">
-            <div class="gh-qty-control">
-              <button type="button" onclick="var i=this.nextElementSibling;i.value=Math.max(1,Number(i.value)-1)">-</button>
-              <input type="number" name="quantity" value="1" min="1">
-              <button type="button" onclick="var i=this.previousElementSibling;i.value=Number(i.value)+1">+</button>
+            <div class="gh-qty-control gh-qty-stepper">
+              <button type="button" class="gh-qty-btn gh-qty-minus" aria-label="Decrease quantity">-</button>
+              <input type="number" name="quantity" value="1" min="1" class="gh-qty-input" aria-label="Quantity">
+              <button type="button" class="gh-qty-btn gh-qty-plus" aria-label="Increase quantity">+</button>
             </div>
             <button
               type="submit"
               class="gh-add-cart-btn"
+              name="add"
+              data-cart-trigger
               {% unless variant.available %}
-                disabled
+                disabled aria-disabled="true"
               {% endunless %}
             >
-              {% if variant.available %}
-                Add to cart
-              {% else %}
-                Sold out
-              {% endif %}
+              Add to cart
             </button>
           </div>
         {% endform %}
@@ -86,30 +84,58 @@
         <div class="gh-accordion">
           {% for block in section.blocks %}
             {% if block.type == 'tab' %}
-              <details {{ block.shopify_attributes }}>
-                <summary>{{ block.settings.title | default: 'Tab' }}</summary>
-                <div class="gh-acc-content">{{ block.settings.content }}</div>
-              </details>
+              <div class="gh-accordion-item" {{ block.shopify_attributes }}>
+                <button
+                  class="gh-accordion-header"
+                  aria-expanded="false"
+                  aria-controls="gh-acc-{{ block.id }}"
+                  type="button"
+                  onclick="ghToggleAccordion(this)">
+                  <span class="gh-accordion-title">{{ block.settings.title | default: 'Tab' }}</span>
+                  <svg class="gh-accordion-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </svg>
+                </button>
+                <div class="gh-accordion-body" id="gh-acc-{{ block.id }}" hidden>
+                  {% if block.settings.content != blank %}
+                    {{ block.settings.content }}
+                  {% else %}
+                    <p class="gh-accordion-placeholder">No content added yet. Edit this section in the theme editor to add content.</p>
+                  {% endif %}
+                </div>
+              </div>
             {% endif %}
           {% endfor %}
 
           {% if section.settings.pdf_url != blank %}
-            <details>
-              <summary>Tasting Note PDF</summary>
-              <div class="gh-acc-content"><a href="{{ section.settings.pdf_url }}">Download PDF</a></div>
-            </details>
+            <div class="gh-accordion-item">
+              <button class="gh-accordion-header" aria-expanded="false" aria-controls="gh-acc-pdf-{{ section.id }}" type="button" onclick="ghToggleAccordion(this)">
+                <span class="gh-accordion-title">Tasting Note PDF</span>
+                <svg class="gh-accordion-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+              </button>
+              <div class="gh-accordion-body" id="gh-acc-pdf-{{ section.id }}" hidden>
+                <a href="{{ section.settings.pdf_url }}">Download PDF</a>
+              </div>
+            </div>
           {% endif %}
 
-          <details>
-            <summary>Reviews</summary>
-            <div class="gh-acc-content">
+          <div class="gh-accordion-item">
+            <button class="gh-accordion-header" aria-expanded="false" aria-controls="gh-acc-reviews-{{ section.id }}" type="button" onclick="ghToggleAccordion(this)">
+              <span class="gh-accordion-title">Reviews</span>
+              <svg class="gh-accordion-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </button>
+            <div class="gh-accordion-body" id="gh-acc-reviews-{{ section.id }}" hidden>
               {% if product.metafields.reviews.rating %}
                 <p>{{ product.metafields.reviews.rating }}</p>
               {% else %}
                 <p>No reviews available yet.</p>
               {% endif %}
             </div>
-          </details>
+          </div>
         </div>
       </div>
     </div>
@@ -147,7 +173,7 @@
     object-fit: contain;
   }
 
-  .gh-product-detail-{{ section.id }} .gh-zoom-btn {
+  .gh-product-detail-{{ section.id }} .gh-product-zoom-btn {
     position: absolute;
     top: 16px;
     right: 16px;
@@ -238,55 +264,203 @@
   }
 
   .gh-product-detail-{{ section.id }} .gh-qty-add-row {
-    display: grid;
-    grid-template-columns: 120px 1fr;
-    gap: 10px;
-    margin-bottom: 18px;
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    align-items: stretch;
+    margin-bottom: 24px;
   }
 
   .gh-product-detail-{{ section.id }} .gh-qty-control {
-    display: grid;
-    grid-template-columns: 36px 1fr 36px;
-    border: 0.5px solid var(--gh-border);
+    display: flex;
+    align-items: center;
+    border: 0.5px solid rgba(28, 43, 26, 0.25);
+    border-radius: 2px;
+    overflow: hidden;
+    flex-shrink: 0;
+    height: 46px;
   }
 
-  .gh-product-detail-{{ section.id }} .gh-qty-control button,
-  .gh-product-detail-{{ section.id }} .gh-qty-control input {
+  .gh-product-detail-{{ section.id }} .gh-qty-control button {
+    width: 36px;
+    height: 100%;
+    background: none;
     border: none;
-    background: #fff;
-    height: 42px;
+    font-size: 18px;
+    cursor: pointer;
+    color: #1C2B1A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-qty-control input[type='number'] {
+    width: 44px;
     text-align: center;
+    font-size: 14px;
+    border: none;
+    border-left: 0.5px solid rgba(28, 43, 26, 0.15);
+    border-right: 0.5px solid rgba(28, 43, 26, 0.15);
+    height: 100%;
+    outline: none;
+    font-family: 'Inter', sans-serif;
+    background: #fff;
+    color: #1C2B1A;
+    -moz-appearance: textfield;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-qty-control input::-webkit-outer-spin-button,
+  .gh-product-detail-{{ section.id }} .gh-qty-control input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
   }
 
   .gh-product-detail-{{ section.id }} .gh-add-cart-btn {
-    border: 1px solid var(--gh-gold);
-    background: var(--gh-gold);
-    color: #fff;
-    font-weight: 600;
-    height: 42px;
+    flex: 1;
+    height: 46px;
+    padding: 0 24px;
+    background: #B8913A;
+    color: #FDF8F2;
+    border: none;
+    border-radius: 2px;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
   }
 
   .gh-product-detail-{{ section.id }} .gh-add-cart-btn:disabled {
-    background: transparent;
+    background: rgba(28, 43, 26, 0.12);
     color: var(--gh-muted);
-    border-color: var(--gh-muted);
     cursor: not-allowed;
   }
 
-  .gh-product-detail-{{ section.id }} .gh-accordion details {
-    border-bottom: 0.5px solid var(--gh-border);
-    padding: 10px 0;
-  }
-
-  .gh-product-detail-{{ section.id }} .gh-accordion summary {
-    cursor: pointer;
-    font-weight: 500;
-  }
-
-  .gh-product-detail-{{ section.id }} .gh-acc-content {
-    color: var(--gh-muted);
+  .gh-product-detail-{{ section.id }} .gh-accordion {
+    border-top: 0.5px solid var(--gh-border);
     margin-top: 8px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-accordion-item {
+    border-bottom: 0.5px solid var(--gh-border);
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-accordion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 16px 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: #1C2B1A;
+    font-family: 'Inter', sans-serif;
+    gap: 12px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-accordion-title {
+    flex: 1;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-accordion-chevron {
+    flex-shrink: 0;
+    color: #6B7668;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-accordion-header[aria-expanded='true'] .gh-accordion-chevron {
+    transform: rotate(180deg);
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-accordion-body {
+    padding-bottom: 16px;
+    font-size: 13.5px;
+    color: #6B7668;
+    line-height: 1.7;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-accordion-body[hidden] {
+    display: none;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-accordion-placeholder {
+    font-style: italic;
+    color: rgba(107, 118, 104, 0.6);
+    font-size: 12px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.92);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-lightbox.gh-lightbox-open {
+    display: flex;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-lightbox-inner {
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-lightbox-img {
+    max-width: 90vw;
+    max-height: 85vh;
+    object-fit: contain;
+    border-radius: 3px;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-lightbox-close {
+    position: absolute;
+    top: -44px;
+    right: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .gh-product-detail-{{ section.id }} .gh-qty-control button {
+      transition: background 0.15s;
+    }
+
+    .gh-product-detail-{{ section.id }} .gh-qty-control button:hover {
+      background: #F5EFE3;
+    }
+
+    .gh-product-detail-{{ section.id }} .gh-add-cart-btn {
+      transition: background 0.2s;
+    }
+
+    .gh-product-detail-{{ section.id }} .gh-add-cart-btn:hover:not(:disabled) {
+      background: #9A7A30;
+    }
+
+    .gh-product-detail-{{ section.id }} .gh-accordion-chevron {
+      transition: transform 0.25s ease;
+    }
   }
 
   @media (max-width: 768px) {
@@ -299,10 +473,79 @@
     }
 
     .gh-product-detail-{{ section.id }} .gh-qty-add-row {
-      grid-template-columns: 1fr;
+      flex-direction: row;
+      gap: 10px;
     }
   }
 </style>
+
+<script>
+  function ghToggleAccordion(btn) {
+    var container = btn.closest('.gh-accordion');
+    if (!container) return;
+    var isOpen = btn.getAttribute('aria-expanded') === 'true';
+    var target = document.getElementById(btn.getAttribute('aria-controls'));
+
+    container.querySelectorAll('.gh-accordion-header').forEach(function (header) {
+      header.setAttribute('aria-expanded', 'false');
+      var body = document.getElementById(header.getAttribute('aria-controls'));
+      if (body) body.hidden = true;
+    });
+
+    if (!isOpen) {
+      btn.setAttribute('aria-expanded', 'true');
+      if (target) target.hidden = false;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var sectionRoot = document.querySelector('.gh-product-detail-{{ section.id }}');
+    if (!sectionRoot) return;
+
+    var zoomBtn = sectionRoot.querySelector('.gh-product-zoom-btn');
+    if (!zoomBtn) return;
+
+    var overlay = document.createElement('div');
+    overlay.className = 'gh-lightbox';
+    overlay.innerHTML =
+      '<div class="gh-lightbox-inner">' +
+      '<button class="gh-lightbox-close" aria-label="Close zoom">' +
+      '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2L18 18M18 2L2 18" stroke="white" stroke-width="2" stroke-linecap="round"></path></svg>' +
+      '</button>' +
+      '<img class="gh-lightbox-img" src="" alt="">' +
+      '</div>';
+
+    sectionRoot.appendChild(overlay);
+
+    var lightboxImg = overlay.querySelector('.gh-lightbox-img');
+    var closeBtn = overlay.querySelector('.gh-lightbox-close');
+
+    function openLightbox() {
+      var mainImg = document.getElementById('{{ main_img_id }}') || sectionRoot.querySelector('.gh-product-main-img img');
+      if (!mainImg || !lightboxImg) return;
+      lightboxImg.src = mainImg.src;
+      lightboxImg.alt = mainImg.alt || '';
+      overlay.classList.add('gh-lightbox-open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      overlay.classList.remove('gh-lightbox-open');
+      document.body.style.overflow = '';
+    }
+
+    zoomBtn.addEventListener('click', openLightbox);
+    if (closeBtn) closeBtn.addEventListener('click', closeLightbox);
+    overlay.addEventListener('click', function (event) {
+      if (event.target === overlay) closeLightbox();
+    });
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') closeLightbox();
+    });
+  });
+</script>
+
+{%- render 'gh-cart-js' -%}
 
 {% schema %}
 {

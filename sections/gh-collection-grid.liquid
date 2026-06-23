@@ -1,71 +1,111 @@
 {%- render 'gh-tokens' -%}
-
 <section class="gh-collection-grid-{{ section.id }}" style="--gh-columns: {{ section.settings.grid_columns }};">
   <div class="gh-collection-grid-shell">
-    <form method="get" action="{{ collection.url }}">
-      <div class="gh-active-tags">
-        {% if collection.filters %}
-          {% for filter in collection.filters %}
-            {% for value in filter.active_values %}
-              <a class="gh-filter-tag" href="{{ value.url_to_remove }}">{{ value.label }} x</a>
-            {% endfor %}
-          {% endfor %}
+    {% paginate collection.products by section.settings.products_per_page %}
+      <form id="gh-filter-form-{{ section.id }}" method="get" action="{{ collection.url }}">
+        {% if collection.sort_by != blank %}
+          <input type="hidden" name="sort_by" value="{{ collection.sort_by }}">
         {% endif %}
-      </div>
 
-      <div class="gh-layout">
-        {% if section.settings.show_filters %}
-          <aside class="gh-sidebar">
-            {% for filter in collection.filters %}
-              <details class="gh-filter-group" open>
-                <summary class="gh-filter-group-title">{{ filter.label }}</summary>
-                <div class="gh-filter-body">
-                  {% case filter.type %}
-                    {% when 'boolean', 'list' %}
-                      {% for value in filter.values %}
-                        <label class="gh-filter-option">
+        <div class="gh-layout">
+          {% if section.settings.show_filters %}
+            <aside class="gh-filter-sidebar">
+              <h2 class="gh-filter-title">Filters</h2>
+
+              {% assign active_count = 0 %}
+              {% for filter in collection.filters %}
+                {% for value in filter.active_values %}
+                  {% assign active_count = active_count | plus: 1 %}
+                  <a href="{{ value.url_to_remove }}" class="gh-filter-tag">
+                    {{ filter.label }}: {{ value.label }}
+                    <span class="gh-filter-tag-remove" aria-hidden="true">
+                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 1L9 9M9 1L1 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                      </svg>
+                    </span>
+                  </a>
+                {% endfor %}
+                {% if filter.type == 'price_range' %}
+                  {% if filter.min_value.value != nil or filter.max_value.value != nil %}
+                    {% assign active_count = active_count | plus: 1 %}
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+              {% if active_count > 0 %}
+                <a href="{{ collection.url }}" class="gh-filter-clear-all">Clear all</a>
+              {% endif %}
+
+              {% for filter in collection.filters %}
+                <details class="gh-filter-group" open>
+                  <summary class="gh-filter-group-title">
+                    {{ filter.label }}
+                    <svg class="gh-filter-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                  </summary>
+                  <div class="gh-filter-body">
+                    {% case filter.type %}
+                      {% when 'boolean', 'list' %}
+                        {% for value in filter.values %}
+                          <label class="gh-filter-option">
+                            <input
+                              type="checkbox"
+                              name="{{ value.param_name }}"
+                              value="{{ value.value }}"
+                              {% if value.active %}checked{% endif %}
+                              {% if value.count == 0 and value.active == false %}disabled{% endif %}
+                              onchange="document.getElementById('gh-filter-form-{{ section.id }}').submit()">
+                            <span class="gh-filter-checkbox-ui" aria-hidden="true"></span>
+                            <span class="gh-filter-label">{{ value.label }}</span>
+                            <span class="gh-filter-count">({{ value.count }})</span>
+                          </label>
+                        {% endfor %}
+                      {% when 'price_range' %}
+                        <div class="gh-price-range">
+                          <span class="gh-price-symbol">$</span>
                           <input
-                            type="checkbox"
-                            name="{{ value.param_name }}"
-                            value="{{ value.value }}"
-                            {% if value.active %}
-                              checked
-                            {% endif %}
-                            onchange="this.closest('form').submit()"
-                          >
-                          <span class="gh-filter-label">{{ value.label }}</span>
-                          <span class="gh-filter-count">{{ value.count }}</span>
-                        </label>
-                      {% endfor %}
-                    {% when 'price_range' %}
-                      <div class="gh-price-range">
-                        <span>$</span>
-                        <input
-                          class="gh-price-input"
-                          type="number"
-                          name="{{ filter.min_value.param_name }}"
-                          value="{{ filter.min_value.value | money_without_currency | remove: ',' }}"
-                          placeholder="0"
-                        >
-                        <span>to</span>
-                        <span>$</span>
-                        <input
-                          class="gh-price-input"
-                          type="number"
-                          name="{{ filter.max_value.param_name }}"
-                          value="{{ filter.max_value.value | money_without_currency | remove: ',' }}"
-                          placeholder="{{ collection.products.first.price_max | money_without_currency | remove: ',' }}"
-                        >
-                      </div>
-                  {% endcase %}
-                </div>
-              </details>
-            {% endfor %}
-          </aside>
-        {% endif %}
+                            type="number"
+                            name="{{ filter.min_value.param_name }}"
+                            value="{% if filter.min_value.value %}{{ filter.min_value.value | money_without_currency | remove: ',' }}{% endif %}"
+                            placeholder="0"
+                            class="gh-price-input"
+                            min="0"
+                            max="{{ filter.range_max | money_without_currency | remove: ',' }}">
+                          <span class="gh-price-sep">to</span>
+                          <span class="gh-price-symbol">$</span>
+                          <input
+                            type="number"
+                            name="{{ filter.max_value.param_name }}"
+                            value="{% if filter.max_value.value %}{{ filter.max_value.value | money_without_currency | remove: ',' }}{% endif %}"
+                            placeholder="{{ filter.range_max | money_without_currency | remove: ',' }}"
+                            class="gh-price-input"
+                            min="0"
+                            max="{{ filter.range_max | money_without_currency | remove: ',' }}">
+                          <button type="submit" class="gh-price-apply">Apply</button>
+                        </div>
+                        <p class="gh-price-hint">Highest price: {{ filter.range_max | money }}</p>
+                    {% endcase %}
+                  </div>
+                </details>
+              {% endfor %}
 
-        <div class="gh-products-panel">
-          {% paginate collection.products by section.settings.products_per_page %}
+              <button type="button" class="gh-filter-submit-btn" onclick="document.getElementById('gh-filter-form-{{ section.id }}').submit()">Apply filters</button>
+            </aside>
+          {% endif %}
+
+          <div class="gh-collection-products">
+            <div class="gh-collection-toolbar">
+              <p class="gh-products-count"><strong>{{ collection.products_count }}</strong> products</p>
+              <div class="gh-sort-row">
+                <label for="gh-sort-select-{{ section.id }}" class="gh-sort-label">Sort by</label>
+                <select id="gh-sort-select-{{ section.id }}" class="gh-sort-select" onchange="location='{{ collection.url }}?sort_by='+this.value+'{{ collection.filter_query }}'">
+                  {% for option in collection.sort_options %}
+                    <option value="{{ option.value }}" {% if collection.sort_by == option.value %}selected{% endif %}>{{ option.name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+
             <div class="gh-product-grid">
               {% for product in collection.products %}
                 {%- render 'gh-product-card', product: product -%}
@@ -75,14 +115,46 @@
             </div>
 
             {% if paginate.pages > 1 %}
-              <div class="gh-pagination">
-                {{ paginate | default_pagination | replace: '<span class="deco">&hellip;</span>', '...' }}
-              </div>
+              <nav class="gh-pagination" aria-label="Pagination">
+                {% if paginate.previous %}
+                  <a href="{{ paginate.previous.url }}" class="gh-page-btn gh-page-prev" aria-label="Previous page">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                  </a>
+                {% else %}
+                  <span class="gh-page-btn gh-page-prev gh-page-disabled" aria-disabled="true">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                  </span>
+                {% endif %}
+
+                {% for part in paginate.parts %}
+                  {% if part.is_link %}
+                    <a href="{{ part.url }}" class="gh-page-btn">{{ part.title }}</a>
+                  {% elsif part.title == paginate.current_page %}
+                    <span class="gh-page-btn gh-page-active" aria-current="page">{{ part.title }}</span>
+                  {% else %}
+                    <span class="gh-page-btn gh-page-ellipsis">{{ part.title }}</span>
+                  {% endif %}
+                {% endfor %}
+
+                {% if paginate.next %}
+                  <a href="{{ paginate.next.url }}" class="gh-page-btn gh-page-next" aria-label="Next page">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                  </a>
+                {% else %}
+                  <span class="gh-page-btn gh-page-next gh-page-disabled" aria-disabled="true">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                  </span>
+                {% endif %}
+              </nav>
             {% endif %}
-          {% endpaginate %}
+          </div>
         </div>
-      </div>
-    </form>
+      </form>
+    {% endpaginate %}
   </div>
 </section>
 
@@ -103,203 +175,274 @@
     gap: 48px;
   }
 
-  .gh-collection-grid-{{ section.id }} .gh-active-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 16px;
+  .gh-collection-grid-{{ section.id }} .gh-filter-sidebar {
+    padding-right: 4px;
   }
 
-  .gh-collection-grid-{{ section.id }} .gh-filter-tag {
-    border: 0.5px solid var(--gh-border);
-    color: var(--gh-vine);
-    font: 500 11px/1.3 'Inter', sans-serif;
-    text-decoration: none;
-    padding: 6px 10px;
-    border-radius: 20px;
-    background: #fff;
+  .gh-collection-grid-{{ section.id }} .gh-filter-title {
+    margin: 0 0 16px;
+    font: 500 10px/1.3 'Inter', sans-serif;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gh-muted);
   }
 
   .gh-collection-grid-{{ section.id }} .gh-filter-group {
     border-bottom: 0.5px solid var(--gh-border);
-    padding: 10px 0;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
   }
 
   .gh-collection-grid-{{ section.id }} .gh-filter-group-title {
-    font: 600 12px/1.4 'Inter', sans-serif;
-    color: var(--gh-vine);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     cursor: pointer;
+    list-style: none;
+    font: 500 10px/1.3 'Inter', sans-serif;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gh-muted);
+    padding: 0 0 12px;
+  }
+
+  .gh-collection-grid-{{ section.id }} .gh-filter-group summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .gh-collection-grid-{{ section.id }} .gh-filter-group[open] .gh-filter-chevron {
+    transform: rotate(180deg);
+  }
+
+  .gh-collection-grid-{{ section.id }} .gh-filter-chevron {
+    flex-shrink: 0;
   }
 
   .gh-collection-grid-{{ section.id }} .gh-filter-option {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    gap: 8px;
+    display: flex;
     align-items: center;
-    font: 400 12px/1.4 'Inter', sans-serif;
+    gap: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #1C2B1A;
+  }
+
+  .gh-collection-grid-{{ section.id }} .gh-filter-option input[type='checkbox'] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .gh-collection-grid-{{ section.id }} .gh-filter-checkbox-ui {
+    width: 14px;
+    height: 14px;
+    border: 0.5px solid rgba(28, 43, 26, 0.3);
+    border-radius: 2px;
+    flex-shrink: 0;
+    background: #fff;
+  }
+
+  .gh-collection-grid-{{ section.id }} .gh-filter-option input:checked ~ .gh-filter-checkbox-ui {
+    background: #1C2B1A;
+    border-color: #1C2B1A;
+  }
+
+  .gh-collection-grid-{{ section.id }} .gh-filter-option input:disabled ~ .gh-filter-checkbox-ui {
+    opacity: 0.35;
+  }
+
+  .gh-collection-grid-{{ section.id }} .gh-filter-option input:disabled ~ .gh-filter-label {
+    opacity: 0.4;
+  }
+
+  .gh-collection-grid-{{ section.id }} .gh-filter-count {
+    margin-left: auto;
+    font-size: 11px;
     color: var(--gh-muted);
-    margin: 8px 0;
   }
 
   .gh-collection-grid-{{ section.id }} .gh-price-range {
-    display: grid;
-    grid-template-columns: auto 1fr auto auto 1fr;
-    gap: 6px;
+    display: flex;
     align-items: center;
+    gap: 6px;
     margin-top: 8px;
+    flex-wrap: wrap;
   }
 
   .gh-collection-grid-{{ section.id }} .gh-price-input {
+    width: 72px;
+    padding: 6px 8px;
     border: 0.5px solid var(--gh-border);
-    padding: 7px 8px;
     border-radius: 2px;
+    font-size: 12px;
+    background: #fff;
+    color: #1C2B1A;
+  }
+
+  .gh-collection-grid-{{ section.id }} .gh-price-apply {
+    padding: 6px 12px;
+    background: #1C2B1A;
+    color: #F5EFE3;
+    border: none;
+    border-radius: 2px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .gh-collection-grid-{{ section.id }} .gh-price-hint {
+    font-size: 11px;
+    color: #6B7668;
+    margin-top: 8px;
+  }
+
+  .gh-collection-grid-{{ section.id }} .gh-filter-submit-btn {
+    width: 100%;
+    margin-top: 16px;
+    padding: 10px 12px;
+    border: 0.5px solid #1C2B1A;
+    border-radius: 2px;
+    background: transparent;
+    color: #1C2B1A;
+    font: 500 10px/1 'Inter', sans-serif;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .gh-collection-grid-{{ section.id }} .gh-filter-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: #F5EFE3;
+    border: 0.5px solid var(--gh-border);
+    border-radius: 20px;
+    font-size: 11px;
+    color: #1C2B1A;
+    margin: 0 6px 6px 0;
+    text-decoration: none;
+  }
+
+  .gh-collection-grid-{{ section.id }} .gh-filter-clear-all {
+    display: block;
+    font-size: 11px;
+    color: #B8913A;
+    letter-spacing: 0.08em;
+    margin-bottom: 16px;
+    text-decoration: underline;
+  }
+
+  .gh-collection-grid-{{ section.id }} .gh-collection-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 0.5px solid var(--gh-border);
+  }
+
+  .gh-collection-grid-{{ section.id }} .gh-products-count {
+    font-size: 12px;
+    color: #6B7668;
+    margin: 0;
+  }
+
+  .gh-collection-grid-{{ section.id }} .gh-sort-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: #6B7668;
+  }
+
+  .gh-collection-grid-{{ section.id }} .gh-sort-select {
+    padding: 7px 12px;
+    border: 0.5px solid var(--gh-border);
+    border-radius: 2px;
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    background: #fff;
+    color: #1C2B1A;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .gh-collection-grid-{{ section.id }} .gh-sort-select:focus {
+    border-color: #B8913A;
   }
 
   .gh-collection-grid-{{ section.id }} .gh-product-grid {
     display: grid;
     grid-template-columns: repeat(var(--gh-columns), minmax(0, 1fr));
     gap: 24px;
-  }
-
-  .gh-collection-grid-{{ section.id }} .gh-product-card {
-    background: #fff;
-    border: 0.5px solid var(--gh-border);
-    border-radius: 4px;
-    overflow: hidden;
-  }
-
-  .gh-collection-grid-{{ section.id }} .gh-product-card__image-wrap {
-    position: relative;
-    display: block;
-    height: 280px;
-    background: var(--gh-cream);
-    overflow: hidden;
-  }
-
-  .gh-collection-grid-{{ section.id }} .gh-product-card__image {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    padding: 24px;
-  }
-
-  .gh-collection-grid-{{ section.id }} .gh-product-card__badge {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    z-index: 2;
-    font: 700 9px/1 'Inter', sans-serif;
-    letter-spacing: 0.08em;
-    padding: 6px 8px;
-    color: #fff;
-    text-transform: uppercase;
-    border-radius: 2px;
-  }
-
-  .gh-collection-grid-{{ section.id }} .gh-product-card__badge--sold {
-    background: var(--gh-vine);
-  }
-
-  .gh-collection-grid-{{ section.id }} .gh-product-card__badge--sale {
-    background: var(--gh-gold);
-  }
-
-  .gh-collection-grid-{{ section.id }} .gh-product-card__body {
-    padding: 18px;
-  }
-
-  .gh-collection-grid-{{ section.id }} .gh-product-card__variety {
-    margin: 0 0 6px;
-    font: 600 10px/1.2 'Inter', sans-serif;
-    color: var(--gh-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-  }
-
-  .gh-collection-grid-{{ section.id }} .gh-product-card__title {
-    margin: 0 0 10px;
-    font: 400 19px/1.2 'EB Garamond', Georgia, serif;
-  }
-
-  .gh-collection-grid-{{ section.id }} .gh-product-card__title a {
-    color: var(--gh-vine);
-    text-decoration: none;
-  }
-
-  .gh-collection-grid-{{ section.id }} .gh-product-card__row {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-
-  .gh-collection-grid-{{ section.id }} .gh-product-card__price {
-    font: 400 20px/1 'EB Garamond', Georgia, serif;
-    color: var(--gh-vine);
-  }
-
-  .gh-collection-grid-{{ section.id }} .gh-product-card__compare {
-    color: var(--gh-muted);
-    text-decoration: line-through;
-    font-size: 12px;
-  }
-
-  .gh-collection-grid-{{ section.id }} .gh-product-card__actions {
-    display: flex;
-    gap: 8px;
-  }
-
-  .gh-collection-grid-{{ section.id }} .gh-product-card__qty {
-    display: flex;
-    border: 0.5px solid var(--gh-border);
-  }
-
-  .gh-collection-grid-{{ section.id }} .gh-product-card__qty button,
-  .gh-collection-grid-{{ section.id }} .gh-product-card__qty input {
-    width: 30px;
-    height: 34px;
-    border: none;
-    background: #fff;
-    text-align: center;
-  }
-
-  .gh-collection-grid-{{ section.id }} .gh-product-card__btn {
-    flex: 1;
-    border: 1px solid var(--gh-gold);
-    color: var(--gh-gold);
-    background: transparent;
-    font: 600 12px/1 'Inter', sans-serif;
-    cursor: pointer;
-    padding: 9px 12px;
-  }
-
-  .gh-collection-grid-{{ section.id }} .gh-product-card__btn--sold {
-    border-color: var(--gh-muted);
-    color: var(--gh-muted);
-    cursor: not-allowed;
+    align-items: stretch;
   }
 
   .gh-collection-grid-{{ section.id }} .gh-pagination {
-    margin-top: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 52px;
+    padding-top: 32px;
+    border-top: 0.5px solid var(--gh-border);
+  }
+
+  .gh-collection-grid-{{ section.id }} .gh-page-btn {
+    width: 36px;
+    height: 36px;
+    border: 0.5px solid var(--gh-border);
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #1C2B1A;
+    background: #fff;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .gh-collection-grid-{{ section.id }} .gh-page-active {
+    background: #1C2B1A;
+    color: #F5EFE3;
+    border-color: #1C2B1A;
+    cursor: default;
+  }
+
+  .gh-collection-grid-{{ section.id }} .gh-page-disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .gh-collection-grid-{{ section.id }} .gh-page-ellipsis {
+    border-color: transparent;
+    background: transparent;
+    cursor: default;
+  }
+
+  .gh-collection-grid-{{ section.id }} .gh-page-prev,
+  .gh-collection-grid-{{ section.id }} .gh-page-next {
+    color: #6B7668;
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .gh-collection-grid-{{ section.id }} .gh-product-card {
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    .gh-collection-grid-{{ section.id }} .gh-filter-chevron {
+      transition: transform 0.2s;
     }
 
-    .gh-collection-grid-{{ section.id }} .gh-product-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 40px rgba(28, 43, 26, 0.1);
+    .gh-collection-grid-{{ section.id }} .gh-page-btn {
+      transition: all 0.2s;
     }
 
-    .gh-collection-grid-{{ section.id }} .gh-product-card__btn {
-      transition: background-color 0.2s ease, color 0.2s ease;
-    }
-
-    .gh-collection-grid-{{ section.id }} .gh-product-card__btn:hover:not(:disabled) {
-      background: var(--gh-gold);
-      color: #fff;
+    .gh-collection-grid-{{ section.id }} .gh-page-btn:hover:not(.gh-page-active):not(.gh-page-disabled) {
+      border-color: #1C2B1A;
+      background: #F5EFE3;
     }
   }
 
@@ -313,12 +456,18 @@
       gap: 20px;
     }
 
-    .gh-collection-grid-{{ section.id }} .gh-sidebar {
+    .gh-collection-grid-{{ section.id }} .gh-filter-sidebar {
       overflow-x: auto;
       white-space: nowrap;
       display: flex;
+      align-items: flex-start;
       gap: 10px;
       padding-bottom: 10px;
+    }
+
+    .gh-collection-grid-{{ section.id }} .gh-filter-title,
+    .gh-collection-grid-{{ section.id }} .gh-filter-clear-all {
+      display: none;
     }
 
     .gh-collection-grid-{{ section.id }} .gh-filter-group {
@@ -327,6 +476,12 @@
       border-radius: 4px;
       padding: 8px;
       background: #fff;
+    }
+
+    .gh-collection-grid-{{ section.id }} .gh-collection-toolbar {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
     }
 
     .gh-collection-grid-{{ section.id }} .gh-product-grid {
