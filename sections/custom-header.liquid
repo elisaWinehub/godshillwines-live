@@ -30,6 +30,7 @@
       --hdr-icon-overlay: {{ section.settings.overlay_icon_color }};
       --gh-nav-active: {{ section.settings.nav_color }};
       --gh-nav-overlay: {{ section.settings.overlay_nav_color }};
+      --gh-header-bg-scrolled: {{ section.settings.scrolled_bg_color | default: '#1c2b1af7' }};
       --nav-fw: {{ section.settings.nav_font_weight }};
       --nav-size: {{ section.settings.nav_font_size }}px;
       --bp: {{ section.settings.mobile_breakpoint }}px;
@@ -39,25 +40,29 @@
     role="banner"
   >
     <div class="gh-hdr-bar">
-      {% if section.settings.logo_fallback_image != blank %}
+      {%- assign gh_default_logo = section.settings.logo_fallback_image | default: settings.logo -%}
+      {%- assign gh_scrolled_logo = section.settings.logo_scrolled_image | default: gh_default_logo -%}
+      {% if gh_default_logo != blank %}
         <a href="{{ routes.root_url }}" class="gh-hdr-logo" aria-label="{{ shop.name }}">
           {{
-            section.settings.logo_fallback_image
+            gh_default_logo
             | image_url: width: section.settings.logo_image_width_px
             | image_tag:
               loading: 'eager',
               fetchpriority: 'high',
-              class: 'gh-hdr-logo-img',
+              class: 'gh-hdr-logo-img gh-hdr-logo-img--default',
               widths: '120,180,240,320',
               alt: shop.name
           }}
-        </a>
-      {% elsif settings.logo %}
-        <a href="{{ routes.root_url }}" class="gh-hdr-logo">
           {{
-            settings.logo
+            gh_scrolled_logo
             | image_url: width: section.settings.logo_image_width_px
-            | image_tag: loading: 'eager', fetchpriority: 'high', class: 'gh-hdr-logo-img', widths: '120,180,240,320', alt: shop.name
+            | image_tag:
+              loading: 'eager',
+              fetchpriority: 'high',
+              class: 'gh-hdr-logo-img gh-hdr-logo-img--scrolled',
+              widths: '120,180,240,320',
+              alt: shop.name
           }}
         </a>
       {% else %}
@@ -194,7 +199,7 @@
   }
   div[data-gh-custom-header="{{ section.id }}"][data-gh-overlay='true'][data-scrolled='true'],
   div[data-gh-custom-header="{{ section.id }}"]:not([data-gh-overlay='true']) {
-    background: {{ section.settings.header_bg_color | default: '#ffffff' }};
+    background: var(--gh-header-bg-scrolled);
     box-shadow: 0 {{ section.settings.border_width_below }}px 16px rgb(0 0 0 / {{ section.settings.shadow_strength | divided_by: 100.0 }});
   }
   div[data-gh-custom-header="{{ section.id }}"][data-gh-overlay='true']:not([data-scrolled='true']) {
@@ -257,6 +262,22 @@
     max-height: calc(max(var(--hdr-h-desktop), 100px) - 18px);
     height: auto;
     object-fit: contain;
+    display: block;
+  }
+  #GhHdr-{{ section.id }} .gh-hdr-logo {
+    display: inline-flex;
+    align-items: center;
+    padding-bottom: 6px;
+  }
+  #GhHdr-{{ section.id }} .gh-hdr-logo-img--scrolled {
+    display: none;
+  }
+  div[data-gh-custom-header="{{ section.id }}"][data-gh-overlay='true'][data-scrolled='true'] #GhHdr-{{ section.id }} .gh-hdr-logo-img--default,
+  div[data-gh-custom-header="{{ section.id }}"]:not([data-gh-overlay='true']) #GhHdr-{{ section.id }} .gh-hdr-logo-img--default {
+    display: none;
+  }
+  div[data-gh-custom-header="{{ section.id }}"][data-gh-overlay='true'][data-scrolled='true'] #GhHdr-{{ section.id }} .gh-hdr-logo-img--scrolled,
+  div[data-gh-custom-header="{{ section.id }}"]:not([data-gh-overlay='true']) #GhHdr-{{ section.id }} .gh-hdr-logo-img--scrolled {
     display: block;
   }
   #GhHdr-{{ section.id }} .gh-hdr-wordmark {
@@ -461,6 +482,9 @@
     }
     #GhHdr-{{ section.id }} .gh-hdr-logo img {
       max-height: calc(var(--hdr-h-mobile) - 12px);
+    }
+    #GhHdr-{{ section.id }} .gh-hdr-logo {
+      padding-bottom: 3px;
     }
     #GhHdr-{{ section.id }} .gh-hdr-ul {
       display: none !important;
@@ -679,6 +703,7 @@
       "content": "`logo_fallback_image` overrides the global theme logo for this header section."
     },
     { "type": "image_picker", "id": "logo_fallback_image", "label": "Override logo picker" },
+    { "type": "image_picker", "id": "logo_scrolled_image", "label": "Scrolled header logo" },
 
     {
       "type": "textarea",
@@ -880,6 +905,12 @@
       "id": "header_bg_color",
       "label": "Header surface",
       "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "scrolled_bg_color",
+      "label": "Scrolled/sticky header background",
+      "default": "#1c2b1af7"
     },
     {
       "type": "range",
