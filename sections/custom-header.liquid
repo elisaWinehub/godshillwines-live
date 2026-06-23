@@ -18,7 +18,7 @@
   data-gh-custom-header="{{ section.id }}"
   {% if gh_overlay %}data-gh-overlay="true"{% endif %}
   {% if gh_overlay %}data-scrolled="false"{% endif %}
-  class="gh-ch-wrap {{ section.settings.custom_css }} {% if section.settings.sticky and gh_overlay == false %}gh-ch-wrap--sticky{% endif %}"
+  class="gh-ch-wrap {{ section.settings.custom_css }} {% if section.settings.sticky %}gh-ch-wrap--sticky{% endif %}"
   {{ section.shopify_attributes }}
 >
   <div
@@ -269,8 +269,11 @@
     align-items: center;
     padding-bottom: 6px;
   }
-  #GhHdr-{{ section.id }} .gh-hdr-logo-img--scrolled {
+  #GhHdr-{{ section.id }} .gh-hdr-logo .gh-hdr-logo-img--scrolled {
     display: none;
+  }
+  #GhHdr-{{ section.id }} .gh-hdr-logo .gh-hdr-logo-img--default {
+    display: block;
   }
   div[data-gh-custom-header="{{ section.id }}"][data-gh-overlay='true'][data-scrolled='true'] #GhHdr-{{ section.id }} .gh-hdr-logo-img--default,
   div[data-gh-custom-header="{{ section.id }}"]:not([data-gh-overlay='true']) #GhHdr-{{ section.id }} .gh-hdr-logo-img--default {
