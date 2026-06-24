@@ -12,25 +12,94 @@
     "gh_hero": {
       "type": "gh-page-hero-block",
       "settings": {
+        "hero_image": "shopify://shop_images/photo-1414235077428-338989a2e8c0.jpg",
         "hero_eyebrow": "God's Hill Wines",
         "hero_title": "<p><em>Restaurant</em></p>",
         "hero_subheading": "Authentic Italian food, fine wine, and a view that stays with you forever.",
-        "hero_height": 380
+        "hero_height": 380,
+        "overlay_opacity": 55,
+        "content_alignment": "left"
       }
     },
-    "gh_restaurant_booking": { "type": "gh-restaurant-booking", "settings": {} },
-    "gh_restaurant_story": { "type": "gh-restaurant-story", "settings": {} },
+    "gh_restaurant_booking": {
+      "type": "gh-restaurant-booking",
+      "settings": {
+        "resdiary_embed": "",
+        "booking_title": "Make a booking",
+        "eyebrow": "Restaurant",
+        "heading": "<p>A Family Tradition of Flavour</p>",
+        "body_1": "Come join us where good food, natural fine wines, and friends come together. Our food is a true reflection of the Italian tradition of hosting guests with food and wine, passed down from generation to generation.",
+        "body_2": "Ennia the wife of Winemaker Charlie is passionate and an excellent cook and very creative and has always accompanied the family's wines. Ennia learned the art of cooking from her Venetian mum Lidia, passing down ancient recipes from generation to generation.",
+        "btn_primary_label": "Book a table",
+        "btn_primary_url": "",
+        "btn_secondary_label": "View menu",
+        "btn_secondary_url": "",
+        "bg_color": "#fdf8f2",
+        "accent_color": "#b8913a"
+      }
+    },
+    "gh_restaurant_story": {
+      "type": "gh-restaurant-story",
+      "settings": {
+        "eyebrow": "Our food",
+        "heading": "<p>Ennia Cucina: A Story of Passion</p>",
+        "body_1": "Ennia Cucina is more than just a restaurant — it's a tribute to the Scalzi family's deep-rooted culinary heritage. At the heart of its story is the family matriarch, whose kitchen was a place of learning and love.",
+        "body_2": "From her son Edward, grew up watching her transform simple ingredients into some of the most flavourful dishes he had ever tasted.",
+        "body_3": "Today, Ennia Cucina continues this legacy — honouring tradition, celebrating flavour, and creating memorable experiences for every guest.",
+        "bg_color": "#fdf8f2"
+      }
+    },
     "gh_pillars_restaurant": {
       "type": "gh-pillars",
       "blocks": {
-        "rp1": { "type": "pillar", "settings": { "title": "Perfect Pairings", "body": "Menu crafted to pair beautifully with our estate wines, creating an unforgettable dining experience." } },
-        "rp2": { "type": "pillar", "settings": { "title": "Local Ingredients", "body": "Sourced locally and seasonally for exceptional flavour and the freshest taste." } },
-        "rp3": { "type": "pillar", "settings": { "title": "Traditional Recipes", "body": "Authentic Italian recipes passed down through generations." } },
-        "rp4": { "type": "pillar", "settings": { "title": "Warm Hospitality", "body": "Enjoy genuine hospitality in a beautiful vineyard setting." } }
+        "rp1": {
+          "type": "pillar",
+          "settings": {
+            "title": "Perfect Pairings",
+            "body": "Menu crafted to pair beautifully with our estate wines, creating an unforgettable dining experience."
+          }
+        },
+        "rp2": {
+          "type": "pillar",
+          "settings": {
+            "title": "Local Ingredients",
+            "body": "Sourced locally and seasonally for exceptional flavour and the freshest taste."
+          }
+        },
+        "rp3": {
+          "type": "pillar",
+          "settings": {
+            "title": "Traditional Recipes",
+            "body": "Authentic Italian recipes passed down through generations."
+          }
+        },
+        "rp4": {
+          "type": "pillar",
+          "settings": {
+            "title": "Warm Hospitality",
+            "body": "Enjoy genuine hospitality in a beautiful vineyard setting."
+          }
+        }
       },
-      "block_order": ["rp1", "rp2", "rp3", "rp4"],
-      "settings": { "dark_mode": true }
+      "block_order": [
+        "rp1",
+        "rp2",
+        "rp3",
+        "rp4"
+      ],
+      "settings": {
+        "bg_color": "#f5efe3",
+        "text_color": "#1c2b1a",
+        "cell_bg": "#f5efe3",
+        "title_color": "#1c2b1a",
+        "dark_mode": true
+      }
     }
   },
-  "order": ["gh_hero", "gh_restaurant_booking", "gh_restaurant_story", "gh_pillars_restaurant"]
+  "order": [
+    "gh_hero",
+    "gh_restaurant_booking",
+    "gh_restaurant_story",
+    "gh_pillars_restaurant"
+  ]
 }
