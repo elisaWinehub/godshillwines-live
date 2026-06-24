@@ -1,288 +1,305 @@
-<div class="gh-age-gate" id="gh-age-gate" style="display:none;">
-  <div class="gh-age-overlay">
-    <div class="gh-age-modal" id="gh-age-main">
-      <div class="gh-age-modal-header">
-        <div class="gh-age-logo-ring">
-          {% if settings.logo != blank %}
-            {{
-              settings.logo
-              | image_url: width: 120
-              | image_tag: loading: 'eager', alt: shop.name, class: 'gh-age-logo-img'
-            }}
-          {% else %}
-            <svg width="28" height="28" fill="none" stroke="#B8913A" stroke-width="1.2" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M8 22h8M12 11v11M5 2l2 9a5 5 0 0 0 10 0l2-9z"/>
-            </svg>
-          {% endif %}
+{% if settings.age_gate_enabled %}
+  {%- assign accent = settings.age_gate_accent_color | default: '#B8913A' -%}
+  {%- assign overlay_hex = settings.age_gate_overlay_color | default: '#141E13' -%}
+  {%- assign overlay_opacity = settings.age_gate_overlay_opacity | default: 92 | divided_by: 100.0 -%}
+  {%- assign heading_raw = settings.age_gate_heading | default: 'Are you 18 or over?' -%}
+  {%- assign heading_parts = heading_raw | split: '*' -%}
+  {%- assign heading_html = '' -%}
+  {%- for part in heading_parts -%}
+    {%- assign index_mod = forloop.index0 | modulo: 2 -%}
+    {%- if index_mod == 1 -%}
+      {%- assign heading_html = heading_html | append: '<em>' | append: part | append: '</em>' -%}
+    {%- else -%}
+      {%- assign heading_html = heading_html | append: part -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- assign legal_text = settings.age_gate_legal | default: "By entering you confirm you are of legal drinking age in your country and agree to our privacy policy and terms of use." -%}
+  {%- assign privacy_url = settings.age_gate_privacy_url | default: '/policies/privacy-policy' -%}
+  {%- assign terms_url = settings.age_gate_terms_url | default: '/policies/terms-of-service' -%}
+  {%- capture privacy_link -%}<a href="{{ privacy_url }}" style="color: {{ accent }}; border-bottom: 0.5px solid {{ accent }}40;">privacy policy</a>{%- endcapture -%}
+  {%- capture terms_link -%}<a href="{{ terms_url }}" style="color: {{ accent }}; border-bottom: 0.5px solid {{ accent }}40;">terms of use</a>{%- endcapture -%}
+  {%- assign legal_with_links = legal_text | replace: 'privacy policy', privacy_link | replace: 'terms of use', terms_link -%}
+
+  <style>
+    .gh-age-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+    }
+    .gh-age-overlay {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .gh-age-modal {
+      border-radius: 8px;
+      overflow: hidden;
+      width: 100%;
+      max-width: 500px;
+      border: 0.5px solid rgba(28,43,26,0.12);
+    }
+    .gh-age-modal-header {
+      padding: 32px 36px 28px;
+      text-align: center;
+      position: relative;
+    }
+    .gh-age-logo-ring {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(184,145,58,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      background: rgba(184,145,58,0.08);
+      overflow: hidden;
+    }
+    .gh-age-logo-img {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+    }
+    .gh-age-modal-header h1 {
+      font-family: var(--font-serif, 'EB Garamond', Georgia, serif);
+      font-size: 22px;
+      font-weight: 400;
+      color: #F5EFE3;
+      margin: 0 0 4px;
+      letter-spacing: 0.02em;
+    }
+    .gh-age-modal-header p {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(212,188,138,0.7);
+      margin: 0;
+    }
+    .gh-age-divider {
+      width: 36px;
+      height: 1px;
+      margin: 14px auto 0;
+    }
+    .gh-age-modal-body {
+      padding: 32px 36px 28px;
+      text-align: center;
+    }
+    .gh-age-modal-body h2 {
+      font-family: var(--font-serif, 'EB Garamond', Georgia, serif);
+      font-size: 20px;
+      font-weight: 400;
+      color: #1C2B1A;
+      margin: 0 0 10px;
+      letter-spacing: -0.01em;
+    }
+    .gh-age-modal-body h2 em {
+      font-style: italic;
+      color: var(--gh-age-accent, #B8913A);
+    }
+    .gh-age-modal-body p {
+      font-size: 14px;
+      color: #6B7668;
+      line-height: 1.7;
+      margin: 0 0 28px;
+    }
+    .gh-age-btn-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .gh-age-btn-yes, .gh-age-btn-no {
+      flex: 1;
+      padding: 13px 16px;
+      border-radius: 2px;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    .gh-age-btn-yes {
+      color: #FDF8F2;
+      border: none;
+    }
+    .gh-age-btn-no {
+      background: transparent;
+      color: #1C2B1A;
+      border: 0.5px solid rgba(28,43,26,0.25);
+    }
+    .gh-age-btn-no:hover { border-color: #1C2B1A; background: rgba(28,43,26,0.04); }
+    .gh-age-legal {
+      font-size: 11px;
+      color: rgba(107,118,104,0.65);
+      line-height: 1.55;
+      margin: 0;
+    }
+    .gh-age-modal-footer {
+      background: rgba(28,43,26,0.03);
+      border-top: 0.5px solid rgba(28,43,26,0.08);
+      padding: 14px 36px;
+      text-align: center;
+    }
+    .gh-age-modal-footer p {
+      font-size: 11px;
+      color: rgba(107,118,104,0.6);
+      margin: 0;
+      line-height: 1.5;
+    }
+    .gh-age-modal-footer strong {
+      color: #6B7668;
+      font-weight: 500;
+    }
+    .gh-age-declined, .gh-age-success-state {
+      display: none;
+      text-align: center;
+      padding: 40px 36px;
+      max-width: 500px;
+    }
+    .gh-age-declined h2, .gh-age-success-state h2 {
+      font-family: var(--font-serif, 'EB Garamond', Georgia, serif);
+      font-size: 20px;
+      font-weight: 400;
+      color: #F5EFE3;
+      margin: 0 0 12px;
+    }
+    .gh-age-declined p, .gh-age-success-state p {
+      font-size: 14px;
+      color: rgba(245,239,227,0.55);
+      line-height: 1.7;
+      margin: 0 auto;
+      max-width: 340px;
+    }
+    .gh-age-declined-icon, .gh-age-success-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(184,145,58,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .gh-age-success-icon {
+      background: rgba(184,145,58,0.15);
+      border-color: rgba(184,145,58,0.4);
+      margin-bottom: 18px;
+    }
+    @media (max-width: 640px) {
+      .gh-age-btn-group {
+        flex-direction: column;
+      }
+    }
+  </style>
+
+  <div class="gh-age-gate" id="gh-age-gate" style="display:none; --gh-age-accent: {{ accent }};">
+    <div class="gh-age-overlay" style="background: {{ overlay_hex }}; opacity: {{ overlay_opacity }};">
+      <div class="gh-age-modal" id="gh-age-main">
+        <div class="gh-age-modal-header" style="background: {{ settings.age_gate_header_bg | default: '#1C2B1A' }};">
+          <div class="gh-age-logo-ring">
+            {% if settings.logo != blank %}
+              {{
+                settings.logo
+                | image_url: width: 120
+                | image_tag: loading: 'eager', alt: shop.name, class: 'gh-age-logo-img'
+              }}
+            {% else %}
+              <svg width="28" height="28" fill="none" stroke="{{ accent }}" stroke-width="1.2" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M8 22h8M12 11v11M5 2l2 9a5 5 0 0 0 10 0l2-9z"/>
+              </svg>
+            {% endif %}
+          </div>
+          <h1>{{ settings.age_gate_store_name | default: "God's Hill Wines" }}</h1>
+          <p>{{ settings.age_gate_store_subline | default: 'Barossa Valley · Australia' }}</p>
+          <div class="gh-age-divider" style="background: {{ accent }};"></div>
         </div>
-        <p>Barossa Valley · Australia</p>
-        <div class="gh-age-divider"></div>
-      </div>
 
-      <div class="gh-age-modal-body">
-        <h2>{{ settings.age_gate_heading | default: 'Are you 18 or over?' }}</h2>
-        <p>{{ settings.age_gate_body | default: 'This website contains information about alcoholic beverages. You must be of legal drinking age in your country to enter.' }}</p>
+        <div class="gh-age-modal-body" style="background: {{ settings.age_gate_body_bg | default: '#FDF8F2' }};">
+          <h2>{{ heading_html }}</h2>
+          <p>{{ settings.age_gate_body | default: 'This website contains information about alcoholic beverages.' | escape }}</p>
 
-        <div class="gh-age-btn-group">
-          <button class="gh-age-btn-yes" type="button" onclick="ghAgeYes()">
-            {{ settings.age_gate_yes | default: "Yes, I'm 18 or over" }}
-          </button>
-          <button class="gh-age-btn-no" type="button" onclick="ghAgeNo()">
-            {{ settings.age_gate_no | default: "No, I'm under 18" }}
-          </button>
+          <div class="gh-age-btn-group">
+            <button class="gh-age-btn-yes" type="button" style="background: {{ settings.age_gate_yes_color | default: '#B8913A' }};" onclick="ghAgeYes()">
+              {{ settings.age_gate_yes_label | default: "Yes, I'm 18 or over" }}
+            </button>
+            <button class="gh-age-btn-no" type="button" onclick="ghAgeNo()">
+              {{ settings.age_gate_no_label | default: "No, I'm under 18" }}
+            </button>
+          </div>
+
+          <p class="gh-age-legal">{{ legal_with_links }}</p>
         </div>
 
-        <p class="gh-age-legal">
-          By entering you confirm you are of legal drinking age in your country and agree to our
-          <a href="{{ settings.age_gate_privacy | default: '/policies/privacy-policy' }}">privacy policy</a>
-          and
-          <a href="{{ settings.age_gate_terms | default: '/policies/terms-of-service' }}">terms of use</a>.
-        </p>
+        <div class="gh-age-modal-footer">
+          <p>{{ settings.age_gate_footer | default: 'Please drink responsibly.' | escape }}</p>
+        </div>
       </div>
 
-      <div class="gh-age-modal-footer">
-        <p>
-          <strong>Please drink responsibly.</strong>
-          Under the Liquor Licensing Act it is an offence to supply alcohol to a person under 18 years.
-        </p>
+      <div class="gh-age-declined" id="gh-age-declined">
+        <div class="gh-age-declined-icon">
+          <svg width="24" height="24" fill="none" stroke="rgba(184,145,58,0.6)" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+        </div>
+        <h2>{{ settings.age_gate_declined_heading | default: 'Access restricted' }}</h2>
+        <p>{{ settings.age_gate_declined_body | default: 'Sorry, you must be of legal drinking age to access this website.' | escape }}</p>
       </div>
-    </div>
 
-    <div class="gh-age-declined" id="gh-age-declined">
-      <div class="gh-age-declined-icon">
-        <svg width="24" height="24" fill="none" stroke="rgba(184,145,58,0.6)" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="12" cy="12" r="10"/>
-          <line x1="12" y1="8" x2="12" y2="12"/>
-          <line x1="12" y1="16" x2="12.01" y2="16"/>
-        </svg>
+      <div class="gh-age-success-state" id="gh-age-success">
+        <div class="gh-age-success-icon">
+          <svg width="24" height="24" fill="none" stroke="{{ accent }}" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h2>{{ settings.age_gate_success_heading | default: "Welcome to God's Hill" }}</h2>
+        <p>{{ settings.age_gate_success_body | default: 'Entering the site — enjoy your visit.' | escape }}</p>
       </div>
-      <h2>Access restricted</h2>
-      <p>Sorry, you must be of legal drinking age to access this website. We hope to welcome you in a few years.</p>
     </div>
   </div>
-</div>
 
-<style>
-  .gh-age-gate {
-    position: fixed;
-    inset: 0;
-    z-index: 10000;
-  }
+  <script>
+    (function () {
+      var gate = document.getElementById('gh-age-gate');
+      var main = document.getElementById('gh-age-main');
+      var declined = document.getElementById('gh-age-declined');
+      var success = document.getElementById('gh-age-success');
+      if (!gate || !main || !declined || !success) return;
 
-  .gh-age-overlay {
-    min-height: 100vh;
-    background: rgba(20, 28, 18, 0.92);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-  }
+      var COOKIE = 'gh_age_verified';
+      var COOKIE_DAYS = {{ settings.age_gate_cookie_days | default: 30 }};
 
-  .gh-age-modal {
-    background: #FDF8F2;
-    border-radius: 8px;
-    overflow: hidden;
-    width: 100%;
-    max-width: 500px;
-    border: 0.5px solid rgba(28,43,26,0.12);
-  }
+      if (document.cookie.split(';').some(function (c) { return c.trim().startsWith(COOKIE + '='); })) {
+        gate.style.display = 'none';
+      } else {
+        gate.style.display = 'block';
+      }
 
-  .gh-age-modal-header {
-    background: #1C2B1A;
-    padding: 32px 36px 28px;
-    text-align: center;
-    position: relative;
-  }
+      window.ghAgeYes = function () {
+        var exp = new Date();
+        exp.setDate(exp.getDate() + COOKIE_DAYS);
+        document.cookie = COOKIE + '=1; expires=' + exp.toUTCString() + '; path=/; SameSite=Lax';
 
-  .gh-age-logo-ring {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    border: 1.5px solid rgba(184,145,58,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 16px;
-    background: rgba(184,145,58,0.08);
-    overflow: hidden;
-  }
+        main.style.display = 'none';
+        declined.style.display = 'none';
+        success.style.display = 'block';
 
-  .gh-age-logo-img {
-    width: 44px;
-    height: 44px;
-    object-fit: contain;
-  }
+        setTimeout(function () {
+          gate.style.transition = 'opacity 0.4s';
+          gate.style.opacity = '0';
+          setTimeout(function () { gate.style.display = 'none'; }, 400);
+        }, 900);
+      };
 
-  .gh-age-modal-header p {
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: rgba(212,188,138,0.7);
-    margin: 0;
-  }
-
-  .gh-age-divider {
-    width: 36px;
-    height: 1px;
-    background: rgba(184,145,58,0.5);
-    margin: 14px auto 0;
-  }
-
-  .gh-age-modal-body {
-    padding: 32px 36px 28px;
-    text-align: center;
-  }
-
-  .gh-age-modal-body h2 {
-    font-family: var(--font-serif, 'EB Garamond', Georgia, serif);
-    font-size: 20px;
-    font-weight: 400;
-    color: #1C2B1A;
-    margin: 0 0 10px;
-    letter-spacing: -0.01em;
-  }
-
-  .gh-age-modal-body p {
-    font-size: 14px;
-    color: #6B7668;
-    line-height: 1.7;
-    margin: 0 0 28px;
-  }
-
-  .gh-age-btn-group {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 18px;
-  }
-
-  .gh-age-btn-yes,
-  .gh-age-btn-no {
-    flex: 1;
-    padding: 13px 16px;
-    border-radius: 2px;
-    font-size: 12px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    font-weight: 500;
-    cursor: pointer;
-    font-family: inherit;
-    transition: all 0.2s;
-  }
-
-  .gh-age-btn-yes {
-    background: #B8913A;
-    color: #FDF8F2;
-    border: none;
-  }
-
-  .gh-age-btn-yes:hover { background: #9A7A30; }
-
-  .gh-age-btn-no {
-    background: transparent;
-    color: #1C2B1A;
-    border: 0.5px solid rgba(28,43,26,0.25);
-  }
-
-  .gh-age-btn-no:hover { border-color: #1C2B1A; background: rgba(28,43,26,0.04); }
-
-  .gh-age-legal {
-    font-size: 11px;
-    color: rgba(107,118,104,0.65);
-    line-height: 1.55;
-    margin: 0;
-  }
-
-  .gh-age-legal a {
-    color: #B8913A;
-    text-decoration: none;
-    border-bottom: 0.5px solid rgba(184,145,58,0.35);
-  }
-
-  .gh-age-modal-footer {
-    background: rgba(28,43,26,0.03);
-    border-top: 0.5px solid rgba(28,43,26,0.08);
-    padding: 14px 36px;
-    text-align: center;
-  }
-
-  .gh-age-modal-footer p {
-    font-size: 11px;
-    color: rgba(107,118,104,0.6);
-    margin: 0;
-    line-height: 1.5;
-  }
-
-  .gh-age-modal-footer strong { color: #6B7668; font-weight: 500; }
-
-  .gh-age-declined {
-    display: none;
-    text-align: center;
-    padding: 40px 36px;
-    max-width: 500px;
-  }
-
-  .gh-age-declined h2 {
-    font-family: var(--font-serif, 'EB Garamond', Georgia, serif);
-    font-size: 20px;
-    font-weight: 400;
-    color: #F5EFE3;
-    margin: 0 0 12px;
-  }
-
-  .gh-age-declined p {
-    font-size: 14px;
-    color: rgba(245,239,227,0.55);
-    line-height: 1.7;
-    margin: 0 auto;
-    max-width: 340px;
-  }
-
-  .gh-age-declined-icon {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    border: 1.5px solid rgba(184,145,58,0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 20px;
-  }
-
-  @media (max-width: 640px) {
-    .gh-age-btn-group {
-      flex-direction: column;
-    }
-  }
-</style>
-
-<script>
-  (function () {
-    var gate = document.getElementById('gh-age-gate');
-    var main = document.getElementById('gh-age-main');
-    var declined = document.getElementById('gh-age-declined');
-    if (!gate || !main || !declined) return;
-
-    var COOKIE = 'gh_age_verified';
-    var DAYS = 30;
-
-    if (document.cookie.split(';').some(function (c) { return c.trim().startsWith(COOKIE + '='); })) {
-      gate.style.display = 'none';
-    } else {
-      gate.style.display = 'block';
-    }
-
-    window.ghAgeYes = function () {
-      var exp = new Date();
-      exp.setDate(exp.getDate() + DAYS);
-      document.cookie = COOKIE + '=1; expires=' + exp.toUTCString() + '; path=/; SameSite=Lax';
-      gate.style.transition = 'opacity 0.4s';
-      gate.style.opacity = '0';
-      setTimeout(function () { gate.style.display = 'none'; }, 400);
-    };
-
-    window.ghAgeNo = function () {
-      main.style.display = 'none';
-      declined.style.display = 'block';
-    };
-  })();
-</script>
+      window.ghAgeNo = function () {
+        main.style.display = 'none';
+        success.style.display = 'none';
+        declined.style.display = 'block';
+      };
+    })();
+  </script>
+{% endif %}
