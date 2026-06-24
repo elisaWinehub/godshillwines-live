@@ -9,9 +9,36 @@
  */
 {
   "sections": {
-    "gh_collection_hero": { "type": "gh-collection-hero", "settings": {} },
-    "gh_collection_toolbar": { "type": "gh-collection-toolbar", "settings": {} },
-    "gh_collection_grid": { "type": "gh-collection-grid", "settings": {} }
+    "gh_collection_hero": {
+      "type": "gh-collection-hero",
+      "settings": {
+        "hero_image": "shopify://shop_images/ghwines_2.png",
+        "hero_eyebrow": "Cellar door",
+        "hero_title": "<p>Our <em>Wines</em></p>",
+        "hero_subheading": "Small-batch Barossa wines crafted from generations of dedication to the land.",
+        "hero_height": 380,
+        "overlay_opacity": 55
+      }
+    },
+    "gh_collection_toolbar": {
+      "type": "gh-collection-toolbar",
+      "settings": {
+        "show_breadcrumb": true
+      }
+    },
+    "gh_collection_grid": {
+      "type": "gh-collection-grid",
+      "settings": {
+        "products_per_page": 9,
+        "show_filters": true,
+        "grid_columns": "3",
+        "bg_color": "#fdf8f2"
+      }
+    }
   },
-  "order": ["gh_collection_hero", "gh_collection_toolbar", "gh_collection_grid"]
+  "order": [
+    "gh_collection_hero",
+    "gh_collection_toolbar",
+    "gh_collection_grid"
+  ]
 }
