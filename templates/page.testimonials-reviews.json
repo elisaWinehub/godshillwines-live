@@ -12,23 +12,89 @@
     "gh_hero": {
       "type": "gh-page-hero-block",
       "settings": {
+        "hero_image": "shopify://shop_images/pexels-orlovamaria-4946411-768x1152.jpg",
         "hero_eyebrow": "What our guests say",
-        "hero_title": "<p>Testimonials <em>&amp; Reviews</em></p>",
-        "hero_height": 380
+        "hero_title": "<p>Testimonials <em>& Reviews</em></p>",
+        "hero_subheading": "Discover the story of God's Hill Wines.",
+        "hero_height": 380,
+        "overlay_opacity": 55,
+        "content_alignment": "left"
       }
     },
-    "gh_featured_review": { "type": "gh-featured-review", "settings": {} },
+    "gh_featured_review": {
+      "type": "gh-featured-review",
+      "settings": {
+        "label": "Featured review",
+        "title": "Walkabout 2012 — God's Hill, Lyndoch.",
+        "stars": 5,
+        "excerpt": "Koala's first face to face meeting with Charlie was arranged when calling for an appointment to visit the Cellar Door of God's Hill Wines. Charlie asked where Koala was calling from and discovering t...",
+        "link_label": "Read more →",
+        "link_url": "",
+        "bg_color": "#f5efe3",
+        "accent_color": "#b8913a"
+      }
+    },
     "gh_testimonials_grid": {
       "type": "gh-testimonials-grid",
       "blocks": {
-        "t1": { "type": "testimonial", "settings": { "stars": 5, "text": "Thank you soooooooooooo much for the most amazing food and function. We absolutely loved it and think every single person had an incredible time.", "name": "Lydia R. Porto", "role": "Operations Lead" } },
-        "t2": { "type": "testimonial", "settings": { "stars": 5, "text": "Please excuse delay with this note of thanks. Your incredibly delicious and beautiful food was appreciated enormously. Everything was perfect!", "name": "Harry K. Baird", "role": "Logistics Manager" } },
-        "t3": { "type": "testimonial", "settings": { "stars": 5, "text": "A truly extraordinary experience. The wines are exceptional and the setting is breathtaking. We'll be coming back every year without fail.", "name": "Sarah M. Collins", "role": "Wine Enthusiast" } }
+        "t1": {
+          "type": "testimonial",
+          "settings": {
+            "stars": 5,
+            "text": "Thank you soooooooooooo much for the most amazing food and function. We absolutely loved it and think every single person had an incredible time.",
+            "name": "Lydia R. Porto",
+            "role": "Operations Lead"
+          }
+        },
+        "t2": {
+          "type": "testimonial",
+          "settings": {
+            "stars": 5,
+            "text": "Please excuse delay with this note of thanks. Your incredibly delicious and beautiful food was appreciated enormously. Everything was perfect!",
+            "name": "Harry K. Baird",
+            "role": "Logistics Manager"
+          }
+        },
+        "t3": {
+          "type": "testimonial",
+          "settings": {
+            "stars": 5,
+            "text": "A truly extraordinary experience. The wines are exceptional and the setting is breathtaking. We'll be coming back every year without fail.",
+            "name": "Sarah M. Collins",
+            "role": "Wine Enthusiast"
+          }
+        }
       },
-      "block_order": ["t1", "t2", "t3"],
-      "settings": {}
+      "block_order": [
+        "t1",
+        "t2",
+        "t3"
+      ],
+      "settings": {
+        "eyebrow": "What our guests say",
+        "heading": "Guest Stories",
+        "bg_color": "#fdf8f2",
+        "card_bg": "#ffffff",
+        "accent_color": "#b8913a"
+      }
     },
-    "gh_awards_strip": { "type": "gh-awards-strip", "settings": {} }
+    "gh_awards_strip": {
+      "type": "gh-awards-strip",
+      "settings": {
+        "eyebrow": "Award Winning Wines",
+        "caption": "Winner of DECANTER and IWC – International Wine Challenge 2012 – CWSA Double Gold Medal and many more.",
+        "medal_count": 10,
+        "btn_label": "View all awards →",
+        "btn_url": "",
+        "show_btn": false,
+        "bg_color": "#1c2b1a"
+      }
+    }
   },
-  "order": ["gh_hero", "gh_featured_review", "gh_testimonials_grid", "gh_awards_strip"]
+  "order": [
+    "gh_hero",
+    "gh_featured_review",
+    "gh_testimonials_grid",
+    "gh_awards_strip"
+  ]
 }
