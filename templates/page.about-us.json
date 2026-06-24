@@ -12,26 +12,118 @@
     "gh_hero": {
       "type": "gh-page-hero-block",
       "settings": {
+        "hero_image": "shopify://shop_images/winery.png",
         "hero_eyebrow": "About us",
         "hero_title": "<p>Traditional <em>Winemakers</em></p>",
         "hero_subheading": "Five generations of passion, craft, and dedication to the Barossa Valley.",
-        "hero_height": 380
+        "hero_height": 380,
+        "overlay_opacity": 55,
+        "content_alignment": "left"
       }
     },
-    "gh_about_story": { "type": "gh-about-story", "settings": {} },
+    "gh_about_story": {
+      "type": "gh-about-story",
+      "settings": {
+        "image": "shopify://shop_images/img1.png",
+        "image_alt": "Charlie Scalzi in the vineyard at God's Hill",
+        "eyebrow": "Our story",
+        "heading": "Five Generations. One Passion.",
+        "body_1": "Charlie's grandfather (Carmine) amongst his farming activities he also grew grapes and produced wine for the local community. This was the beginning of Charlie's involvement in the wine industry.",
+        "body_2": "Recalling the early age of 6 when his grandfather asked him to wash his feet thoroughly so that he could place him in the large wooden vats of grapes to crush with his feet.",
+        "body_3": "From those early days to today, the family tradition continues with the same passion for winemaking, the land and the Barossa Valley.",
+        "btn_label": "Discover our wines",
+        "btn_url": "",
+        "bg_color": "#fdf8f2",
+        "show_corner_accent": true,
+        "accent_color": "#b8913a",
+        "show_quote_card": true,
+        "quote": "When making wine my actions are controlled by my perfectionist nature to everything I do in life, and most importantly how well can I serve the consumer.",
+        "quote_name": "Charlie Scalzi",
+        "quote_role": "Chief Winemaker",
+        "quote_bg_color": "#f5efe3",
+        "quote_accent_color": "#b8913a"
+      }
+    },
     "gh_pillars": {
       "type": "gh-pillars",
       "blocks": {
-        "p1": { "type": "pillar", "settings": { "title": "Barossa Heritage", "body": "Deep roots in the Barossa Valley spanning five generations." } },
-        "p2": { "type": "pillar", "settings": { "title": "Family Tradition", "body": "Winemaking knowledge passed down with pride and dedication." } },
-        "p3": { "type": "pillar", "settings": { "title": "Estate Grown", "body": "Sustainably grown grapes from our premium estate vineyards." } },
-        "p4": { "type": "pillar", "settings": { "title": "Award Winning", "body": "Recognised wines celebrated both locally and internationally." } }
+        "p1": {
+          "type": "pillar",
+          "settings": {
+            "title": "Barossa Heritage",
+            "body": "Deep roots in the Barossa Valley spanning five generations."
+          }
+        },
+        "p2": {
+          "type": "pillar",
+          "settings": {
+            "title": "Family Tradition",
+            "body": "Winemaking knowledge passed down with pride and dedication."
+          }
+        },
+        "p3": {
+          "type": "pillar",
+          "settings": {
+            "title": "Estate Grown",
+            "body": "Sustainably grown grapes from our premium estate vineyards."
+          }
+        },
+        "p4": {
+          "type": "pillar",
+          "settings": {
+            "title": "Award Winning",
+            "body": "Recognised wines celebrated both locally and internationally."
+          }
+        }
       },
-      "block_order": ["p1", "p2", "p3", "p4"],
-      "settings": {}
+      "block_order": [
+        "p1",
+        "p2",
+        "p3",
+        "p4"
+      ],
+      "settings": {
+        "bg_color": "#f5efe3",
+        "text_color": "#1c2b1a",
+        "cell_bg": "#f5efe3",
+        "title_color": "#1c2b1a",
+        "dark_mode": false
+      }
     },
-    "gh_about_video": { "type": "gh-about-video", "settings": {} },
-    "gh_awards_strip": { "type": "gh-awards-strip", "settings": {} }
+    "gh_about_video": {
+      "type": "gh-about-video",
+      "settings": {
+        "eyebrow": "About",
+        "heading": "<p>Built on Hard Work and Dedication</p>",
+        "body_1": "The family's journey began in 1998 with just 25 acres of vines at Lyndoch in the Barossa Valley. Today, God's Hill Vineyard consists of some of the most renowned vineyards in the region.",
+        "body_2": "We remain committed to producing exceptional wines while respecting the land and embracing sustainable vineyard practices for future generations.",
+        "body_3": "Our wines reflect the true character of the Barossa — rich in history, bold in flavour and crafted with care.",
+        "btn_primary_label": "Our wines",
+        "btn_primary_url": "",
+        "btn_secondary_label": "Visit us",
+        "btn_secondary_url": "",
+        "video_url": "",
+        "bg_color": "#fdf8f2"
+      }
+    },
+    "gh_awards_strip": {
+      "type": "gh-awards-strip",
+      "settings": {
+        "eyebrow": "Award Winning Wines",
+        "caption": "Winner of DECANTER and IWC – International Wine Challenge 2012 – CWSA Double Gold Medal and many more.",
+        "medal_count": 10,
+        "btn_label": "View all awards →",
+        "btn_url": "",
+        "show_btn": false,
+        "bg_color": "#1c2b1a"
+      }
+    }
   },
-  "order": ["gh_hero", "gh_about_story", "gh_pillars", "gh_about_video", "gh_awards_strip"]
+  "order": [
+    "gh_hero",
+    "gh_about_story",
+    "gh_pillars",
+    "gh_about_video",
+    "gh_awards_strip"
+  ]
 }
