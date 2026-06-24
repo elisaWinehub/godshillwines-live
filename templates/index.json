@@ -13,7 +13,7 @@
     "gh_hero": {
       "type": "gh-hero",
       "settings": {
-        "bg_image": "shopify://shop_images/ghwines_2.png",
+        "bg_image": "shopify://shop_images/banner2_1.png",
         "eyebrow": "Barossa Valley · Family owned since generation one",
         "title": "<p>Wine grown from <em>generations of care</em></p>",
         "subheading": "Small-batch Barossa wines poured with the passion of their maker",
