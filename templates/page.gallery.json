@@ -12,15 +12,31 @@
     "gh_hero": {
       "type": "gh-page-hero-block",
       "settings": {
+        "hero_image": "shopify://shop_images/ChatGPT_Image_May_11_2026_01_11_30_PM.png",
         "hero_eyebrow": "God's Hill Wines",
         "hero_title": "<p><em>Gallery</em></p>",
         "hero_subheading": "Life at the vineyard — captured through the seasons.",
-        "hero_height": 380
+        "hero_height": 380,
+        "overlay_opacity": 55,
+        "content_alignment": "left"
       }
     },
     "gh_gallery_grid": {
       "type": "gh-gallery-grid",
-      "settings": {}
+      "settings": {
+        "columns": 4,
+        "row_height": 200,
+        "gap": 8,
+        "padding_top": 56,
+        "padding_bottom": 80,
+        "bg_color": "#fdf8f2",
+        "show_filters": true,
+        "filter_all_label": "All",
+        "show_category_chips": false,
+        "show_load_more": true,
+        "items_per_page": 12,
+        "load_more_label": "Load more"
+      }
     }
   },
   "order": [
