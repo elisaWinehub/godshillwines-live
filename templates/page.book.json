@@ -12,6 +12,7 @@
     "gh_book_hero": {
       "type": "gh-book-hero",
       "settings": {
+        "hero_image": "shopify://shop_images/photo-1506377247377-2a5b3b417ebb.jpg",
         "eyebrow": "God's Hill Wines · Barossa Valley",
         "title": "<p>Book an <em>Experience</em></p>",
         "subheading": "Wine tastings, restaurant reservations, accommodation — choose your experience below.",
@@ -39,7 +40,8 @@
             "primary_btn_style": "gold",
             "secondary_btn_label": "Send an enquiry",
             "secondary_btn_url": "/pages/contact",
-            "show_resdiary_embed": false
+            "show_resdiary_embed": false,
+            "resdiary_embed": ""
           }
         },
         "b_restaurant": {
@@ -80,7 +82,8 @@
             "primary_btn_style": "vine",
             "secondary_btn_label": "Enquire",
             "secondary_btn_url": "/pages/contact",
-            "show_resdiary_embed": false
+            "show_resdiary_embed": false,
+            "resdiary_embed": ""
           }
         },
         "b_events": {
@@ -100,11 +103,17 @@
             "primary_btn_style": "gold",
             "secondary_btn_label": "Call us",
             "secondary_btn_url": "tel:+61408838004",
-            "show_resdiary_embed": false
+            "show_resdiary_embed": false,
+            "resdiary_embed": ""
           }
         }
       },
-      "block_order": ["b_tasting", "b_restaurant", "b_accommodation", "b_events"],
+      "block_order": [
+        "b_tasting",
+        "b_restaurant",
+        "b_accommodation",
+        "b_events"
+      ],
       "settings": {
         "sidebar_address": "34 Moppert Rd, Lyndoch SA 5351",
         "sidebar_hours": "Thu – Sun, 11am – 5pm",
@@ -117,9 +126,13 @@
         "sidebar_cta_btn_label": "Learn more →",
         "sidebar_cta_btn_url": "/pages/wine-club",
         "sidebar_directions_blurb": "Only 55 minutes from Adelaide CBD. Located in Lyndoch in the famous Southern Barossa wine region.",
-        "sidebar_maps_url": "https://maps.google.com/?q=34+Moppert+Rd+Lyndoch+SA+5351"
+        "sidebar_maps_url": "https://maps.google.com/?q=34+Moppert+Rd+Lyndoch+SA+5351",
+        "bg_color": "#fdf8f2"
       }
     }
   },
-  "order": ["gh_book_hero", "gh_book_options"]
+  "order": [
+    "gh_book_hero",
+    "gh_book_options"
+  ]
 }
