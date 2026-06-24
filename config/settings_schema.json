@@ -2286,15 +2286,178 @@
     ]
   },
   {
-    "name": "Age Verification",
+    "name": "Age verification",
     "settings": [
-      { "type": "checkbox", "id": "age_gate_enabled", "label": "Show age verification popup", "default": true },
-      { "type": "text", "id": "age_gate_heading", "label": "Heading", "default": "Are you 18 or over?" },
-      { "type": "text", "id": "age_gate_body", "label": "Body text", "default": "This website contains information about alcoholic beverages. You must be of legal drinking age in your country to enter." },
-      { "type": "text", "id": "age_gate_yes", "label": "Yes button label", "default": "Yes, I'm 18 or over" },
-      { "type": "text", "id": "age_gate_no", "label": "No button label", "default": "No, I'm under 18" },
-      { "type": "url", "id": "age_gate_privacy", "label": "Privacy policy URL" },
-      { "type": "url", "id": "age_gate_terms", "label": "Terms of use URL" }
+      {
+        "type": "header",
+        "content": "Popup toggle"
+      },
+      {
+        "type": "checkbox",
+        "id": "age_gate_enabled",
+        "label": "Show age verification popup",
+        "default": true,
+        "info": "Disable to hide the popup across the entire store without deleting the code."
+      },
+      {
+        "type": "range",
+        "id": "age_gate_cookie_days",
+        "label": "Remember verified visitors for (days)",
+        "min": 1,
+        "max": 90,
+        "step": 1,
+        "default": 30,
+        "info": "Once a visitor confirms their age, they won't see the popup again for this many days."
+      },
+      {
+        "type": "header",
+        "content": "Branding"
+      },
+      {
+        "type": "text",
+        "id": "age_gate_store_name",
+        "label": "Store name (header)",
+        "default": "God's Hill Wines"
+      },
+      {
+        "type": "text",
+        "id": "age_gate_store_subline",
+        "label": "Store subline (header)",
+        "default": "Barossa Valley · Australia"
+      },
+      {
+        "type": "color",
+        "id": "age_gate_header_bg",
+        "label": "Header background colour",
+        "default": "#1C2B1A"
+      },
+      {
+        "type": "color",
+        "id": "age_gate_accent_color",
+        "label": "Accent colour (divider, icon, links)",
+        "default": "#B8913A"
+      },
+      {
+        "type": "color",
+        "id": "age_gate_overlay_color",
+        "label": "Overlay background colour",
+        "default": "#141E13"
+      },
+      {
+        "type": "range",
+        "id": "age_gate_overlay_opacity",
+        "label": "Overlay opacity %",
+        "min": 50,
+        "max": 98,
+        "step": 2,
+        "default": 92
+      },
+      {
+        "type": "color",
+        "id": "age_gate_body_bg",
+        "label": "Modal body background colour",
+        "default": "#FDF8F2"
+      },
+      {
+        "type": "header",
+        "content": "Content"
+      },
+      {
+        "type": "text",
+        "id": "age_gate_heading",
+        "label": "Heading",
+        "default": "Are you 18 or over?",
+        "info": "Wrap a word in *asterisks* to show it in italic gold — e.g. \"Are you *18 or over?*\""
+      },
+      {
+        "type": "textarea",
+        "id": "age_gate_body",
+        "label": "Body text",
+        "default": "This website contains information about alcoholic beverages. You must be of legal drinking age in your country to enter."
+      },
+      {
+        "type": "header",
+        "content": "Buttons"
+      },
+      {
+        "type": "text",
+        "id": "age_gate_yes_label",
+        "label": "Yes button label",
+        "default": "Yes, I'm 18 or over"
+      },
+      {
+        "type": "color",
+        "id": "age_gate_yes_color",
+        "label": "Yes button colour",
+        "default": "#B8913A"
+      },
+      {
+        "type": "text",
+        "id": "age_gate_no_label",
+        "label": "No button label",
+        "default": "No, I'm under 18"
+      },
+      {
+        "type": "header",
+        "content": "Legal text"
+      },
+      {
+        "type": "textarea",
+        "id": "age_gate_legal",
+        "label": "Legal line (below buttons)",
+        "default": "By entering you confirm you are of legal drinking age in your country and agree to our privacy policy and terms of use.",
+        "info": "The words 'privacy policy' and 'terms of use' will automatically become clickable links using the URLs set below."
+      },
+      {
+        "type": "url",
+        "id": "age_gate_privacy_url",
+        "label": "Privacy policy URL",
+        "info": "Linked from the word 'privacy policy' in the legal line."
+      },
+      {
+        "type": "url",
+        "id": "age_gate_terms_url",
+        "label": "Terms of use URL",
+        "info": "Linked from the words 'terms of use' in the legal line."
+      },
+      {
+        "type": "textarea",
+        "id": "age_gate_footer",
+        "label": "Footer disclaimer text",
+        "default": "Please drink responsibly. Under the Liquor Licensing Act it is an offence to supply alcohol to a person under 18 years."
+      },
+      {
+        "type": "header",
+        "content": "Declined state"
+      },
+      {
+        "type": "text",
+        "id": "age_gate_declined_heading",
+        "label": "Declined heading",
+        "default": "Access restricted"
+      },
+      {
+        "type": "text",
+        "id": "age_gate_declined_body",
+        "label": "Declined body text",
+        "default": "Sorry, you must be of legal drinking age to access this website. We hope to welcome you in a few years."
+      },
+      {
+        "type": "header",
+        "content": "Success / entry state"
+      },
+      {
+        "type": "text",
+        "id": "age_gate_success_heading",
+        "label": "Welcome heading (shown briefly after confirming)",
+        "default": "Welcome to God's Hill"
+      },
+      {
+        "type": "text",
+        "id": "age_gate_success_body",
+        "label": "Welcome body text",
+        "default": "Entering the site — enjoy your visit."
+      }
     ]
   },
   {
