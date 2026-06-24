@@ -2293,8 +2293,8 @@
       { "type": "text", "id": "age_gate_body", "label": "Body text", "default": "This website contains information about alcoholic beverages. You must be of legal drinking age in your country to enter." },
       { "type": "text", "id": "age_gate_yes", "label": "Yes button label", "default": "Yes, I'm 18 or over" },
       { "type": "text", "id": "age_gate_no", "label": "No button label", "default": "No, I'm under 18" },
-      { "type": "url", "id": "age_gate_privacy", "label": "Privacy policy URL", "default": "/policies/privacy-policy" },
-      { "type": "url", "id": "age_gate_terms", "label": "Terms of use URL", "default": "/policies/terms-of-service" }
+      { "type": "url", "id": "age_gate_privacy", "label": "Privacy policy URL" },
+      { "type": "url", "id": "age_gate_terms", "label": "Terms of use URL" }
     ]
   },
   {
