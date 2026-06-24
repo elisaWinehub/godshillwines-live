@@ -2,6 +2,26 @@
 {%- render 'gh-tokens' -%}
 
 <section class="gh-product-detail-{{ section.id }}" style="background: {{ section.settings.bg_color | default: '#FDF8F2' }};">
+  {% for block in section.blocks %}
+    {% if block.type == 'breadcrumbs' and block.settings.show_block %}
+      <nav class="gh-breadcrumbs" {{ block.shopify_attributes }}>
+        {% if block.settings.show_home %}
+          <a href="{{ routes.root_url }}">{{ block.settings.home_label | default: 'Home' }}</a>
+        {% endif %}
+        {% if block.settings.show_all_products and block.settings.all_products_collection != blank %}
+          <span>/</span>
+          <a href="{{ block.settings.all_products_collection.url }}">{{ block.settings.all_products_label | default: 'All products' }}</a>
+        {% endif %}
+        {% if block.settings.show_collection and collection %}
+          <span>/</span>
+          <a href="{{ collection.url }}">{{ collection.title }}</a>
+        {% endif %}
+        <span>/</span>
+        <span>{{ product.title }}</span>
+      </nav>
+    {% endif %}
+  {% endfor %}
+
   <div class="gh-product-detail-shell">
     <div class="gh-product-detail-grid">
       <div class="gh-product-media-col">
@@ -682,24 +702,6 @@
                 {% render block %}
               </div>
 
-            {% when 'breadcrumbs' %}
-              {% if block.settings.show_block %}
-                <nav class="gh-breadcrumbs" {{ block.shopify_attributes }}>
-                  {% if block.settings.show_home %}
-                    <a href="{{ routes.root_url }}">{{ block.settings.home_label | default: 'Home' }}</a>
-                  {% endif %}
-                  {% if block.settings.show_all_products and block.settings.all_products_collection != blank %}
-                    <span>/</span>
-                    <a href="{{ block.settings.all_products_collection.url }}">{{ block.settings.all_products_label | default: 'All products' }}</a>
-                  {% endif %}
-                  {% if block.settings.show_collection and collection %}
-                    <span>/</span>
-                    <a href="{{ collection.url }}">{{ collection.title }}</a>
-                  {% endif %}
-                  <span>/</span><span>{{ product.title }}</span>
-                </nav>
-              {% endif %}
-
             {% when 'vendor' %}
               {% if block.settings.show_block %}
                 <p class="gh-vendor" {{ block.shopify_attributes }}>{{ block.settings.text | default: product.vendor }}</p>
@@ -1046,9 +1048,19 @@
   }
 
   .gh-product-detail-{{ section.id }} .gh-breadcrumbs {
-    margin: 0 0 14px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 18px;
     font: 400 11px/1.5 'Inter', sans-serif;
     color: var(--gh-muted);
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-breadcrumbs > * {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1.4;
   }
 
   .gh-product-detail-{{ section.id }} .gh-breadcrumbs a {

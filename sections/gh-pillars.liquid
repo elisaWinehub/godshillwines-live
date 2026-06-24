@@ -4,6 +4,159 @@
   assign cell_bg = section.settings.cell_bg | default: '#F5EFE3'
   assign text_color = section.settings.text_color | default: '#1C2B1A'
   assign title_color = section.settings.title_color | default: '#1C2B1A'
+  assign divider_color = section.settings.divider_color | default: '#D8C9AA'
+
+  if section.settings.dark_mode
+    assign bg_color = '#1C2B1A'
+    assign cell_bg = '#1C2B1A'
+    assign text_color = '#F5EFE3'
+    assign title_color = '#F5EFE3'
+  endif
+-%}
+
+<section
+  class="gh-pillars-{{ section.id }}"
+  style="--gh-p-bg: {{ bg_color }}; --gh-p-cell: {{ cell_bg }}; --gh-p-text: {{ text_color }}; --gh-p-title: {{ title_color }}; --gh-p-divider: {{ divider_color }};"
+>
+  <div class="gh-pillars-shell">
+    <div class="gh-pillars-grid">
+      {% for block in section.blocks %}
+        {% if block.type == 'pillar' %}
+          <article class="gh-pillar" {{ block.shopify_attributes }}>
+            <h3 class="gh-pillar-title">{{ block.settings.title }}</h3>
+            {% if block.settings.body != blank %}
+              <p class="gh-pillar-body">{{ block.settings.body }}</p>
+            {% endif %}
+          </article>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+  .gh-pillars-{{ section.id }} {
+    background: var(--gh-p-bg);
+    padding: 52px 40px;
+  }
+
+  .gh-pillars-{{ section.id }} .gh-pillars-shell {
+    width: min(1280px, 100%);
+    margin: 0 auto;
+  }
+
+  .gh-pillars-{{ section.id }} .gh-pillars-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0;
+    border-top: 0.5px solid var(--gh-p-divider);
+    border-bottom: 0.5px solid var(--gh-p-divider);
+  }
+
+  .gh-pillars-{{ section.id }} .gh-pillar {
+    background: var(--gh-p-cell);
+    color: var(--gh-p-text);
+    padding: 22px 20px;
+    text-align: center;
+    position: relative;
+  }
+
+  .gh-pillars-{{ section.id }} .gh-pillar + .gh-pillar::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 18%;
+    bottom: 18%;
+    width: 0.5px;
+    background: var(--gh-p-divider);
+  }
+
+  .gh-pillars-{{ section.id }} .gh-pillar-title {
+    margin: 0 0 8px;
+    color: var(--gh-p-title);
+    font: 600 12px/1.4 'Inter', sans-serif;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .gh-pillars-{{ section.id }} .gh-pillar-body {
+    margin: 0;
+    color: var(--gh-p-text);
+    font: 400 14px/1.65 'Inter', sans-serif;
+  }
+
+  @media (max-width: 980px) {
+    .gh-pillars-{{ section.id }} .gh-pillars-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 768px) {
+    .gh-pillars-{{ section.id }} {
+      padding: 46px 20px;
+    }
+
+    .gh-pillars-{{ section.id }} .gh-pillars-grid {
+      grid-template-columns: 1fr;
+      border-top: none;
+      border-bottom: none;
+    }
+
+    .gh-pillars-{{ section.id }} .gh-pillar {
+      border-top: 0.5px solid var(--gh-p-divider);
+    }
+
+    .gh-pillars-{{ section.id }} .gh-pillar:last-child {
+      border-bottom: 0.5px solid var(--gh-p-divider);
+    }
+
+    .gh-pillars-{{ section.id }} .gh-pillar + .gh-pillar::before {
+      content: none;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "GH — Pillars",
+  "settings": [
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#F5EFE3" },
+    { "type": "color", "id": "text_color", "label": "Text colour", "default": "#1C2B1A" },
+    { "type": "color", "id": "cell_bg", "label": "Pillar background", "default": "#F5EFE3" },
+    { "type": "color", "id": "title_color", "label": "Pillar title colour", "default": "#1C2B1A" },
+    { "type": "color", "id": "divider_color", "label": "Divider colour", "default": "#D8C9AA" },
+    { "type": "checkbox", "id": "dark_mode", "label": "Dark mode (override base colours)", "default": false }
+  ],
+  "blocks": [
+    {
+      "type": "pillar",
+      "name": "Pillar",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Pillar title" },
+        { "type": "textarea", "id": "body", "label": "Body", "default": "Describe this brand pillar here." }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "GH — Pillars",
+      "blocks": [
+        { "type": "pillar", "settings": { "title": "Barossa Heritage", "body": "Deep roots in the Barossa Valley spanning five generations." } },
+        { "type": "pillar", "settings": { "title": "Family Tradition", "body": "Winemaking knowledge passed down with pride and dedication." } },
+        { "type": "pillar", "settings": { "title": "Estate Grown", "body": "Sustainably grown grapes from our premium estate vineyards." } },
+        { "type": "pillar", "settings": { "title": "Award Winning", "body": "Recognised wines celebrated both locally and internationally." } }
+      ]
+    }
+  ]
+}
+{% endschema %}
+{%- render 'gh-tokens' -%}
+{%- liquid
+  assign bg_color = section.settings.bg_color | default: '#F5EFE3'
+  assign cell_bg = section.settings.cell_bg | default: '#F5EFE3'
+  assign text_color = section.settings.text_color | default: '#1C2B1A'
+  assign title_color = section.settings.title_color | default: '#1C2B1A'
   if section.settings.dark_mode
     assign bg_color = '#1C2B1A'
     assign cell_bg = '#1C2B1A'
