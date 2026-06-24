@@ -218,5 +218,12 @@
     {% if settings.quick_add or settings.mobile_quick_add %}
       {% render 'quick-add-modal' %}
     {% endif %}
+
+    {%- comment -%} God's Hill Age Verification Gate {%- endcomment -%}
+    {% unless customer.tags contains 'age-verified' %}
+      {% if settings.age_gate_enabled %}
+        {%- render 'gh-age-gate' -%}
+      {% endif %}
+    {% endunless %}
   </body>
 </html>

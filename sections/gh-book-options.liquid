@@ -1,0 +1,573 @@
+{%- render 'gh-tokens' -%}
+<style>
+  .gh-book-options-{{ section.id }} {
+    background: {{ section.settings.bg_color | default: '#FDF8F2' }};
+  }
+
+  .gh-book-options-{{ section.id }} .gh-book-layout {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 64px 40px 96px;
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 56px;
+    align-items: start;
+  }
+
+  .gh-book-options-{{ section.id }} .gh-booking-options {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .gh-book-options-{{ section.id }} .gh-booking-card {
+    background: #fff;
+    border: 0.5px solid rgba(28,43,26,0.1);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  .gh-book-options-{{ section.id }} .gh-booking-card-header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 20px;
+    padding: 28px 28px 24px;
+  }
+
+  .gh-book-options-{{ section.id }} .gh-booking-card-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .gh-book-options-{{ section.id }} .gh-booking-card-icon--wine {
+    background: rgba(184,145,58,0.1);
+    border: 1px solid rgba(184,145,58,0.2);
+  }
+
+  .gh-book-options-{{ section.id }} .gh-booking-card-icon--fork {
+    background: rgba(28,43,26,0.07);
+    border: 1px solid rgba(28,43,26,0.12);
+  }
+
+  .gh-book-options-{{ section.id }} .gh-booking-card-icon--house {
+    background: rgba(74,104,136,0.08);
+    border: 1px solid rgba(74,104,136,0.18);
+  }
+
+  .gh-book-options-{{ section.id }} .gh-booking-card-icon--mail {
+    background: rgba(107,118,104,0.08);
+    border: 1px solid rgba(107,118,104,0.16);
+  }
+
+  .gh-book-options-{{ section.id }} .gh-booking-card-eyebrow {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #6B7668;
+    margin: 0 0 4px;
+  }
+
+  .gh-book-options-{{ section.id }} .gh-booking-card-title {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: #1C2B1A;
+    line-height: 1.15;
+    margin: 0;
+  }
+
+  .gh-book-options-{{ section.id }} .gh-booking-card-badge {
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+
+  .gh-book-options-{{ section.id }} .gh-badge-gold { background: rgba(184,145,58,0.1); color: #B8913A; border: 0.5px solid rgba(184,145,58,0.25); }
+  .gh-book-options-{{ section.id }} .gh-badge-green { background: rgba(28,43,26,0.07); color: #1C2B1A; border: 0.5px solid rgba(28,43,26,0.15); }
+  .gh-book-options-{{ section.id }} .gh-badge-blue { background: rgba(74,104,136,0.08); color: #4A6888; border: 0.5px solid rgba(74,104,136,0.2); }
+
+  .gh-book-options-{{ section.id }} .gh-booking-card-body { padding: 0 28px 28px; }
+  .gh-book-options-{{ section.id }} .gh-booking-card-desc { font-size: 14px; color: #6B7668; line-height: 1.75; margin: 0 0 18px; }
+  .gh-book-options-{{ section.id }} .gh-booking-card-details { display: flex; flex-wrap: wrap; gap: 18px; margin-bottom: 22px; }
+  .gh-book-options-{{ section.id }} .gh-booking-detail { display: flex; align-items: center; gap: 7px; font-size: 12px; color: #6B7668; }
+  .gh-book-options-{{ section.id }} .gh-booking-detail svg { color: #B8913A; flex-shrink: 0; }
+  .gh-book-options-{{ section.id }} .gh-booking-card-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+  .gh-book-options-{{ section.id }} .gh-book-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 22px;
+    border-radius: 2px;
+    font-size: 11px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .gh-book-options-{{ section.id }} .gh-book-btn--gold { background: #B8913A; color: #FDF8F2; }
+  .gh-book-options-{{ section.id }} .gh-book-btn--gold:hover { background: #9A7A30; }
+  .gh-book-options-{{ section.id }} .gh-book-btn--vine { background: #1C2B1A; color: #F5EFE3; }
+  .gh-book-options-{{ section.id }} .gh-book-btn--vine:hover { background: #2E4A2C; }
+  .gh-book-options-{{ section.id }} .gh-book-btn--outline {
+    background: transparent;
+    color: #1C2B1A;
+    border: 0.5px solid rgba(28,43,26,0.25);
+    padding: 11px 20px;
+  }
+  .gh-book-options-{{ section.id }} .gh-book-btn--outline:hover { border-color: #1C2B1A; background: rgba(28,43,26,0.04); }
+
+  .gh-book-options-{{ section.id }} .gh-book-embed-wrap { margin-bottom: 16px; }
+  .gh-book-options-{{ section.id }} .gh-book-embed-placeholder {
+    background: #F5EFE3;
+    border: 0.5px dashed rgba(28,43,26,0.2);
+    border-radius: 3px;
+    padding: 28px 24px;
+    text-align: center;
+    font-size: 13px;
+    color: #6B7668;
+    line-height: 1.65;
+    margin-bottom: 16px;
+  }
+  .gh-book-options-{{ section.id }} .gh-book-embed-placeholder strong {
+    display: block;
+    font-size: 14px;
+    color: #1C2B1A;
+    margin-bottom: 6px;
+  }
+  .gh-book-options-{{ section.id }} .gh-book-embed-tag {
+    display: inline-block;
+    background: rgba(184,145,58,0.1);
+    border: 0.5px solid rgba(184,145,58,0.3);
+    border-radius: 2px;
+    padding: 3px 8px;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #B8913A;
+    margin-top: 10px;
+  }
+
+  .gh-book-options-{{ section.id }} .gh-booking-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    position: sticky;
+    top: 90px;
+  }
+
+  .gh-book-options-{{ section.id }} .gh-sidebar-info-card {
+    background: #fff;
+    border: 0.5px solid rgba(28,43,26,0.1);
+    border-radius: 4px;
+    padding: 24px;
+  }
+
+  .gh-book-options-{{ section.id }} .gh-sidebar-card-label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #6B7668;
+    margin: 0 0 14px;
+    padding-bottom: 12px;
+    border-bottom: 0.5px solid rgba(28,43,26,0.1);
+  }
+
+  .gh-book-options-{{ section.id }} .gh-sidebar-info-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 14px;
+  }
+  .gh-book-options-{{ section.id }} .gh-sidebar-info-row:last-child { margin-bottom: 0; }
+  .gh-book-options-{{ section.id }} .gh-sidebar-info-icon { color: #B8913A; flex-shrink: 0; margin-top: 1px; }
+  .gh-book-options-{{ section.id }} .gh-sidebar-info-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #6B7668; margin: 0 0 2px; }
+  .gh-book-options-{{ section.id }} .gh-sidebar-info-value { font-size: 13.5px; color: #1C2B1A; line-height: 1.45; margin: 0; }
+  .gh-book-options-{{ section.id }} .gh-sidebar-info-value a { color: inherit; text-decoration: none; }
+
+  .gh-book-options-{{ section.id }} .gh-sidebar-cta {
+    background: #1C2B1A;
+    border-radius: 4px;
+    padding: 24px;
+    text-align: center;
+  }
+  .gh-book-options-{{ section.id }} .gh-sidebar-cta-eyebrow {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #D4BC8A;
+    display: block;
+    margin-bottom: 8px;
+  }
+  .gh-book-options-{{ section.id }} .gh-sidebar-cta-title {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 20px;
+    color: #F5EFE3;
+    margin: 0 0 8px;
+    line-height: 1.25;
+  }
+  .gh-book-options-{{ section.id }} .gh-sidebar-cta-body {
+    font-size: 12.5px;
+    color: rgba(245,239,227,0.5);
+    line-height: 1.6;
+    margin: 0 0 18px;
+  }
+  .gh-book-options-{{ section.id }} .gh-sidebar-cta-btn {
+    display: block;
+    padding: 10px 16px;
+    background: #B8913A;
+    color: #FDF8F2;
+    border-radius: 2px;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    text-align: center;
+    text-decoration: none;
+  }
+
+  .gh-book-options-{{ section.id }} .gh-sidebar-contact {
+    background: #F5EFE3;
+    border: 0.5px solid rgba(28,43,26,0.1);
+    border-radius: 4px;
+    padding: 24px;
+  }
+  .gh-book-options-{{ section.id }} .gh-sidebar-contact-title {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 17px;
+    color: #1C2B1A;
+    margin: 0 0 14px;
+  }
+  .gh-book-options-{{ section.id }} .gh-sidebar-directions-blurb {
+    font-size: 13px;
+    color: #6B7668;
+    line-height: 1.65;
+    margin: 0 0 12px;
+  }
+
+  @media (max-width: 1024px) {
+    .gh-book-options-{{ section.id }} .gh-book-layout {
+      grid-template-columns: 1fr;
+    }
+    .gh-book-options-{{ section.id }} .gh-booking-sidebar {
+      position: static;
+      top: auto;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .gh-book-options-{{ section.id }} .gh-book-layout {
+      padding: 44px 20px 72px;
+      gap: 36px;
+    }
+    .gh-book-options-{{ section.id }} .gh-booking-card-header {
+      grid-template-columns: auto 1fr;
+      gap: 14px;
+      padding: 22px 20px 18px;
+    }
+    .gh-book-options-{{ section.id }} .gh-booking-card-badge {
+      display: none;
+    }
+    .gh-book-options-{{ section.id }} .gh-booking-card-body {
+      padding: 0 20px 22px;
+    }
+  }
+</style>
+
+<section class="gh-book-options-{{ section.id }}">
+  <div class="gh-book-layout">
+    <div class="gh-booking-options">
+      {% for block in section.blocks %}
+        {% if block.type == 'booking' %}
+          <article class="gh-booking-card" {{ block.shopify_attributes }}>
+            <div class="gh-booking-card-header">
+              <div class="gh-booking-card-icon gh-booking-card-icon--{{ block.settings.icon | default: 'wine' }}">
+                {% case block.settings.icon %}
+                  {% when 'wine' %}
+                    <svg width="22" height="22" fill="none" stroke="#B8913A" stroke-width="1.5" viewBox="0 0 24 24"><path d="M8 22h8M12 11v11M5 2l2 9a5 5 0 0 0 10 0l2-9z"/></svg>
+                  {% when 'fork' %}
+                    <svg width="22" height="22" fill="none" stroke="#1C2B1A" stroke-width="1.5" viewBox="0 0 24 24"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+                  {% when 'house' %}
+                    <svg width="22" height="22" fill="none" stroke="#4A6888" stroke-width="1.5" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                  {% when 'mail' %}
+                    <svg width="22" height="22" fill="none" stroke="#6B7668" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  {% else %}
+                    <svg width="22" height="22" fill="none" stroke="#B8913A" stroke-width="1.5" viewBox="0 0 24 24"><path d="M8 22h8M12 11v11M5 2l2 9a5 5 0 0 0 10 0l2-9z"/></svg>
+                {% endcase %}
+              </div>
+              <div class="gh-booking-card-title-wrap">
+                {% if block.settings.category != blank %}<p class="gh-booking-card-eyebrow">{{ block.settings.category }}</p>{% endif %}
+                {% if block.settings.title != blank %}<h2 class="gh-booking-card-title">{{ block.settings.title }}</h2>{% endif %}
+              </div>
+              {% if block.settings.badge != blank and block.settings.badge_style != 'none' %}
+                <span class="gh-booking-card-badge gh-badge-{{ block.settings.badge_style }}">{{ block.settings.badge }}</span>
+              {% endif %}
+            </div>
+            <div class="gh-booking-card-body">
+              {% if block.settings.description != blank %}<p class="gh-booking-card-desc">{{ block.settings.description }}</p>{% endif %}
+              <div class="gh-booking-card-details">
+                {% for i in (1..3) %}
+                  {% capture detail_key %}detail_{{ i }}{% endcapture %}
+                  {% assign detail = block.settings[detail_key] %}
+                  {% if detail != blank %}
+                    <span class="gh-booking-detail">
+                      {% if detail contains 'am' or detail contains 'pm' %}
+                        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                      {% elsif detail contains 'Rd' or detail contains 'SA' or detail contains 'Lyndoch' %}
+                        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                      {% elsif detail contains '+' or detail contains 'Call' %}
+                        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 3.07 9.63 19.79 19.79 0 0 1 .63 2 2 2 0 0 1 2.62 0h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L7.09 7.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                      {% else %}
+                        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                      {% endif %}
+                      {{ detail }}
+                    </span>
+                  {% endif %}
+                {% endfor %}
+              </div>
+
+              {% if block.settings.show_resdiary_embed %}
+                {% if block.settings.resdiary_embed != blank %}
+                  <div class="gh-book-embed-wrap">{{ block.settings.resdiary_embed }}</div>
+                {% else %}
+                  <div class="gh-book-embed-placeholder">
+                    <strong>Restaurant Booking</strong>
+                    Paste your ResDiary embed code in the theme editor -> this card -> "ResDiary embed code".
+                    <span class="gh-book-embed-tag">ResDiary embed</span>
+                  </div>
+                {% endif %}
+              {% endif %}
+
+              <div class="gh-booking-card-actions"{% if block.settings.show_resdiary_embed %} style="margin-top:16px;"{% endif %}>
+                {% if block.settings.primary_btn_label != blank and block.settings.primary_btn_url != blank %}
+                  <a href="{{ block.settings.primary_btn_url }}" class="gh-book-btn gh-book-btn--{{ block.settings.primary_btn_style | default: 'gold' }}">
+                    {{ block.settings.primary_btn_label }}
+                  </a>
+                {% endif %}
+                {% if block.settings.secondary_btn_label != blank and block.settings.secondary_btn_url != blank %}
+                  <a href="{{ block.settings.secondary_btn_url }}" class="gh-book-btn gh-book-btn--outline">{{ block.settings.secondary_btn_label }}</a>
+                {% endif %}
+              </div>
+            </div>
+          </article>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <aside class="gh-booking-sidebar">
+      <div class="gh-sidebar-info-card">
+        <p class="gh-sidebar-card-label">Visit information</p>
+        <div class="gh-sidebar-info-row">
+          <svg class="gh-sidebar-info-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <div><p class="gh-sidebar-info-label">Address</p><p class="gh-sidebar-info-value">{{ section.settings.sidebar_address }}</p></div>
+        </div>
+        <div class="gh-sidebar-info-row">
+          <svg class="gh-sidebar-info-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <div><p class="gh-sidebar-info-label">Cellar door hours</p><p class="gh-sidebar-info-value">{{ section.settings.sidebar_hours }}</p></div>
+        </div>
+        <div class="gh-sidebar-info-row">
+          <svg class="gh-sidebar-info-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 3.07 9.63 19.79 19.79 0 0 1 .63 2 2 2 0 0 1 2.62 0h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L7.09 7.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <div><p class="gh-sidebar-info-label">Cellar door</p><p class="gh-sidebar-info-value"><a href="tel:{{ section.settings.sidebar_phone_cellar | remove: ' ' }}">{{ section.settings.sidebar_phone_cellar }}</a></p></div>
+        </div>
+        <div class="gh-sidebar-info-row">
+          <svg class="gh-sidebar-info-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 3.07 9.63 19.79 19.79 0 0 1 .63 2 2 2 0 0 1 2.62 0h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L7.09 7.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <div><p class="gh-sidebar-info-label">Ennia Cucina</p><p class="gh-sidebar-info-value"><a href="tel:{{ section.settings.sidebar_phone_restaurant | remove: ' ' }}">{{ section.settings.sidebar_phone_restaurant }}</a></p></div>
+        </div>
+        <div class="gh-sidebar-info-row">
+          <svg class="gh-sidebar-info-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <div><p class="gh-sidebar-info-label">Email</p><p class="gh-sidebar-info-value"><a href="mailto:{{ section.settings.sidebar_email }}">{{ section.settings.sidebar_email }}</a></p></div>
+        </div>
+      </div>
+
+      <div class="gh-sidebar-cta">
+        <span class="gh-sidebar-cta-eyebrow">{{ section.settings.sidebar_cta_eyebrow }}</span>
+        <p class="gh-sidebar-cta-title">{{ section.settings.sidebar_cta_title }}</p>
+        <p class="gh-sidebar-cta-body">{{ section.settings.sidebar_cta_body }}</p>
+        {% if section.settings.sidebar_cta_btn_label != blank and section.settings.sidebar_cta_btn_url != blank %}
+          <a href="{{ section.settings.sidebar_cta_btn_url }}" class="gh-sidebar-cta-btn">{{ section.settings.sidebar_cta_btn_label }}</a>
+        {% endif %}
+      </div>
+
+      <div class="gh-sidebar-contact">
+        <p class="gh-sidebar-contact-title">Getting here</p>
+        <p class="gh-sidebar-directions-blurb">{{ section.settings.sidebar_directions_blurb }}</p>
+        {% if section.settings.sidebar_maps_url != blank %}
+          <a href="{{ section.settings.sidebar_maps_url }}" target="_blank" rel="noopener" class="gh-book-btn gh-book-btn--outline" style="font-size:10px;padding:9px 16px;">
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Open in Google Maps
+          </a>
+        {% endif %}
+      </div>
+    </aside>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "GH — Book Options",
+  "settings": [
+    { "type": "text", "id": "sidebar_address", "label": "Address", "default": "34 Moppert Rd, Lyndoch SA 5351" },
+    { "type": "text", "id": "sidebar_hours", "label": "Opening hours", "default": "Thu – Sun, 11am – 5pm" },
+    { "type": "text", "id": "sidebar_phone_cellar", "label": "Cellar door phone", "default": "+61 408 838 004" },
+    { "type": "text", "id": "sidebar_phone_restaurant", "label": "Restaurant phone", "default": "+61 422 588 605" },
+    { "type": "text", "id": "sidebar_email", "label": "Email address", "default": "wine@godshill.com.au" },
+    { "type": "text", "id": "sidebar_cta_eyebrow", "label": "CTA card eyebrow", "default": "Members save more" },
+    { "type": "text", "id": "sidebar_cta_title", "label": "CTA card title", "default": "Join the Family Wine Club" },
+    { "type": "textarea", "id": "sidebar_cta_body", "label": "CTA card body", "default": "Members receive 15–25% off all wines, dining discounts at Ennia Cucina, and exclusive event invitations." },
+    { "type": "text", "id": "sidebar_cta_btn_label", "label": "CTA button label", "default": "Learn more →" },
+    { "type": "url", "id": "sidebar_cta_btn_url", "label": "CTA button URL" },
+    { "type": "textarea", "id": "sidebar_directions_blurb", "label": "Getting here text", "default": "Only 55 minutes from Adelaide CBD. Located in Lyndoch in the famous Southern Barossa wine region." },
+    { "type": "url", "id": "sidebar_maps_url", "label": "Google Maps URL" },
+    { "type": "color", "id": "bg_color", "label": "Page background", "default": "#FDF8F2" }
+  ],
+  "blocks": [
+    {
+      "type": "booking",
+      "name": "Booking card",
+      "settings": [
+        { "type": "text", "id": "category", "label": "Category eyebrow", "default": "Cellar door" },
+        { "type": "text", "id": "title", "label": "Card title", "default": "Wine Tasting" },
+        { "type": "text", "id": "badge", "label": "Badge label", "default": "Thu – Sun" },
+        {
+          "type": "select",
+          "id": "badge_style",
+          "label": "Badge colour",
+          "default": "gold",
+          "options": [
+            { "value": "gold", "label": "Gold" },
+            { "value": "green", "label": "Green" },
+            { "value": "blue", "label": "Blue" },
+            { "value": "none", "label": "None" }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "default": "wine",
+          "options": [
+            { "value": "wine", "label": "Wine" },
+            { "value": "fork", "label": "Fork" },
+            { "value": "house", "label": "House" },
+            { "value": "mail", "label": "Mail" }
+          ]
+        },
+        { "type": "textarea", "id": "description", "label": "Description", "default": "Experience our wines at the source. Our cellar door tastings are a guided journey through God's Hill's small-batch Barossa wines, poured with the story behind each bottle. Groups of 6 or more please book ahead." },
+        { "type": "text", "id": "detail_1", "label": "Detail row 1", "default": "Thursday – Sunday, 11am – 5pm" },
+        { "type": "text", "id": "detail_2", "label": "Detail row 2", "default": "Groups of 6+ book ahead" },
+        { "type": "text", "id": "detail_3", "label": "Detail row 3", "default": "34 Moppert Rd, Lyndoch SA 5351" },
+        { "type": "text", "id": "primary_btn_label", "label": "Primary button label", "default": "Call to book" },
+        { "type": "url", "id": "primary_btn_url", "label": "Primary button URL" },
+        {
+          "type": "select",
+          "id": "primary_btn_style",
+          "label": "Primary button style",
+          "default": "gold",
+          "options": [
+            { "value": "gold", "label": "Gold" },
+            { "value": "vine", "label": "Vine" },
+            { "value": "outline", "label": "Outline" }
+          ]
+        },
+        { "type": "text", "id": "secondary_btn_label", "label": "Secondary button label", "default": "Send an enquiry" },
+        { "type": "url", "id": "secondary_btn_url", "label": "Secondary button URL" },
+        { "type": "checkbox", "id": "show_resdiary_embed", "label": "Show ResDiary embed placeholder", "default": false },
+        { "type": "html", "id": "resdiary_embed", "label": "ResDiary embed code" }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "GH — Book Options",
+      "blocks": [
+        {
+          "type": "booking",
+          "settings": {
+            "category": "Cellar door",
+            "title": "Wine Tasting",
+            "badge": "Thu – Sun",
+            "badge_style": "gold",
+            "icon": "wine",
+            "description": "Experience our wines at the source. Our cellar door tastings are a guided journey through God's Hill's small-batch Barossa wines, poured with the story behind each bottle. Groups of 6 or more please book ahead.",
+            "detail_1": "Thursday – Sunday, 11am – 5pm",
+            "detail_2": "Groups of 6+ book ahead",
+            "detail_3": "34 Moppert Rd, Lyndoch SA 5351",
+            "primary_btn_label": "Call to book",
+            "primary_btn_url": "tel:+61408838004",
+            "primary_btn_style": "gold",
+            "secondary_btn_label": "Send an enquiry",
+            "secondary_btn_url": "/pages/contact",
+            "show_resdiary_embed": false
+          }
+        },
+        {
+          "type": "booking",
+          "settings": {
+            "category": "Authentic Italian food",
+            "title": "Ennia Cucina",
+            "badge": "ResDiary",
+            "badge_style": "green",
+            "icon": "fork",
+            "description": "Reserve your table at Ennia Cucina — our restaurant at the vineyard serving authentic Italian food matched with God's Hill wines. Good food, natural wine, and a view that stays with you.",
+            "detail_1": "Thu – Sun, Kitchen 11am – 4pm",
+            "detail_2": "All group sizes welcome",
+            "primary_btn_label": "Call 0422 588 605",
+            "primary_btn_url": "tel:+61422588605",
+            "primary_btn_style": "outline",
+            "show_resdiary_embed": true
+          }
+        },
+        {
+          "type": "booking",
+          "settings": {
+            "category": "Barossa accommodation",
+            "title": "Villa Scalzi",
+            "badge": "Stay",
+            "badge_style": "blue",
+            "icon": "house",
+            "description": "Wake up among the vines at Villa Scalzi — our heritage accommodation in the heart of the Barossa Valley. Old-world comfort, modern amenities, and the cellar door at your doorstep.",
+            "detail_1": "Lyndoch, Barossa Valley SA",
+            "detail_2": "Subject to availability",
+            "primary_btn_label": "Check availability",
+            "primary_btn_url": "/pages/accommodation",
+            "primary_btn_style": "vine",
+            "secondary_btn_label": "Enquire",
+            "secondary_btn_url": "/pages/contact"
+          }
+        },
+        {
+          "type": "booking",
+          "settings": {
+            "category": "Groups · Events · Private",
+            "title": "Private & Group Events",
+            "badge_style": "none",
+            "icon": "mail",
+            "description": "Planning a private function, corporate event, or special occasion at the vineyard? We host bespoke events at Cantina Scalzi — contact our team to discuss dates, menus, and wine packages.",
+            "primary_btn_label": "Get in touch",
+            "primary_btn_url": "/pages/contact",
+            "primary_btn_style": "gold",
+            "secondary_btn_label": "Call us",
+            "secondary_btn_url": "tel:+61408838004"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
