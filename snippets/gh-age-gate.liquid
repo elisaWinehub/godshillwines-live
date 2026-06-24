@@ -2,7 +2,7 @@
   {%- assign accent = settings.age_gate_accent_color | default: '#B8913A' -%}
   {%- assign overlay_hex = settings.age_gate_overlay_color | default: '#141E13' -%}
   {%- assign overlay_opacity = settings.age_gate_overlay_opacity | default: 92 | divided_by: 100.0 -%}
-  {%- assign heading_raw = settings.age_gate_heading | default: 'Are you 18 or over?' -%}
+  {%- assign heading_raw = settings.age_gate_heading -%}
   {%- assign heading_parts = heading_raw | split: '*' -%}
   {%- assign heading_html = '' -%}
   {%- for part in heading_parts -%}
@@ -13,7 +13,7 @@
       {%- assign heading_html = heading_html | append: part -%}
     {%- endif -%}
   {%- endfor -%}
-  {%- assign legal_text = settings.age_gate_legal | default: "By entering you confirm you are of legal drinking age in your country and agree to our privacy policy and terms of use." -%}
+  {%- assign legal_text = settings.age_gate_legal -%}
   {%- assign privacy_url = settings.age_gate_privacy_url | default: '/policies/privacy-policy' -%}
   {%- assign terms_url = settings.age_gate_terms_url | default: '/policies/terms-of-service' -%}
   {%- capture privacy_link -%}<a href="{{ privacy_url }}" style="color: {{ accent }}; border-bottom: 0.5px solid {{ accent }}40;">privacy policy</a>{%- endcapture -%}
@@ -214,29 +214,29 @@
               </svg>
             {% endif %}
           </div>
-          <h1>{{ settings.age_gate_store_name | default: "God's Hill Wines" }}</h1>
-          <p>{{ settings.age_gate_store_subline | default: 'Barossa Valley · Australia' }}</p>
+          {% if settings.age_gate_store_name != blank %}<h1>{{ settings.age_gate_store_name }}</h1>{% endif %}
+          {% if settings.age_gate_store_subline != blank %}<p>{{ settings.age_gate_store_subline }}</p>{% endif %}
           <div class="gh-age-divider" style="background: {{ accent }};"></div>
         </div>
 
         <div class="gh-age-modal-body" style="background: {{ settings.age_gate_body_bg | default: '#FDF8F2' }};">
-          <h2>{{ heading_html }}</h2>
-          <p>{{ settings.age_gate_body | default: 'This website contains information about alcoholic beverages.' | escape }}</p>
+          {% if heading_html != blank %}<h2>{{ heading_html }}</h2>{% endif %}
+          {% if settings.age_gate_body != blank %}<p>{{ settings.age_gate_body | escape }}</p>{% endif %}
 
           <div class="gh-age-btn-group">
             <button class="gh-age-btn-yes" type="button" style="background: {{ settings.age_gate_yes_color | default: '#B8913A' }};" onclick="ghAgeYes()">
-              {{ settings.age_gate_yes_label | default: "Yes, I'm 18 or over" }}
+              {{ settings.age_gate_yes_label }}
             </button>
             <button class="gh-age-btn-no" type="button" onclick="ghAgeNo()">
-              {{ settings.age_gate_no_label | default: "No, I'm under 18" }}
+              {{ settings.age_gate_no_label }}
             </button>
           </div>
 
-          <p class="gh-age-legal">{{ legal_with_links }}</p>
+          {% if legal_with_links != blank %}<p class="gh-age-legal">{{ legal_with_links }}</p>{% endif %}
         </div>
 
         <div class="gh-age-modal-footer">
-          <p>{{ settings.age_gate_footer | default: 'Please drink responsibly.' | escape }}</p>
+          {% if settings.age_gate_footer != blank %}<p>{{ settings.age_gate_footer | escape }}</p>{% endif %}
         </div>
       </div>
 
@@ -248,8 +248,8 @@
             <line x1="12" y1="16" x2="12.01" y2="16"/>
           </svg>
         </div>
-        <h2>{{ settings.age_gate_declined_heading | default: 'Access restricted' }}</h2>
-        <p>{{ settings.age_gate_declined_body | default: 'Sorry, you must be of legal drinking age to access this website.' | escape }}</p>
+        {% if settings.age_gate_declined_heading != blank %}<h2>{{ settings.age_gate_declined_heading }}</h2>{% endif %}
+        {% if settings.age_gate_declined_body != blank %}<p>{{ settings.age_gate_declined_body | escape }}</p>{% endif %}
       </div>
 
       <div class="gh-age-success-state" id="gh-age-success">
@@ -258,8 +258,8 @@
             <path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
-        <h2>{{ settings.age_gate_success_heading | default: "Welcome to God's Hill" }}</h2>
-        <p>{{ settings.age_gate_success_body | default: 'Entering the site — enjoy your visit.' | escape }}</p>
+        {% if settings.age_gate_success_heading != blank %}<h2>{{ settings.age_gate_success_heading }}</h2>{% endif %}
+        {% if settings.age_gate_success_body != blank %}<p>{{ settings.age_gate_success_body | escape }}</p>{% endif %}
       </div>
     </div>
   </div>
