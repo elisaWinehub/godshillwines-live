@@ -1,6 +1,6 @@
 {%- render 'gh-tokens' -%}
 
-<section class="gh-collection-toolbar-{{ section.id }}">
+<section class="gh-collection-toolbar-{{ section.id }}" style="background: {{ section.settings.bg_color | default: '#FDF8F2' }};">
   <div class="gh-collection-toolbar-inner">
     {% if section.settings.show_breadcrumb %}
       <div class="breadcrumb">
@@ -112,7 +112,8 @@
 {
   "name": "GH — Collection Toolbar",
   "settings": [
-    { "type": "checkbox", "id": "show_breadcrumb", "label": "Show breadcrumb", "default": true }
+    { "type": "checkbox", "id": "show_breadcrumb", "label": "Show breadcrumb", "default": true },
+    { "type": "color", "id": "bg_color", "label": "Background colour", "default": "#FDF8F2" }
   ],
   "presets": [{ "name": "GH — Collection Toolbar" }]
 }
