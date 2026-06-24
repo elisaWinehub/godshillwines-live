@@ -2,6 +2,9 @@
 {%- render 'gh-tokens' -%}
 
 <section class="gh-product-detail-{{ section.id }}" style="background: {{ section.settings.bg_color | default: '#FDF8F2' }};">
+  
+
+  <div class="gh-product-detail-shell">
   {% for block in section.blocks %}
     {% if block.type == 'breadcrumbs' and block.settings.show_block %}
       <nav class="gh-breadcrumbs" {{ block.shopify_attributes }}>
@@ -21,8 +24,6 @@
       </nav>
     {% endif %}
   {% endfor %}
-
-  <div class="gh-product-detail-shell">
     <div class="gh-product-detail-grid">
       <div class="gh-product-media-col">
         {% assign featured = product.selected_or_first_available_variant.featured_image | default: product.featured_image %}
@@ -165,7 +166,7 @@
 
 <style>
   .gh-product-detail-{{ section.id }} {
-    padding: 56px 40px;
+    padding: 20px 56px 40px;
   }
 
   .gh-product-detail-{{ section.id }} .gh-product-detail-shell {
@@ -742,7 +743,7 @@
 
             {% when 'rating' %}
               {% if block.settings.show_block %}
-                <p class="gh-rating" {{ block.shopify_attributes }}>★★★★★ <span>5.0</span></p>
+                <p class="gh-rating" {{ block.shopify_attributes }}>★★★★½ <span>4.5 · 12 reviews</span></p>
               {% endif %}
 
             {% when 'price' %}
