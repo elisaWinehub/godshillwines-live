@@ -93,9 +93,10 @@
       ],
       "settings": {
         "bg_color": "#f5efe3",
-        "text_color": "#FFFFFF",
-        "cell_bg": "#FFFFFF",
+        "text_color": "#ffffff",
+        "cell_bg": "#ffffff",
         "title_color": "#1c2b1a",
+        "divider_color": "#243B21",
         "dark_mode": true
       }
     }
