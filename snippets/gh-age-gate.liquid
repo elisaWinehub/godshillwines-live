@@ -45,21 +45,17 @@
       text-align: center;
       position: relative;
     }
-    .gh-age-logo-ring {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      border: 1.5px solid rgba(184,145,58,0.5);
+    .gh-age-logo-wrap {
+      min-height: 48px;
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto 16px;
-      background: rgba(184,145,58,0.08);
-      overflow: hidden;
     }
     .gh-age-logo-img {
-      width: 44px;
-      height: 44px;
+      width: auto;
+      max-width: 160px;
+      max-height: 56px;
       object-fit: contain;
     }
     .gh-age-modal-header h1 {
@@ -199,11 +195,17 @@
     <div class="gh-age-overlay" style="background: {{ overlay_hex }}; opacity: {{ overlay_opacity }};">
       <div class="gh-age-modal" id="gh-age-main">
         <div class="gh-age-modal-header" style="background: {{ settings.age_gate_header_bg | default: '#1C2B1A' }};">
-          <div class="gh-age-logo-ring">
-            {% if settings.logo != blank %}
+          <div class="gh-age-logo-wrap">
+            {% if settings.age_gate_logo != blank %}
+              {{
+                settings.age_gate_logo
+                | image_url: width: 160
+                | image_tag: loading: 'eager', alt: shop.name, class: 'gh-age-logo-img'
+              }}
+            {% elsif settings.logo != blank %}
               {{
                 settings.logo
-                | image_url: width: 120
+                | image_url: width: 160
                 | image_tag: loading: 'eager', alt: shop.name, class: 'gh-age-logo-img'
               }}
             {% else %}

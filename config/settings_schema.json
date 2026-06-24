@@ -2326,6 +2326,11 @@
         "default": "Barossa Valley · Australia"
       },
       {
+        "type": "image_picker",
+        "id": "age_gate_logo",
+        "label": "Popup logo"
+      },
+      {
         "type": "color",
         "id": "age_gate_header_bg",
         "label": "Header background colour",
