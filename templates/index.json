@@ -59,7 +59,7 @@
             "title": "Villa Scalzi",
             "description": "Wake up among the vines. Old-world Barossa comfort with modern ease, minutes from Lyndoch.",
             "link_label": "Make a booking",
-            "link_url": "/pages/accommodation"
+            "link_url": "#"
           }
         }
       },
@@ -172,9 +172,9 @@
         "heading": "<p>Wine Tasting<br/><em>in the heart of Barossa</em></p>",
         "body": "Our cellar door tastings are our labour of love. Groups of six or more are welcome — we simply ask you to book ahead so we can look after you properly.",
         "btn_primary_label": "Book a tasting",
-        "btn_primary_url": "",
+        "btn_primary_url": "shopify://pages/book",
         "btn_secondary_label": "Plan your visit",
-        "btn_secondary_url": "",
+        "btn_secondary_url": "shopify://pages/wine-club",
         "bg_color": "#1c2b1a",
         "text_color": "#f5efe3"
       }
