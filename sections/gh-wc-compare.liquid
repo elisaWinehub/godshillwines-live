@@ -1,0 +1,113 @@
+{%- render 'gh-tokens' -%}
+<style>
+  .gh-wc-compare-{{ section.id }} {
+    --ruby: #8B1A2E;
+    --pearl: #4A6888;
+    background: {{ section.settings.bg_color | default: '#F5EFE3' }};
+    padding: 80px 40px;
+  }
+  .gh-wc-compare-{{ section.id }} .gh-wc-compare-inner { width: min(900px, 100%); margin: 0 auto; }
+  .gh-wc-compare-{{ section.id }} .gh-wc-compare-head { text-align: center; margin-bottom: 20px; }
+  .gh-wc-compare-{{ section.id }} .gh-wc-compare-eyebrow { margin: 0 0 8px; font: 500 11px/1.4 'Inter', sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #B8913A; }
+  .gh-wc-compare-{{ section.id }} .gh-wc-compare-title { margin: 0; font: 400 clamp(28px, 4vw, 44px)/1.1 'EB Garamond', Georgia, serif; color: #1C2B1A; }
+  .gh-wc-compare-{{ section.id }} .gh-wc-compare-table { border: 0.5px solid rgba(28,43,26,0.1); border-radius: 4px; overflow: hidden; }
+  .gh-wc-compare-{{ section.id }} .gh-wc-compare-row { display: grid; grid-template-columns: 1.6fr 1fr 1fr; }
+  .gh-wc-compare-{{ section.id }} .gh-wc-compare-row > div { padding: 12px 14px; border-bottom: 0.5px solid rgba(28,43,26,0.08); font: 400 13px/1.6 'Inter', sans-serif; color: #1C2B1A; background: #fff; }
+  .gh-wc-compare-{{ section.id }} .gh-wc-compare-row--head > div { font-weight: 600; background: #FCF8F0; }
+  .gh-wc-compare-{{ section.id }} .gh-wc-ruby-head { color: {{ section.settings.ruby_header_color | default: '#8B1A2E' }}; }
+  .gh-wc-compare-{{ section.id }} .gh-wc-pearl-head { color: {{ section.settings.pearl_header_color | default: '#4A6888' }}; }
+  .gh-wc-compare-{{ section.id }} .gh-wc-compare-row--highlight > div { background: rgba(184,145,58,0.08); }
+  .gh-wc-compare-{{ section.id }} .gh-wc-check { display: inline-flex; align-items: center; justify-content: center; }
+  .gh-wc-compare-{{ section.id }} .gh-wc-dash { color: #6B7668; }
+  .gh-wc-compare-{{ section.id }} .gh-wc-compare-row:last-child > div { border-bottom: none; }
+  @media (max-width: 768px) {
+    .gh-wc-compare-{{ section.id }} { padding: 60px 20px; }
+    .gh-wc-compare-{{ section.id }} .gh-wc-compare-row { grid-template-columns: 1.2fr 1fr 1fr; }
+    .gh-wc-compare-{{ section.id }} .gh-wc-compare-row > div { padding: 10px; font-size: 12px; }
+  }
+</style>
+
+<section class="gh-wc-compare-{{ section.id }}">
+  <div class="gh-wc-compare-inner">
+    <div class="gh-wc-compare-head">
+      <p class="gh-wc-compare-eyebrow">{{ section.settings.eyebrow }}</p>
+      <h2 class="gh-wc-compare-title">{{ section.settings.heading }}</h2>
+    </div>
+    <div class="gh-wc-compare-table">
+      <div class="gh-wc-compare-row gh-wc-compare-row--head">
+        <div>Benefit</div>
+        <div class="gh-wc-ruby-head">{{ section.settings.ruby_col_label }}</div>
+        <div class="gh-wc-pearl-head">{{ section.settings.pearl_col_label }}</div>
+      </div>
+      {% for block in section.blocks %}
+        {% if block.type == 'row' %}
+          <div class="gh-wc-compare-row{% if block.settings.highlight %} gh-wc-compare-row--highlight{% endif %}" {{ block.shopify_attributes }}>
+            <div>{{ block.settings.label }}</div>
+            <div>
+              {% if block.settings.ruby_check %}
+                <span class="gh-wc-check"><svg width="16" height="16" fill="none" stroke="#B8913A" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              {% else %}
+                {{ block.settings.ruby_value }}
+              {% endif %}
+            </div>
+            <div>
+              {% if block.settings.pearl_check %}
+                <span class="gh-wc-check"><svg width="16" height="16" fill="none" stroke="#B8913A" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              {% elsif block.settings.pearl_cross %}
+                <span class="gh-wc-dash">—</span>
+              {% else %}
+                {{ block.settings.pearl_value }}
+              {% endif %}
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "GH — Wine Club Compare",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Side by side" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Compare membership tiers" },
+    { "type": "text", "id": "ruby_col_label", "label": "Ruby column heading", "default": "Ruby Club" },
+    { "type": "text", "id": "pearl_col_label", "label": "Pearl column heading", "default": "Pearl Club" },
+    { "type": "color", "id": "ruby_header_color", "label": "Ruby heading colour", "default": "#8B1A2E" },
+    { "type": "color", "id": "pearl_header_color", "label": "Pearl heading colour", "default": "#4A6888" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#F5EFE3" }
+  ],
+  "blocks": [
+    {
+      "type": "row",
+      "name": "Row",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Benefit label" },
+        { "type": "text", "id": "ruby_value", "label": "Ruby value" },
+        { "type": "text", "id": "pearl_value", "label": "Pearl value" },
+        { "type": "checkbox", "id": "highlight", "label": "Highlight this row", "default": false },
+        { "type": "checkbox", "id": "ruby_check", "label": "Ruby = check", "default": false },
+        { "type": "checkbox", "id": "pearl_check", "label": "Pearl = check", "default": false },
+        { "type": "checkbox", "id": "pearl_cross", "label": "Pearl = dash", "default": false }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "GH — Wine Club Compare",
+      "blocks": [
+        { "type": "row", "settings": { "label": "Annual wine commitment", "ruby_value": "2 dozen", "pearl_value": "1 dozen" } },
+        { "type": "row", "settings": { "label": "Discount on wine purchases", "ruby_value": "25% off", "pearl_value": "15% off", "highlight": true } },
+        { "type": "row", "settings": { "label": "Ennia Cucina dining discount", "ruby_value": "15% off", "pearl_value": "10% off" } },
+        { "type": "row", "settings": { "label": "Free Australia-wide shipping", "highlight": true, "ruby_check": true, "pearl_check": true } },
+        { "type": "row", "settings": { "label": "First release & rare vintage access", "ruby_check": true, "pearl_check": true } },
+        { "type": "row", "settings": { "label": "Member-only event invitations", "highlight": true, "ruby_check": true, "pearl_check": true } },
+        { "type": "row", "settings": { "label": "Personalised wine selection", "ruby_check": true, "pearl_check": true } },
+        { "type": "row", "settings": { "label": "No joining fees", "highlight": true, "ruby_check": true, "pearl_check": true } },
+        { "type": "row", "settings": { "label": "Quarterly deliveries (4 per year)", "ruby_check": true, "pearl_cross": true } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,97 @@
+{%- render 'gh-tokens' -%}
+<style>
+  .gh-wc-faq-{{ section.id }} {
+    --ruby: #8B1A2E;
+    --pearl: #4A6888;
+    background: {{ section.settings.bg_color | default: '#FDF8F2' }};
+    padding: 80px 40px;
+  }
+  .gh-wc-faq-{{ section.id }} .gh-wc-faq-inner { width: min(800px, 100%); margin: 0 auto; }
+  .gh-wc-faq-{{ section.id }} .gh-wc-faq-head { text-align: center; margin-bottom: 16px; }
+  .gh-wc-faq-{{ section.id }} .gh-wc-faq-eyebrow { margin: 0 0 8px; font: 500 11px/1.4 'Inter', sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #B8913A; }
+  .gh-wc-faq-{{ section.id }} .gh-wc-faq-title { margin: 0; font: 400 clamp(28px, 4vw, 44px)/1.1 'EB Garamond', Georgia, serif; color: #1C2B1A; }
+  .gh-wc-faq-{{ section.id }} .gh-wc-faq-item { border-bottom: 0.5px solid rgba(28,43,26,.1); }
+  .gh-wc-faq-{{ section.id }} .gh-wc-faq-btn { width: 100%; border: 0; background: transparent; padding: 18px 0; text-align: left; display: flex; justify-content: space-between; gap: 10px; align-items: center; font: 500 14px/1.6 'Inter', sans-serif; color: #1C2B1A; cursor: pointer; }
+  .gh-wc-faq-{{ section.id }} .gh-wc-faq-chevron { transition: transform .2s; color: #6B7668; }
+  .gh-wc-faq-{{ section.id }} .gh-wc-faq-btn[aria-expanded="true"] .gh-wc-faq-chevron { transform: rotate(180deg); color: #B8913A; }
+  .gh-wc-faq-{{ section.id }} .gh-wc-faq-answer { padding-bottom: 18px; font-size: 14px; line-height: 1.8; color: #6B7668; }
+  .gh-wc-faq-{{ section.id }} .gh-wc-faq-answer[hidden] { display: none; }
+  .gh-wc-faq-{{ section.id }} .gh-wc-faq-answer p { margin: 0; }
+  @media (max-width: 768px) { .gh-wc-faq-{{ section.id }} { padding: 60px 20px; } }
+</style>
+
+<section class="gh-wc-faq-{{ section.id }}">
+  <div class="gh-wc-faq-inner">
+    <div class="gh-wc-faq-head">
+      <p class="gh-wc-faq-eyebrow">{{ section.settings.eyebrow }}</p>
+      <h2 class="gh-wc-faq-title">{{ section.settings.heading }}</h2>
+    </div>
+    {% for block in section.blocks %}
+      {% if block.type == 'faq' %}
+        <div class="gh-wc-faq-item" {{ block.shopify_attributes }}>
+          <button class="gh-wc-faq-btn" aria-expanded="false" aria-controls="gh-wc-faq-{{ section.id }}-{{ block.id }}" type="button">
+            {{ block.settings.question }}
+            <svg class="gh-wc-faq-chevron" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="gh-wc-faq-answer" id="gh-wc-faq-{{ section.id }}-{{ block.id }}" hidden>{{ block.settings.answer }}</div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</section>
+
+<script>
+  (function () {
+    var root = document.querySelector('.gh-wc-faq-{{ section.id }}');
+    if (!root) return;
+    root.querySelectorAll('.gh-wc-faq-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var open = btn.getAttribute('aria-expanded') === 'true';
+        root.querySelectorAll('.gh-wc-faq-btn').forEach(function (b) {
+          b.setAttribute('aria-expanded', 'false');
+          var a = document.getElementById(b.getAttribute('aria-controls'));
+          if (a) a.hidden = true;
+        });
+        if (!open) {
+          btn.setAttribute('aria-expanded', 'true');
+          var answer = document.getElementById(btn.getAttribute('aria-controls'));
+          if (answer) answer.hidden = false;
+        }
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "GH — Wine Club FAQ",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Common questions" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Frequently asked questions" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#FDF8F2" }
+  ],
+  "blocks": [
+    {
+      "type": "faq",
+      "name": "FAQ",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question" },
+        { "type": "richtext", "id": "answer", "label": "Answer" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "GH — Wine Club FAQ",
+      "blocks": [
+        { "type": "faq", "settings": { "question": "Is there a joining fee?", "answer": "<p>No joining fees at all. Simply choose your club tier and your membership begins with your first wine delivery.</p>" } },
+        { "type": "faq", "settings": { "question": "Can I choose which wines I receive?", "answer": "<p>Yes — we offer personalised wine selections tailored to your preferences. Let us know your favourite styles and we'll curate each delivery accordingly.</p>" } },
+        { "type": "faq", "settings": { "question": "When are deliveries made?", "answer": "<p>Pearl Club members receive deliveries in June and December. Ruby Club members can choose between the June/December schedule or quarterly deliveries in March, June, September and December.</p>" } },
+        { "type": "faq", "settings": { "question": "Does the discount apply to additional wine purchases?", "answer": "<p>Yes. Your member discount (25% for Ruby, 15% for Pearl) applies to all wine purchases throughout the year — not just your club deliveries.</p>" } },
+        { "type": "faq", "settings": { "question": "Can I upgrade from Pearl to Ruby?", "answer": "<p>Absolutely. Contact our team at any time and we'll upgrade your membership. The additional benefits and discount take effect immediately.</p>" } },
+        { "type": "faq", "settings": { "question": "Does the Ennia Cucina discount apply to the whole table?", "answer": "<p>The dining discount applies when you present your membership at the restaurant. Please contact us for full terms on group bookings.</p>" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

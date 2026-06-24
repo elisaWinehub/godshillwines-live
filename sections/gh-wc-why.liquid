@@ -1,0 +1,122 @@
+{%- render 'gh-tokens' -%}
+<style>
+  .gh-wc-why-{{ section.id }} {
+    --ruby: #8B1A2E;
+    --pearl: #4A6888;
+    background: {{ section.settings.bg_color | default: '#1C2B1A' }};
+    padding: 64px 40px;
+    color: #F5EFE3;
+  }
+  .gh-wc-why-{{ section.id }} .gh-wc-why-inner { width: min(1280px, 100%); margin: 0 auto; }
+  .gh-wc-why-{{ section.id }} .gh-wc-why-head { text-align: center; margin-bottom: 30px; }
+  .gh-wc-why-{{ section.id }} .gh-wc-why-eyebrow { margin: 0 0 10px; font: 500 11px/1.4 'Inter', sans-serif; letter-spacing: 0.14em; text-transform: uppercase; color: #D4BC8A; }
+  .gh-wc-why-{{ section.id }} .gh-wc-why-title { margin: 0; font: 400 clamp(32px, 4vw, 50px)/1.1 'EB Garamond', Georgia, serif; }
+  .gh-wc-why-{{ section.id }} .gh-wc-why-title p { margin: 0; }
+  .gh-wc-why-{{ section.id }} .gh-wc-why-title em { color: #D4BC8A; font-style: italic; }
+
+  .gh-wc-why-{{ section.id }} .gh-wc-why-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: rgba(245,239,227,0.08);
+  }
+
+  .gh-wc-why-{{ section.id }} .gh-wc-why-item { background: #1C2B1A; padding: 28px 24px; }
+  .gh-wc-why-{{ section.id }} .gh-wc-why-icon {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: rgba(184,145,58,0.15); border: 1px solid rgba(184,145,58,0.3);
+    display: inline-flex; align-items: center; justify-content: center; margin-bottom: 14px;
+  }
+  .gh-wc-why-{{ section.id }} .gh-wc-why-icon svg { width: 22px; height: 22px; stroke: #B8913A; fill: none; stroke-width: 1.5; }
+  .gh-wc-why-{{ section.id }} .gh-wc-why-item-title { margin: 0 0 8px; color: #F5EFE3; font: 400 19px/1.25 'EB Garamond', Georgia, serif; }
+  .gh-wc-why-{{ section.id }} .gh-wc-why-item-body { margin: 0; color: rgba(245,239,227,0.5); font: 400 13px/1.75 'Inter', sans-serif; }
+
+  @media (max-width: 768px) {
+    .gh-wc-why-{{ section.id }} { padding: 56px 20px; }
+    .gh-wc-why-{{ section.id }} .gh-wc-why-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<section class="gh-wc-why-{{ section.id }}">
+  <div class="gh-wc-why-inner">
+    <div class="gh-wc-why-head">
+      <p class="gh-wc-why-eyebrow">{{ section.settings.eyebrow }}</p>
+      <div class="gh-wc-why-title">{{ section.settings.heading }}</div>
+    </div>
+    <div class="gh-wc-why-grid">
+      {% for block in section.blocks %}
+        {% if block.type == 'benefit' %}
+          <article class="gh-wc-why-item" {{ block.shopify_attributes }}>
+            <span class="gh-wc-why-icon" aria-hidden="true">
+              {% case block.settings.icon %}
+                {% when 'no_fee' %}
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"></circle><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"></path></svg>
+                {% when 'star' %}
+                  <svg viewBox="0 0 24 24"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.2 6.5 20.2l1-6.2L3 9.6l6.2-.9z"></path></svg>
+                {% when 'shipping' %}
+                  <svg viewBox="0 0 24 24"><path d="M3 7h11v8H3z"></path><path d="M14 10h4l3 3v2h-7z"></path><circle cx="7" cy="18" r="1.8"></circle><circle cx="18" cy="18" r="1.8"></circle></svg>
+                {% when 'discount' %}
+                  <svg viewBox="0 0 24 24"><path d="M19 5L5 19"></path><circle cx="7" cy="7" r="2"></circle><circle cx="17" cy="17" r="2"></circle></svg>
+                {% when 'list' %}
+                  <svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"></path><circle cx="4" cy="6" r="1"></circle><circle cx="4" cy="12" r="1"></circle><circle cx="4" cy="18" r="1"></circle></svg>
+                {% when 'events' %}
+                  <svg viewBox="0 0 24 24"><path d="M3 10.5L12 4l9 6.5"></path><path d="M5 10v10h14V10"></path><path d="M9 20v-5h6v5"></path></svg>
+              {% endcase %}
+            </span>
+            <h3 class="gh-wc-why-item-title">{{ block.settings.title }}</h3>
+            <p class="gh-wc-why-item-body">{{ block.settings.body }}</p>
+          </article>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "GH — Wine Club Why Join",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Member benefits" },
+    { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p>Why join God's Hill<br><em>Family Wine Club?</em></p>" },
+    { "type": "color", "id": "bg_color", "label": "Background colour", "default": "#1C2B1A" }
+  ],
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Benefit",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "default": "no_fee",
+          "options": [
+            { "value": "no_fee", "label": "No fee" },
+            { "value": "star", "label": "Star" },
+            { "value": "shipping", "label": "Shipping" },
+            { "value": "discount", "label": "Discount" },
+            { "value": "list", "label": "List" },
+            { "value": "events", "label": "Events" }
+          ]
+        },
+        { "type": "text", "id": "title", "label": "Benefit title", "default": "No joining fees" },
+        { "type": "textarea", "id": "body", "label": "Benefit body", "default": "Join at no cost. Your commitment is the wine — nothing else." }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [
+    {
+      "name": "GH — Wine Club Why Join",
+      "blocks": [
+        { "type": "benefit", "settings": { "icon": "no_fee", "title": "No joining fees", "body": "Join at no cost. Your commitment is the wine — nothing else." } },
+        { "type": "benefit", "settings": { "icon": "star", "title": "First release access", "body": "Exclusive access to first release wines and rare back vintages before the public." } },
+        { "type": "benefit", "settings": { "icon": "shipping", "title": "Free shipping", "body": "Free Australia-wide shipping on all your deliveries and additional orders." } },
+        { "type": "benefit", "settings": { "icon": "discount", "title": "Premium discounts", "body": "Up to 25% off all wine purchases and dining discounts at Ennia Cucina." } },
+        { "type": "benefit", "settings": { "icon": "list", "title": "Personalised selection", "body": "Wine selections tailored to your preferences — you choose what goes in the box." } },
+        { "type": "benefit", "settings": { "icon": "events", "title": "Member-only events", "body": "Exclusive invites to cellar door events, winemaker dinners, and seasonal experiences." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

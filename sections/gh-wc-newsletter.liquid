@@ -1,0 +1,58 @@
+{%- render 'gh-tokens' -%}
+<style>
+  .gh-wc-newsletter-{{ section.id }} {
+    --ruby: #8B1A2E;
+    --pearl: #4A6888;
+    background: {{ section.settings.bg_color | default: '#F5EFE3' }};
+    padding: 64px 40px;
+  }
+  .gh-wc-newsletter-{{ section.id }} .gh-wc-newsletter-inner { width: min(640px, 100%); margin: 0 auto; text-align: center; }
+  .gh-wc-newsletter-{{ section.id }} .gh-wc-newsletter-eyebrow { margin: 0 0 8px; font: 500 11px/1.4 'Inter', sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #B8913A; }
+  .gh-wc-newsletter-{{ section.id }} .gh-wc-newsletter-title { margin: 0 0 10px; font: 400 clamp(28px, 4vw, 44px)/1.12 'EB Garamond', Georgia, serif; color: #1C2B1A; }
+  .gh-wc-newsletter-{{ section.id }} .gh-wc-newsletter-title p { margin: 0; }
+  .gh-wc-newsletter-{{ section.id }} .gh-wc-newsletter-title em { color: #B8913A; font-style: italic; }
+  .gh-wc-newsletter-{{ section.id }} .gh-wc-newsletter-subheading { margin: 0 0 14px; color: #6B7668; font: 400 14px/1.75 'Inter', sans-serif; }
+  .gh-wc-newsletter-{{ section.id }} .gh-wc-nl-form { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+  .gh-wc-newsletter-{{ section.id }} .gh-wc-nl-input { border: .5px solid rgba(28,43,26,.2); border-radius: 3px; background: #fff; color: #1C2B1A; padding: 11px 12px; font: 400 13px/1.4 'Inter', sans-serif; }
+  .gh-wc-newsletter-{{ section.id }} .gh-wc-nl-btn { border: 0; border-radius: 3px; background: #1C2B1A; color: #F5EFE3; padding: 11px 14px; font: 500 11px/1.4 'Inter', sans-serif; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; }
+  .gh-wc-newsletter-{{ section.id }} .gh-wc-nl-success { margin: 0; color: #1C2B1A; font: 500 14px/1.6 'Inter', sans-serif; }
+  @media (max-width: 768px) {
+    .gh-wc-newsletter-{{ section.id }} { padding: 56px 20px; }
+    .gh-wc-newsletter-{{ section.id }} .gh-wc-nl-form { grid-template-columns: 1fr; }
+  }
+</style>
+
+<section class="gh-wc-newsletter-{{ section.id }}">
+  <div class="gh-wc-newsletter-inner">
+    <p class="gh-wc-newsletter-eyebrow">{{ section.settings.eyebrow }}</p>
+    <div class="gh-wc-newsletter-title">{{ section.settings.heading }}</div>
+    <p class="gh-wc-newsletter-subheading">{{ section.settings.subheading }}</p>
+    {% form 'customer', id: 'gh-wc-newsletter' %}
+      <input type="hidden" name="contact[tags]" value="newsletter,wine-club">
+      {% if form.posted_successfully? %}
+        <p class="gh-wc-nl-success">{{ section.settings.success_msg | default: "Thanks for subscribing!" }}</p>
+      {% else %}
+        <div class="gh-wc-nl-form">
+          <input type="email" name="contact[email]" class="gh-wc-nl-input" placeholder="{{ section.settings.placeholder | default: 'Your email address' }}" autocomplete="email" required>
+          <button type="submit" class="gh-wc-nl-btn">{{ section.settings.btn_label | default: 'Subscribe' }}</button>
+        </div>
+      {% endif %}
+    {% endform %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "GH — Wine Club Newsletter",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Stay in the loop" },
+    { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p>New releases, events <em>&amp; offers</em></p>" },
+    { "type": "textarea", "id": "subheading", "label": "Subheading", "default": "Be first to hear about new vintages, member events, and exclusive offers from God's Hill Wines." },
+    { "type": "text", "id": "placeholder", "label": "Input placeholder", "default": "Your email address" },
+    { "type": "text", "id": "btn_label", "label": "Button label", "default": "Subscribe" },
+    { "type": "text", "id": "success_msg", "label": "Success message", "default": "Thanks for subscribing!" },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#F5EFE3" }
+  ],
+  "presets": [{ "name": "GH — Wine Club Newsletter" }]
+}
+{% endschema %}

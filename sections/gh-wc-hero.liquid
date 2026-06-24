@@ -1,0 +1,121 @@
+{%- render 'gh-tokens' -%}
+<style>
+  .gh-wc-hero-{{ section.id }} {
+    --ruby: #8B1A2E;
+    --pearl: #4A6888;
+    position: relative;
+    min-height: {{ section.settings.hero_height | default: 480 }}px;
+    color: #F5EFE3;
+    display: flex;
+    align-items: flex-end;
+    background-color: #1C2B1A;
+    overflow: hidden;
+  }
+
+  .gh-wc-hero-{{ section.id }} .gh-wc-hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .gh-wc-hero-{{ section.id }} .gh-wc-hero-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .gh-wc-hero-{{ section.id }} .gh-wc-hero-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(to bottom, rgba(20,28,18,0.2) 0%, rgba(20,28,18,0.82) 100%);
+    opacity: {{ section.settings.overlay_opacity | default: 70 | times: 0.01 }};
+  }
+
+  .gh-wc-hero-{{ section.id }} .gh-wc-hero-inner {
+    position: relative;
+    z-index: 2;
+    width: min(1280px, 100%);
+    margin: 0 auto;
+    padding: 64px 40px;
+  }
+
+  .gh-wc-hero-{{ section.id }} .gh-wc-hero-eyebrow {
+    margin: 0;
+    font: 500 11px/1.4 'Inter', sans-serif;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #D4BC8A;
+  }
+
+  .gh-wc-hero-{{ section.id }} .gh-wc-hero-divider {
+    width: 40px;
+    height: 1px;
+    background: #B8913A;
+    margin: 12px 0 16px;
+  }
+
+  .gh-wc-hero-{{ section.id }} .gh-wc-hero-title {
+    margin: 0 0 12px;
+    font: 400 clamp(36px, 5vw, 64px)/1.05 'EB Garamond', Georgia, serif;
+    color: #F5EFE3;
+  }
+
+  .gh-wc-hero-{{ section.id }} .gh-wc-hero-title p {
+    margin: 0;
+    display: inline;
+  }
+
+  .gh-wc-hero-{{ section.id }} .gh-wc-hero-title em {
+    color: #D4BC8A;
+    font-style: italic;
+  }
+
+  .gh-wc-hero-{{ section.id }} .gh-wc-hero-subheading {
+    margin: 0;
+    max-width: 760px;
+    font: 400 15px/1.7 'Inter', sans-serif;
+    color: rgba(245,239,227,0.92);
+  }
+
+  @media (max-width: 768px) {
+    .gh-wc-hero-{{ section.id }} .gh-wc-hero-inner {
+      padding: 48px 20px;
+    }
+  }
+</style>
+
+<section class="gh-wc-hero-{{ section.id }}">
+  {% if section.settings.hero_image != blank %}
+    <div class="gh-wc-hero-bg">
+      {{
+        section.settings.hero_image
+        | image_url: width: 1600
+        | image_tag: loading: 'eager', alt: section.settings.eyebrow
+      }}
+    </div>
+  {% endif %}
+  <div class="gh-wc-hero-overlay" aria-hidden="true"></div>
+  <div class="gh-wc-hero-inner">
+    <p class="gh-wc-hero-eyebrow">{{ section.settings.eyebrow | default: "God's Hill Wines" }}</p>
+    <div class="gh-wc-hero-divider" aria-hidden="true"></div>
+    <div class="gh-wc-hero-title">{{ section.settings.title }}</div>
+    <p class="gh-wc-hero-subheading">{{ section.settings.subheading }}</p>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "GH — Wine Club Hero",
+  "settings": [
+    { "type": "image_picker", "id": "hero_image", "label": "Background image" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "God's Hill Wines" },
+    { "type": "richtext", "id": "title", "label": "Hero title", "default": "<p>Family <em>Wine Club</em></p>" },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "The wines with heart & soul — delivered to your door, with the warmth of Italian tradition and Barossa craftsmanship." },
+    { "type": "range", "id": "hero_height", "label": "Hero height (px)", "min": 320, "max": 640, "step": 20, "default": 480 },
+    { "type": "range", "id": "overlay_opacity", "label": "Overlay darkness %", "min": 0, "max": 90, "step": 5, "default": 70 }
+  ],
+  "presets": [{ "name": "GH — Wine Club Hero" }]
+}
+{% endschema %}
