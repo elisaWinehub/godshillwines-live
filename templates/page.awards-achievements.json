@@ -12,26 +12,94 @@
     "gh_hero": {
       "type": "gh-page-hero-block",
       "settings": {
+        "hero_image": "shopify://shop_images/bottles.png",
         "hero_eyebrow": "Recognition",
-        "hero_title": "<p>Awards &amp; <em>Achievements</em></p>",
-        "hero_height": 380
+        "hero_title": "<p>Awards & <em>Achievements</em></p>",
+        "hero_subheading": "Discover the story of God's Hill Wines.",
+        "hero_height": 380,
+        "overlay_opacity": 55,
+        "content_alignment": "left"
       }
     },
     "gh_awards_timeline": {
       "type": "gh-awards-timeline",
       "blocks": {
-        "y2022": { "type": "year_group", "settings": { "year": "2022", "entries": "<p>Challenge – Silver Medal (94/100) 2021 Single Vineyard 3 Generation Shiraz</p>" } },
-        "y2016": { "type": "year_group", "settings": { "year": "2016", "entries": "<p>WineState World Wine Cabernet Challenge – Gold Medal 2008 Permanent Arm Cabernet Sauvignon</p><p>2006 Menzel Shiraz – Silver Medal · 2008 Menzel Shiraz – Silver Medal</p>" } },
-        "y2014": { "type": "year_group", "settings": { "year": "2014", "entries": "<p>CWSA (Chinese Wine &amp; Spirit Awards) – DOUBLE GOLD award: 2008 Menzel Shiraz</p>" } },
-        "y2012": { "type": "year_group", "settings": { "year": "2012", "entries": "<p>Decanter Awards UK – Bronze Medal: 2008 Menzel Shiraz</p><p>International Wine Challenge UK – Bronze Medal: 2008 Menzel Shiraz</p><p>WineState Best of the Best – Silver: 2008 Menzel Shiraz</p><p>WineWise — Highly Recommended Wine: 2008 Menzel Shiraz</p><p>WineState World Shiraz Challenge – 3 Stars: 2008 Menzel Shiraz</p><p>WineState World Cabernet Challenge – 3 Stars: 2006 Amo Rosso</p><p>Nicks Wine Merchants – 96 Points: 2008 Menzel Shiraz · 91 Points: 2011 Ill Rows Unwooded Chardonnay</p><p>Visy Great Australian Shiraz Challenge – Silver: 2008 Menzel Shiraz &amp; top 20</p>" } },
-        "y2011": { "type": "year_group", "settings": { "year": "2011", "entries": "<p>Great Australian Red – Bronze Medal: 2008 Soulmate</p><p>Barossa Wine Show – Bronze Medal: 2008 Soulmate</p><p>James Halliday — 92 Points: 2006 Menzel Shiraz · 92 Points: 2006 Amo Rosso</p>" } },
-        "y2010": { "type": "year_group", "settings": { "year": "2010", "entries": "<p>San Diego International Wine Competition – Gold Medal: 2006 Menzel Shiraz</p><p>WineWise Small Vigneron Award – Bronze Medal: 2006 Amo Rosso</p>" } },
-        "y2008": { "type": "year_group", "settings": { "year": "2008", "entries": "<p>Singapore Wine for Asia – Platinum Gold: 2005 Menzel Shiraz</p><p>Robert Parker – 96 Points: 2004 Black Olive Merlot</p><p>Philip White – 93 Points: 2005 Menzel Shiraz · 93 Points: 2002 Permanent Arm Cabernet Sauvignon</p><p>Martin Moran – Gold Medal: 2002 Menzel Shiraz · Gold Medal: 2004 Black Olive Merlot</p><p>Italian Sommelier Association – Judged Best Wines Presented</p>" } },
-        "y2007": { "type": "year_group", "settings": { "year": "2007", "entries": "<p>Rocky Mountain Vino Awards – Gold Medal: 2005 Permanent Arm Cabernet Sauvignon</p>" } }
+        "y2022": {
+          "type": "year_group",
+          "settings": {
+            "year": "2022",
+            "entries": "<p>Challenge – Silver Medal (94/100) 2021 Single Vineyard 3 Generation Shiraz</p>"
+          }
+        },
+        "y2016": {
+          "type": "year_group",
+          "settings": {
+            "year": "2016",
+            "entries": "<p>WineState World Wine Cabernet Challenge – Gold Medal 2008 Permanent Arm Cabernet Sauvignon</p><p>2006 Menzel Shiraz – Silver Medal · 2008 Menzel Shiraz – Silver Medal</p>"
+          }
+        },
+        "y2014": {
+          "type": "year_group",
+          "settings": {
+            "year": "2014",
+            "entries": "<p>CWSA (Chinese Wine &amp; Spirit Awards) – DOUBLE GOLD award: 2008 Menzel Shiraz</p>"
+          }
+        },
+        "y2012": {
+          "type": "year_group",
+          "settings": {
+            "year": "2012",
+            "entries": "<p>Decanter Awards UK – Bronze Medal: 2008 Menzel Shiraz</p><p>International Wine Challenge UK – Bronze Medal: 2008 Menzel Shiraz</p><p>WineState Best of the Best – Silver: 2008 Menzel Shiraz</p><p>WineWise — Highly Recommended Wine: 2008 Menzel Shiraz</p><p>WineState World Shiraz Challenge – 3 Stars: 2008 Menzel Shiraz</p><p>WineState World Cabernet Challenge – 3 Stars: 2006 Amo Rosso</p><p>Nicks Wine Merchants – 96 Points: 2008 Menzel Shiraz · 91 Points: 2011 Ill Rows Unwooded Chardonnay</p><p>Visy Great Australian Shiraz Challenge – Silver: 2008 Menzel Shiraz &amp; top 20</p>"
+          }
+        },
+        "y2011": {
+          "type": "year_group",
+          "settings": {
+            "year": "2011",
+            "entries": "<p>Great Australian Red – Bronze Medal: 2008 Soulmate</p><p>Barossa Wine Show – Bronze Medal: 2008 Soulmate</p><p>James Halliday — 92 Points: 2006 Menzel Shiraz · 92 Points: 2006 Amo Rosso</p>"
+          }
+        },
+        "y2010": {
+          "type": "year_group",
+          "settings": {
+            "year": "2010",
+            "entries": "<p>San Diego International Wine Competition – Gold Medal: 2006 Menzel Shiraz</p><p>WineWise Small Vigneron Award – Bronze Medal: 2006 Amo Rosso</p>"
+          }
+        },
+        "y2008": {
+          "type": "year_group",
+          "settings": {
+            "year": "2008",
+            "entries": "<p>Singapore Wine for Asia – Platinum Gold: 2005 Menzel Shiraz</p><p>Robert Parker – 96 Points: 2004 Black Olive Merlot</p><p>Philip White – 93 Points: 2005 Menzel Shiraz · 93 Points: 2002 Permanent Arm Cabernet Sauvignon</p><p>Martin Moran – Gold Medal: 2002 Menzel Shiraz · Gold Medal: 2004 Black Olive Merlot</p><p>Italian Sommelier Association – Judged Best Wines Presented</p>"
+          }
+        },
+        "y2007": {
+          "type": "year_group",
+          "settings": {
+            "year": "2007",
+            "entries": "<p>Rocky Mountain Vino Awards – Gold Medal: 2005 Permanent Arm Cabernet Sauvignon</p>"
+          }
+        }
       },
-      "block_order": ["y2022", "y2016", "y2014", "y2012", "y2011", "y2010", "y2008", "y2007"],
-      "settings": {}
+      "block_order": [
+        "y2022",
+        "y2016",
+        "y2014",
+        "y2012",
+        "y2011",
+        "y2010",
+        "y2008",
+        "y2007"
+      ],
+      "settings": {
+        "page_title": "Awards & Achievements",
+        "bg_color": "#fdf8f2",
+        "accent_color": "#b8913a"
+      }
     }
   },
-  "order": ["gh_hero", "gh_awards_timeline"]
+  "order": [
+    "gh_hero",
+    "gh_awards_timeline"
+  ]
 }
