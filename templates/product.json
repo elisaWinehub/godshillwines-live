@@ -12,149 +12,24 @@
     "gh_product_detail": {
       "type": "gh-product-detail",
       "blocks": {
-        "breadcrumbs": {
-          "type": "breadcrumbs",
-          "settings": {
-            "show_block": true,
-            "show_home": true,
-            "home_label": "Home",
-            "show_all_products": true,
-            "all_products_collection": "",
-            "all_products_label": "All products",
-            "show_collection": true
-          }
-        },
-        "vendor": {
-          "type": "vendor",
-          "settings": {
-            "show_block": true,
-            "text": ""
-          }
-        },
-        "title": {
-          "type": "title",
-          "settings": {
-            "show_block": true
-          }
-        },
-        "rating": {
-          "type": "rating",
-          "settings": {
-            "show_block": true
-          }
-        },
-        "price": {
-          "type": "price",
-          "settings": {
-            "show_block": true
-          }
-        },
-        "description": {
-          "type": "description",
-          "settings": {
-            "show_block": true,
-            "use_first_paragraph": true
-          }
-        },
-        "purchase_options": {
-          "type": "purchase_options",
-          "settings": {
-            "show_block": true,
-            "title": "CHOOSE YOUR PURCHASE OPTION",
-            "one_time_label": "One-time purchase",
-            "one_time_price": "$85.00",
-            "show_subscribe": true,
-            "subscribe_label": "Subscribe & Save",
-            "plan_1_label": "Every 1 month – 20% off",
-            "plan_1_price": "$32.00",
-            "plan_2_label": "Every 2 months – 15% off",
-            "plan_2_price": "$34.00",
-            "plan_3_label": "Every 3 months – 10% off",
-            "plan_3_price": "$36.00"
-          }
-        },
-        "buy_row": {
-          "type": "buy_row",
-          "settings": {
-            "show_block": true,
-            "show_qty_add": true
-          }
-        },
-        "tab_1": {
-          "type": "tab",
-          "settings": {
-            "show_block": true,
-            "title": "Wine Details",
-            "content": "<p></p>"
-          }
-        },
-        "tab_2": {
-          "type": "tab",
-          "settings": {
-            "show_block": true,
-            "title": "Vineyard",
-            "content": "<p></p>"
-          }
-        },
-        "tab_3": {
-          "type": "tab",
-          "settings": {
-            "show_block": true,
-            "title": "Tasting Notes",
-            "content": "<p></p>"
-          }
-        },
-        "tab_4": {
-          "type": "tab",
-          "settings": {
-            "show_block": true,
-            "title": "Winemaking",
-            "content": "<p></p>"
-          }
-        },
-        "tab_5": {
-          "type": "tab",
-          "settings": {
-            "show_block": true,
-            "title": "Awards",
-            "content": "<p></p>"
-          }
-        }
+        "breadcrumbs": { "type": "breadcrumbs", "settings": { "show_block": true, "show_home": true, "home_label": "Home", "show_all_products": false, "all_products_label": "All products", "show_collection": true } },
+        "vendor": { "type": "vendor", "settings": { "show_block": true, "text": "" } },
+        "title": { "type": "title", "settings": { "show_block": true } },
+        "rating": { "type": "rating", "settings": { "show_block": true } },
+        "price": { "type": "price", "settings": { "show_block": true } },
+        "description": { "type": "description", "settings": { "show_block": true, "use_first_paragraph": true } },
+        "purchase_options": { "type": "purchase_options", "settings": { "show_block": true } },
+        "buy_row": { "type": "buy_row", "settings": { "show_block": true, "show_qty_add": true } },
+        "tab_1": { "type": "tab", "settings": { "title": "Wine Details", "content": "<p></p>" } },
+        "tab_2": { "type": "tab", "settings": { "title": "Vineyard", "content": "<p></p>" } },
+        "tab_3": { "type": "tab", "settings": { "title": "Tasting Notes", "content": "<p></p>" } },
+        "tab_4": { "type": "tab", "settings": { "title": "Winemaking", "content": "<p></p>" } },
+        "tab_5": { "type": "tab", "settings": { "title": "Awards", "content": "<p></p>" } }
       },
-      "block_order": [
-        "breadcrumbs",
-        "vendor",
-        "title",
-        "rating",
-        "price",
-        "description",
-        "purchase_options",
-        "buy_row",
-        "tab_1",
-        "tab_2",
-        "tab_3",
-        "tab_4",
-        "tab_5"
-      ],
-      "settings": {
-        "show_subscribe_option": true,
-        "subscribe_discount_label": "Save 10%",
-        "show_thumbnails": true,
-        "bg_color": "#fdf8f2"
-      }
+      "block_order": ["breadcrumbs", "vendor", "title", "rating", "price", "description", "purchase_options", "buy_row", "tab_1", "tab_2", "tab_3", "tab_4", "tab_5"],
+      "settings": {}
     },
-    "gh_related_products": {
-      "type": "gh-related-products",
-      "settings": {
-        "heading": "You may also like",
-        "bg_color": "#f5efe3",
-        "accent_color": "#b8913a",
-        "products_limit": 4
-      }
-    }
+    "gh_related_products": { "type": "gh-related-products", "settings": {} }
   },
-  "order": [
-    "gh_product_detail",
-    "gh_related_products"
-  ]
+  "order": ["gh_product_detail", "gh_related_products"]
 }

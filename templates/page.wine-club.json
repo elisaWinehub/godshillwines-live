@@ -1,0 +1,169 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gh_wc_hero": {
+      "type": "gh-wc-hero",
+      "settings": {
+        "eyebrow": "God's Hill Wines",
+        "title": "<p>Family <em>Wine Club</em></p>",
+        "subheading": "The wines with heart & soul — delivered to your door, with the warmth of Italian tradition and Barossa craftsmanship.",
+        "hero_height": 480,
+        "overlay_opacity": 70
+      }
+    },
+    "gh_wc_intro": {
+      "type": "gh-wc-intro",
+      "settings": {
+        "eyebrow": "Charlie has finally done it",
+        "heading": "Welcome to the God's Hill Family",
+        "body_1": "We're thrilled to welcome you into the God's Hill Family Wine Club — a place where our love for great wine and genuine hospitality come together.",
+        "body_2": "Choose the club that feels right for you and enjoy sharing in the wines we craft with care, passion, and family tradition — all year round.",
+        "body_3": "Whether it's to celebrate special occasions or stock your cellar with premium wines, we're here to ensure every glass is memorable.",
+        "signature": "From our family to yours — Salute",
+        "show_corner_accent": true
+      }
+    },
+    "gh_wc_why": {
+      "type": "gh-wc-why",
+      "blocks": {
+        "b1": { "type": "benefit", "settings": { "icon": "no_fee", "title": "No joining fees", "body": "Join at no cost. Your commitment is the wine — nothing else." } },
+        "b2": { "type": "benefit", "settings": { "icon": "star", "title": "First release access", "body": "Exclusive access to first release wines and rare back vintages before the public." } },
+        "b3": { "type": "benefit", "settings": { "icon": "shipping", "title": "Free shipping", "body": "Free Australia-wide shipping on all your deliveries and additional orders." } },
+        "b4": { "type": "benefit", "settings": { "icon": "discount", "title": "Premium discounts", "body": "Up to 25% off all wine purchases and dining discounts at Ennia Cucina." } },
+        "b5": { "type": "benefit", "settings": { "icon": "list", "title": "Personalised selection", "body": "Wine selections tailored to your preferences — you choose what goes in the box." } },
+        "b6": { "type": "benefit", "settings": { "icon": "events", "title": "Member-only events", "body": "Exclusive invites to cellar door events, winemaker dinners, and seasonal experiences." } }
+      },
+      "block_order": ["b1", "b2", "b3", "b4", "b5", "b6"],
+      "settings": {
+        "eyebrow": "Member benefits",
+        "heading": "<p>Why join God's Hill<br><em>Family Wine Club?</em></p>"
+      }
+    },
+    "gh_wc_tiers": {
+      "type": "gh-wc-tiers",
+      "blocks": {
+        "r1": { "type": "perk", "settings": { "tier": "ruby", "title": "25% off all wine purchases", "subtitle": "Applied to all orders year-round" } },
+        "r2": { "type": "perk", "settings": { "tier": "ruby", "title": "15% discount at Ennia Cucina", "subtitle": "Dine at the restaurant with member pricing" } },
+        "r3": { "type": "perk", "settings": { "tier": "ruby", "title": "Free Australia-wide shipping", "subtitle": "On club deliveries and additional orders" } },
+        "r4": { "type": "perk", "settings": { "tier": "ruby", "title": "First release & rare back vintages", "subtitle": "Priority access before general release" } },
+        "r5": { "type": "perk", "settings": { "tier": "ruby", "title": "Exclusive member events", "subtitle": "Private tastings, winemaker dinners & more" } },
+        "p1": { "type": "perk", "settings": { "tier": "pearl", "title": "15% off all wine purchases", "subtitle": "Applied to all orders year-round" } },
+        "p2": { "type": "perk", "settings": { "tier": "pearl", "title": "10% discount at Ennia Cucina", "subtitle": "Dine at the restaurant with member pricing" } },
+        "p3": { "type": "perk", "settings": { "tier": "pearl", "title": "Free Australia-wide shipping", "subtitle": "On club deliveries and additional orders" } },
+        "p4": { "type": "perk", "settings": { "tier": "pearl", "title": "First release access", "subtitle": "Early access to new vintages" } },
+        "p5": { "type": "perk", "settings": { "tier": "pearl", "title": "Member event invitations", "subtitle": "Access to cellar door events and tastings" } }
+      },
+      "block_order": ["r1", "r2", "r3", "r4", "r5", "p1", "p2", "p3", "p4", "p5"],
+      "settings": {
+        "eyebrow": "Choose your tier",
+        "heading": "Two clubs. One family.",
+        "subtitle": "Select the commitment that suits your lifestyle — both give you access to God's Hill wines with the care and tradition they're made with.",
+        "ruby_tier_label": "Premium tier",
+        "ruby_name": "Ruby Club",
+        "ruby_tagline": "For the dedicated wine lover",
+        "ruby_badge": "Most popular",
+        "ruby_header_color": "#8B1A2E",
+        "ruby_commitment": "2 dozen wines per year",
+        "ruby_option_1": "A dozen wines delivered in June and December",
+        "ruby_option_2": "A 6-pack delivered in March, June, September and December",
+        "ruby_cta_label": "Join the Ruby Club →",
+        "ruby_cta_url": "#join",
+        "pearl_tier_label": "Entry tier",
+        "pearl_name": "Pearl Club",
+        "pearl_tagline": "A perfect introduction to the family",
+        "pearl_badge": "Great start",
+        "pearl_header_color": "#4A6888",
+        "pearl_commitment": "1 dozen wines per year",
+        "pearl_option_1": "A 6-pack delivered in June and December",
+        "pearl_option_2": "",
+        "pearl_cta_label": "Join the Pearl Club →",
+        "pearl_cta_url": "#join"
+      }
+    },
+    "gh_wc_compare": {
+      "type": "gh-wc-compare",
+      "blocks": {
+        "row1": { "type": "row", "settings": { "label": "Annual wine commitment", "ruby_value": "2 dozen", "pearl_value": "1 dozen", "highlight": false, "ruby_check": false, "pearl_check": false, "pearl_cross": false } },
+        "row2": { "type": "row", "settings": { "label": "Discount on wine purchases", "ruby_value": "25% off", "pearl_value": "15% off", "highlight": true, "ruby_check": false, "pearl_check": false, "pearl_cross": false } },
+        "row3": { "type": "row", "settings": { "label": "Ennia Cucina dining discount", "ruby_value": "15% off", "pearl_value": "10% off", "highlight": false, "ruby_check": false, "pearl_check": false, "pearl_cross": false } },
+        "row4": { "type": "row", "settings": { "label": "Free Australia-wide shipping", "ruby_value": "", "pearl_value": "", "highlight": true, "ruby_check": true, "pearl_check": true, "pearl_cross": false } },
+        "row5": { "type": "row", "settings": { "label": "First release & rare vintages", "ruby_value": "", "pearl_value": "", "highlight": false, "ruby_check": true, "pearl_check": true, "pearl_cross": false } },
+        "row6": { "type": "row", "settings": { "label": "Member-only event invitations", "ruby_value": "", "pearl_value": "", "highlight": true, "ruby_check": true, "pearl_check": true, "pearl_cross": false } },
+        "row7": { "type": "row", "settings": { "label": "Personalised wine selection", "ruby_value": "", "pearl_value": "", "highlight": false, "ruby_check": true, "pearl_check": true, "pearl_cross": false } },
+        "row8": { "type": "row", "settings": { "label": "No joining fees", "ruby_value": "", "pearl_value": "", "highlight": true, "ruby_check": true, "pearl_check": true, "pearl_cross": false } },
+        "row9": { "type": "row", "settings": { "label": "Quarterly deliveries (4/year)", "ruby_value": "", "pearl_value": "", "highlight": false, "ruby_check": true, "pearl_check": false, "pearl_cross": true } }
+      },
+      "block_order": ["row1", "row2", "row3", "row4", "row5", "row6", "row7", "row8", "row9"],
+      "settings": {
+        "eyebrow": "Side by side",
+        "heading": "Compare membership tiers",
+        "ruby_col_label": "Ruby Club",
+        "pearl_col_label": "Pearl Club",
+        "ruby_header_color": "#8B1A2E",
+        "pearl_header_color": "#4A6888"
+      }
+    },
+    "gh_wc_join": {
+      "type": "gh-wc-join",
+      "settings": {
+        "eyebrow": "Join today",
+        "heading": "<p>Become a valued<br><em>God's Hill member</em></p>",
+        "quote": "Where Italian heritage, passion and craftsmanship are poured into every bottle.",
+        "body": "Join today and become a valued God's Hill Family member. Create your custom wine experience by selecting the tier and delivery schedule that suits your lifestyle perfectly.",
+        "ruby_btn_label": "Join Ruby Club",
+        "ruby_btn_url": "#gh-wc-join-form",
+        "pearl_btn_label": "Join Pearl Club",
+        "pearl_btn_url": "#gh-wc-join-form",
+        "ghost_btn_label": "Ask a question",
+        "ghost_btn_url": "/pages/contact",
+        "card_title": "Express your interest",
+        "card_subtitle": "Fill in your details and we'll be in touch to set up your membership and first delivery.",
+        "form_submit_label": "Submit membership interest →",
+        "form_note": "No payment required now. A member of our team will contact you within 2 business days to confirm your membership and arrange payment."
+      }
+    },
+    "gh_wc_faq": {
+      "type": "gh-wc-faq",
+      "blocks": {
+        "f1": { "type": "faq", "settings": { "question": "Is there a joining fee?", "answer": "<p>No joining fees at all. Simply choose your club tier and your membership begins with your first wine delivery.</p>" } },
+        "f2": { "type": "faq", "settings": { "question": "Can I choose which wines I receive?", "answer": "<p>Yes — we offer personalised wine selections tailored to your preferences. Let us know your favourite styles and we'll curate each delivery accordingly.</p>" } },
+        "f3": { "type": "faq", "settings": { "question": "When are deliveries made?", "answer": "<p>Pearl Club members receive deliveries in June and December. Ruby Club members can choose between the June/December schedule or quarterly deliveries in March, June, September and December.</p>" } },
+        "f4": { "type": "faq", "settings": { "question": "Does the discount apply to additional wine purchases?", "answer": "<p>Yes. Your member discount (25% for Ruby, 15% for Pearl) applies to all wine purchases throughout the year — not just your club deliveries.</p>" } },
+        "f5": { "type": "faq", "settings": { "question": "Can I upgrade from Pearl to Ruby?", "answer": "<p>Absolutely. Contact our team at any time and we'll upgrade your membership. The additional benefits and discount take effect immediately.</p>" } },
+        "f6": { "type": "faq", "settings": { "question": "Does the Ennia Cucina discount apply to the whole table?", "answer": "<p>The dining discount applies when you present your membership at the restaurant. Please contact us for full terms on group bookings.</p>" } }
+      },
+      "block_order": ["f1", "f2", "f3", "f4", "f5", "f6"],
+      "settings": {
+        "eyebrow": "Common questions",
+        "heading": "Frequently asked questions"
+      }
+    },
+    "gh_wc_newsletter": {
+      "type": "gh-wc-newsletter",
+      "settings": {
+        "eyebrow": "Stay in the loop",
+        "heading": "<p>New releases, events <em>&amp; offers</em></p>",
+        "subheading": "Be first to hear about new vintages, member events, and exclusive offers from God's Hill Wines.",
+        "btn_label": "Subscribe"
+      }
+    }
+  },
+  "order": [
+    "gh_wc_hero",
+    "gh_wc_intro",
+    "gh_wc_why",
+    "gh_wc_tiers",
+    "gh_wc_compare",
+    "gh_wc_join",
+    "gh_wc_faq",
+    "gh_wc_newsletter"
+  ]
+}

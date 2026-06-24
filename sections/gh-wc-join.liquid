@@ -1,0 +1,119 @@
+{%- render 'gh-tokens' -%}
+<style>
+  .gh-wc-join-{{ section.id }} {
+    --ruby: #8B1A2E;
+    --pearl: #4A6888;
+    background: {{ section.settings.bg_color | default: '#1C2B1A' }};
+    padding: 88px 40px;
+    color: #F5EFE3;
+  }
+  .gh-wc-join-{{ section.id }} .gh-wc-join-inner { width: min(1280px, 100%); margin: 0 auto; display: grid; grid-template-columns: 1.1fr 1fr; gap: 80px; align-items: center; }
+  .gh-wc-join-{{ section.id }} .gh-wc-join-eyebrow { margin: 0 0 10px; font: 500 11px/1.4 'Inter', sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #D4BC8A; }
+  .gh-wc-join-{{ section.id }} .gh-wc-join-title { margin: 0 0 16px; font: 400 clamp(32px, 4vw, 52px)/1.08 'EB Garamond', Georgia, serif; }
+  .gh-wc-join-{{ section.id }} .gh-wc-join-title p { margin: 0; }
+  .gh-wc-join-{{ section.id }} .gh-wc-join-title em { color: #D4BC8A; font-style: italic; }
+  .gh-wc-join-{{ section.id }} .gh-wc-join-quote { margin: 0 0 16px; padding-left: 14px; border-left: 2px solid #B8913A; color: #D4BC8A; font: italic 400 26px/1.35 'EB Garamond', Georgia, serif; }
+  .gh-wc-join-{{ section.id }} .gh-wc-join-body { margin: 0 0 18px; color: rgba(245,239,227,0.88); font: 400 14px/1.8 'Inter', sans-serif; }
+  .gh-wc-join-{{ section.id }} .gh-wc-join-btns { display: flex; flex-wrap: wrap; gap: 10px; }
+  .gh-wc-join-{{ section.id }} .gh-wc-btn { display: inline-block; text-decoration: none; border-radius: 3px; padding: 11px 14px; font: 500 11px/1.4 'Inter', sans-serif; letter-spacing: .09em; text-transform: uppercase; }
+  .gh-wc-join-{{ section.id }} .gh-wc-btn--ruby { background: #8B1A2E; color: #F5EFE3; }
+  .gh-wc-join-{{ section.id }} .gh-wc-btn--pearl { background: #4A6888; color: #F5EFE3; }
+  .gh-wc-join-{{ section.id }} .gh-wc-btn--ghost { background: transparent; color: #F5EFE3; border: 0.5px solid rgba(245,239,227,0.55); }
+
+  .gh-wc-join-{{ section.id }} .gh-wc-form-card { background: #FDF8F2; color: #1C2B1A; border-radius: 4px; padding: 24px; }
+  .gh-wc-join-{{ section.id }} .gh-wc-form-title { margin: 0 0 6px; font: 400 32px/1.1 'EB Garamond', Georgia, serif; }
+  .gh-wc-join-{{ section.id }} .gh-wc-form-subtitle { margin: 0 0 14px; color: #6B7668; font: 400 13px/1.65 'Inter', sans-serif; }
+  .gh-wc-join-{{ section.id }} .gh-wc-form-field { display: grid; gap: 6px; margin-bottom: 10px; }
+  .gh-wc-join-{{ section.id }} .gh-wc-form-label { font: 500 11px/1.4 'Inter', sans-serif; letter-spacing: .06em; text-transform: uppercase; color: #6B7668; }
+  .gh-wc-join-{{ section.id }} .gh-wc-form-input,
+  .gh-wc-join-{{ section.id }} .gh-wc-form-select { border: .5px solid rgba(28,43,26,.2); border-radius: 3px; background: #fff; color: #1C2B1A; padding: 10px 12px; font: 400 13px/1.4 'Inter', sans-serif; }
+  .gh-wc-join-{{ section.id }} .gh-wc-radio-group { display: grid; gap: 8px; }
+  .gh-wc-join-{{ section.id }} .gh-wc-radio { display: flex; gap: 8px; align-items: flex-start; color: #6B7668; font: 400 12px/1.5 'Inter', sans-serif; }
+  .gh-wc-join-{{ section.id }} .gh-wc-form-submit { width: 100%; border: 0; border-radius: 3px; background: #1C2B1A; color: #F5EFE3; padding: 12px; cursor: pointer; font: 500 11px/1.4 'Inter', sans-serif; letter-spacing: .09em; text-transform: uppercase; margin-top: 8px; }
+  .gh-wc-join-{{ section.id }} .gh-wc-form-note { margin: 10px 0 0; color: #6B7668; font: 400 12px/1.6 'Inter', sans-serif; }
+  .gh-wc-join-{{ section.id }} .gh-wc-form-success { margin: 0; color: #1C2B1A; }
+  .gh-wc-join-{{ section.id }} .gh-wc-form-error { margin: 0 0 8px; color: #8B1A2E; }
+
+  @media (max-width: 1024px) {
+    .gh-wc-join-{{ section.id }} { padding: 68px 20px; }
+    .gh-wc-join-{{ section.id }} .gh-wc-join-inner { grid-template-columns: 1fr; gap: 34px; }
+  }
+</style>
+
+<section class="gh-wc-join-{{ section.id }}" id="join">
+  <div class="gh-wc-join-inner">
+    <div class="gh-wc-join-copy">
+      <p class="gh-wc-join-eyebrow">{{ section.settings.eyebrow }}</p>
+      <div class="gh-wc-join-title">{{ section.settings.heading }}</div>
+      <p class="gh-wc-join-quote">{{ section.settings.quote }}</p>
+      <p class="gh-wc-join-body">{{ section.settings.body }}</p>
+      <div class="gh-wc-join-btns">
+        {% if section.settings.ruby_btn_label != blank and section.settings.ruby_btn_url != blank %}<a class="gh-wc-btn gh-wc-btn--ruby" href="{{ section.settings.ruby_btn_url }}">{{ section.settings.ruby_btn_label }}</a>{% endif %}
+        {% if section.settings.pearl_btn_label != blank and section.settings.pearl_btn_url != blank %}<a class="gh-wc-btn gh-wc-btn--pearl" href="{{ section.settings.pearl_btn_url }}">{{ section.settings.pearl_btn_label }}</a>{% endif %}
+        {% if section.settings.ghost_btn_label != blank and section.settings.ghost_btn_url != blank %}<a class="gh-wc-btn gh-wc-btn--ghost" href="{{ section.settings.ghost_btn_url }}">{{ section.settings.ghost_btn_label }}</a>{% endif %}
+      </div>
+    </div>
+
+    <div class="gh-wc-form-card">
+      <h3 class="gh-wc-form-title">{{ section.settings.card_title }}</h3>
+      <p class="gh-wc-form-subtitle">{{ section.settings.card_subtitle }}</p>
+      {% form 'contact', id: 'gh-wc-join-form' %}
+        {% if form.posted_successfully? %}
+          <p class="gh-wc-form-success">{{ section.settings.form_success | default: "Thanks! We'll be in touch within 2 business days to confirm your membership." }}</p>
+        {% else %}
+          {% if form.errors %}<p class="gh-wc-form-error">{{ form.errors | default_errors }}</p>{% endif %}
+          <div class="gh-wc-form-field"><label class="gh-wc-form-label" for="gh-wc-name-{{ section.id }}">{{ section.settings.label_name | default: 'Full name' }}</label><input type="text" id="gh-wc-name-{{ section.id }}" name="contact[name]" class="gh-wc-form-input" placeholder="Your name" required></div>
+          <div class="gh-wc-form-field"><label class="gh-wc-form-label" for="gh-wc-email-{{ section.id }}">{{ section.settings.label_email | default: 'Email address' }}</label><input type="email" id="gh-wc-email-{{ section.id }}" name="contact[email]" class="gh-wc-form-input" placeholder="your@email.com" required></div>
+          <div class="gh-wc-form-field"><label class="gh-wc-form-label" for="gh-wc-phone-{{ section.id }}">{{ section.settings.label_phone | default: 'Phone number' }}</label><input type="tel" id="gh-wc-phone-{{ section.id }}" name="contact[phone]" class="gh-wc-form-input" placeholder="0400 000 000"></div>
+          <div class="gh-wc-form-field">
+            <label class="gh-wc-form-label" for="gh-wc-tier-{{ section.id }}">{{ section.settings.label_tier | default: 'Membership tier' }}</label>
+            <select id="gh-wc-tier-{{ section.id }}" name="contact[tier]" class="gh-wc-form-select" required>
+              <option value="">Choose a club...</option>
+              <option value="Ruby Club — 2 dozen per year (25% off)">Ruby Club — 2 dozen per year (25% off)</option>
+              <option value="Pearl Club — 1 dozen per year (15% off)">Pearl Club — 1 dozen per year (15% off)</option>
+            </select>
+          </div>
+          <div class="gh-wc-form-field">
+            <label class="gh-wc-form-label">{{ section.settings.label_delivery | default: 'Preferred delivery schedule' }}</label>
+            <div class="gh-wc-radio-group">
+              <label class="gh-wc-radio"><input type="radio" name="contact[delivery]" value="June & December (2× per year)">June &amp; December (2× per year)</label>
+              <label class="gh-wc-radio"><input type="radio" name="contact[delivery]" value="Quarterly: March, June, September & December">March, June, September &amp; December (4× per year — Ruby only)</label>
+            </div>
+          </div>
+          <button type="submit" class="gh-wc-form-submit">{{ section.settings.form_submit_label | default: 'Submit membership interest →' }}</button>
+          <p class="gh-wc-form-note">{{ section.settings.form_note | default: 'No payment required now. A member of our team will contact you within 2 business days.' }}</p>
+        {% endif %}
+      {% endform %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "GH — Wine Club Join",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Join today" },
+    { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p>Become a valued<br><em>God's Hill member</em></p>" },
+    { "type": "textarea", "id": "quote", "label": "Pull quote", "default": "Where Italian heritage, passion and craftsmanship are poured into every bottle." },
+    { "type": "textarea", "id": "body", "label": "Body paragraph", "default": "Join today and become a valued God's Hill Family member. Create your custom wine experience by selecting the tier and delivery schedule that suits your lifestyle perfectly." },
+    { "type": "text", "id": "ruby_btn_label", "label": "Ruby CTA label", "default": "Join Ruby Club" },
+    { "type": "url", "id": "ruby_btn_url", "label": "Ruby CTA URL" },
+    { "type": "text", "id": "pearl_btn_label", "label": "Pearl CTA label", "default": "Join Pearl Club" },
+    { "type": "url", "id": "pearl_btn_url", "label": "Pearl CTA URL" },
+    { "type": "text", "id": "ghost_btn_label", "label": "Ghost CTA label", "default": "Ask a question" },
+    { "type": "url", "id": "ghost_btn_url", "label": "Ghost CTA URL" },
+    { "type": "text", "id": "card_title", "label": "Form card title", "default": "Express your interest" },
+    { "type": "text", "id": "card_subtitle", "label": "Form card subtitle", "default": "Fill in your details and we'll be in touch to set up your membership and first delivery." },
+    { "type": "text", "id": "label_name", "label": "Name field label", "default": "Full name" },
+    { "type": "text", "id": "label_email", "label": "Email field label", "default": "Email address" },
+    { "type": "text", "id": "label_phone", "label": "Phone field label", "default": "Phone number" },
+    { "type": "text", "id": "label_tier", "label": "Tier field label", "default": "Select membership tier" },
+    { "type": "text", "id": "label_delivery", "label": "Delivery field label", "default": "Preferred delivery schedule" },
+    { "type": "text", "id": "form_submit_label", "label": "Submit button label", "default": "Submit membership interest →" },
+    { "type": "textarea", "id": "form_note", "label": "Below-button note", "default": "No payment required now. A member of our team will contact you within 2 business days to confirm your membership and arrange payment." },
+    { "type": "text", "id": "form_success", "label": "Success message", "default": "Thanks! We'll be in touch within 2 business days to confirm your membership." },
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#1C2B1A" }
+  ],
+  "presets": [{ "name": "GH — Wine Club Join" }]
+}
+{% endschema %}

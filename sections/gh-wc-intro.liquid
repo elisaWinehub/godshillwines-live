@@ -1,0 +1,129 @@
+{%- render 'gh-tokens' -%}
+<style>
+  .gh-wc-intro-{{ section.id }} {
+    --ruby: #8B1A2E;
+    --pearl: #4A6888;
+    background: {{ section.settings.bg_color | default: '#FDF8F2' }};
+    padding: 80px 40px;
+  }
+
+  .gh-wc-intro-{{ section.id }} .gh-wc-intro-inner {
+    width: min(1280px, 100%);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .gh-wc-intro-{{ section.id }} .gh-wc-intro-eyebrow {
+    margin: 0 0 10px;
+    font: 500 11px/1.4 'Inter', sans-serif;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #B8913A;
+  }
+
+  .gh-wc-intro-{{ section.id }} .gh-wc-intro-heading {
+    margin: 0 0 18px;
+    font: 400 clamp(30px, 4vw, 48px)/1.12 'EB Garamond', Georgia, serif;
+    color: #1C2B1A;
+  }
+
+  .gh-wc-intro-{{ section.id }} .gh-wc-intro-body {
+    margin: 0 0 14px;
+    color: #6B7668;
+    font: 400 14px/1.8 'Inter', sans-serif;
+  }
+
+  .gh-wc-intro-{{ section.id }} .gh-wc-intro-signature {
+    margin: 10px 0 0;
+    color: #B8913A;
+    font: italic 400 28px/1.2 'EB Garamond', Georgia, serif;
+  }
+
+  .gh-wc-intro-{{ section.id }} .gh-wc-intro-media {
+    position: relative;
+    height: 460px;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .gh-wc-intro-{{ section.id }} .gh-wc-intro-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .gh-wc-intro-{{ section.id }} .gh-wc-intro-corner {
+    position: absolute;
+    width: 130px;
+    height: 130px;
+    border: 1.5px solid #B8913A;
+    border-radius: 3px;
+    opacity: 0.35;
+    bottom: -18px;
+    right: -18px;
+    pointer-events: none;
+  }
+
+  @media (max-width: 1024px) {
+    .gh-wc-intro-{{ section.id }} {
+      padding: 60px 20px;
+    }
+
+    .gh-wc-intro-{{ section.id }} .gh-wc-intro-inner {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .gh-wc-intro-{{ section.id }} .gh-wc-intro-media {
+      height: 320px;
+    }
+  }
+</style>
+
+<section class="gh-wc-intro-{{ section.id }}">
+  <div class="gh-wc-intro-inner">
+    <div class="gh-wc-intro-content">
+      <p class="gh-wc-intro-eyebrow">{{ section.settings.eyebrow }}</p>
+      <h2 class="gh-wc-intro-heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.body_1 != blank %}<p class="gh-wc-intro-body">{{ section.settings.body_1 }}</p>{% endif %}
+      {% if section.settings.body_2 != blank %}<p class="gh-wc-intro-body">{{ section.settings.body_2 }}</p>{% endif %}
+      {% if section.settings.body_3 != blank %}<p class="gh-wc-intro-body">{{ section.settings.body_3 }}</p>{% endif %}
+      {% if section.settings.signature != blank %}<p class="gh-wc-intro-signature">{{ section.settings.signature }}</p>{% endif %}
+    </div>
+    <div class="gh-wc-intro-media">
+      {% if section.settings.image != blank %}
+        {{
+          section.settings.image
+          | image_url: width: 900
+          | image_tag: loading: 'lazy', alt: section.settings.image_alt
+        }}
+      {% endif %}
+      {% if section.settings.show_corner_accent %}
+        <div class="gh-wc-intro-corner" aria-hidden="true"></div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "GH — Wine Club Intro",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Charlie has finally done it" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Welcome to the God's Hill Family" },
+    { "type": "textarea", "id": "body_1", "label": "Paragraph 1", "default": "We're thrilled to welcome you into the God's Hill Family Wine Club — a place where our love for great wine and genuine hospitality come together." },
+    { "type": "textarea", "id": "body_2", "label": "Paragraph 2", "default": "Choose the club that feels right for you and enjoy sharing in the wines we craft with care, passion, and family tradition — all year round." },
+    { "type": "textarea", "id": "body_3", "label": "Paragraph 3", "default": "Whether it's to celebrate special occasions or stock your cellar with premium wines, we're here to ensure every glass is memorable." },
+    { "type": "text", "id": "signature", "label": "Signature line", "default": "From our family to yours — Salute" },
+    { "type": "image_picker", "id": "image", "label": "Right column image" },
+    { "type": "text", "id": "image_alt", "label": "Image alt text", "default": "Charlie Scalzi in the God's Hill vineyard, Barossa Valley" },
+    { "type": "checkbox", "id": "show_corner_accent", "label": "Show decorative gold accent", "default": true },
+    { "type": "color", "id": "bg_color", "label": "Background colour", "default": "#FDF8F2" }
+  ],
+  "presets": [{ "name": "GH — Wine Club Intro" }]
+}
+{% endschema %}
