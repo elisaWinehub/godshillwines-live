@@ -78,6 +78,8 @@
     "variant_button_border_width": 1,
     "variant_button_radius": 5,
     "variant_button_width": "equal-width-buttons",
+    "age_gate_store_name": "",
+    "age_gate_logo": "shopify://shop_images/gods-hill-wines-logo-white.png",
     "age_gate_overlay_opacity": 98,
     "godshill_index_hide_theme_header_footer": false,
     "content_for_index": [],
