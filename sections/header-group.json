@@ -48,7 +48,7 @@
         "overlay_hero": true,
         "overlay_on_home": true,
         "overlay_on_collection": true,
-        "overlay_on_page_hero": true,
+        "overlay_on_page_hero": false,
         "overlay_scroll_threshold": 24,
         "overlay_nav_color": "#ffffff",
         "overlay_icon_color": "#ffffff",
