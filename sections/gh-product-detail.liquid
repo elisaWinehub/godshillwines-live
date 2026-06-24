@@ -649,30 +649,30 @@
 {% assign variant = product.selected_or_first_available_variant %}
 
 <section class="gh-product-detail-{{ section.id }}" style="background: {{ section.settings.bg_color | default: '#FDF8F2' }};">
-  {% for block in section.blocks %}
-    {% if block.type == 'breadcrumbs' and block.settings.show_block %}
-      <div class="gh-product-detail-breadcrumb-row">
-        <nav class="gh-breadcrumbs" {{ block.shopify_attributes }}>
-          {% if block.settings.show_home %}
-            <a href="{{ routes.root_url }}">{{ block.settings.home_label | default: 'Home' }}</a>
-          {% endif %}
-          {% if block.settings.show_all_products and block.settings.all_products_collection != blank %}
-            <span>/</span>
-            <a href="{{ block.settings.all_products_collection.url }}">{{ block.settings.all_products_label | default: 'All products' }}</a>
-          {% endif %}
-          {% if block.settings.show_collection and collection %}
-            <span>/</span>
-            <a href="{{ collection.url }}">{{ collection.title }}</a>
-          {% endif %}
-          <span>/</span>
-          <span>{{ product.title }}</span>
-        </nav>
-      </div>
-      {% break %}
-    {% endif %}
-  {% endfor %}
-
   <div class="gh-product-detail-shell">
+    {% for block in section.blocks %}
+      {% if block.type == 'breadcrumbs' and block.settings.show_block %}
+        <div class="gh-product-detail-breadcrumb-row">
+          <nav class="gh-breadcrumbs" {{ block.shopify_attributes }}>
+            {% if block.settings.show_home %}
+              <a href="{{ routes.root_url }}">{{ block.settings.home_label | default: 'Home' }}</a>
+            {% endif %}
+            {% if block.settings.show_all_products and block.settings.all_products_collection != blank %}
+              <span>/</span>
+              <a href="{{ block.settings.all_products_collection.url }}">{{ block.settings.all_products_label | default: 'All products' }}</a>
+            {% endif %}
+            {% if block.settings.show_collection and collection %}
+              <span>/</span>
+              <a href="{{ collection.url }}">{{ collection.title }}</a>
+            {% endif %}
+            <span>/</span>
+            <span>{{ product.title }}</span>
+          </nav>
+        </div>
+        {% break %}
+      {% endif %}
+    {% endfor %}
+
     <div class="gh-product-detail-grid">
       <div class="gh-product-media-col">
         {% assign featured = variant.featured_image | default: product.featured_image %}
@@ -937,12 +937,16 @@
 
 <style>
   .gh-product-detail-{{ section.id }} {
-    padding: 56px 40px;
+    padding: 20px 56px 40px;
   }
 
   .gh-product-detail-{{ section.id }} .gh-product-detail-shell {
     width: min(1280px, 100%);
     margin: 0 auto;
+  }
+
+  .gh-product-detail-{{ section.id }} .gh-product-detail-breadcrumb-row {
+    margin-bottom: 12px;
   }
 
   .gh-product-detail-{{ section.id }} .gh-product-detail-grid {
