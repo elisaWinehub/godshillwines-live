@@ -189,6 +189,13 @@
         flex-direction: column;
       }
     }
+
+    /* Hide age gate in Shopify theme editor — JS guard above handles it,
+       this CSS catches any flash before JS executes */
+    .shopify-design-mode #gh-age-gate,
+    body.admin-bar #gh-age-gate {
+      display: none !important;
+    }
   </style>
 
   <div class="gh-age-gate" id="gh-age-gate" style="display:none; --gh-age-accent: {{ accent }};">
@@ -266,6 +273,13 @@
 
   <script>
     (function () {
+      // Never show the age gate inside the Shopify theme editor
+      if (window.Shopify && window.Shopify.designMode) {
+        var el = document.getElementById('gh-age-gate');
+        if (el) el.style.display = 'none';
+        return;
+      }
+
       var gate = document.getElementById('gh-age-gate');
       var main = document.getElementById('gh-age-main');
       var declined = document.getElementById('gh-age-declined');
