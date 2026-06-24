@@ -1,0 +1,128 @@
+{%- render 'gh-tokens' -%}
+<style>
+  .gh-book-hero-{{ section.id }} {
+    position: relative;
+    height: {{ section.settings.hero_height | default: 340 }}px;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    background: #1C2B1A;
+  }
+
+  .gh-book-hero-{{ section.id }} .gh-book-hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .gh-book-hero-{{ section.id }} .gh-book-hero-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .gh-book-hero-{{ section.id }} .gh-book-hero-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(to bottom, rgba(20,28,18,0.2) 0%, rgba(20,28,18,0.82) 100%);
+    opacity: {{ section.settings.overlay_opacity | default: 70 | times: 0.01 }};
+  }
+
+  .gh-book-hero-{{ section.id }} .gh-book-hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 0 40px 48px;
+    max-width: 1280px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .gh-book-hero-{{ section.id }} .gh-book-hero-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #B8913A;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .gh-book-hero-{{ section.id }} .gh-book-hero-divider {
+    width: 40px;
+    height: 1px;
+    background: #B8913A;
+    margin-bottom: 14px;
+    opacity: 0.7;
+  }
+
+  .gh-book-hero-{{ section.id }} .gh-book-hero-title {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: clamp(36px, 5vw, 60px);
+    font-weight: 400;
+    color: #F5EFE3;
+    line-height: 1.08;
+    margin-bottom: 10px;
+  }
+
+  .gh-book-hero-{{ section.id }} .gh-book-hero-title p {
+    margin: 0;
+    display: inline;
+  }
+
+  .gh-book-hero-{{ section.id }} .gh-book-hero-title em {
+    font-style: italic;
+    color: #D4BC8A;
+  }
+
+  .gh-book-hero-{{ section.id }} .gh-book-hero-sub {
+    font-size: 14px;
+    color: rgba(245,239,227,0.65);
+    max-width: 520px;
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .gh-book-hero-{{ section.id }} {
+      height: max(280px, {{ section.settings.hero_height | default: 340 | minus: 60 }}px);
+    }
+
+    .gh-book-hero-{{ section.id }} .gh-book-hero-content {
+      padding: 0 20px 36px;
+    }
+  }
+</style>
+
+<section class="gh-book-hero-{{ section.id }}">
+  {% if section.settings.hero_image != blank %}
+    <div class="gh-book-hero-bg">
+      {{
+        section.settings.hero_image
+        | image_url: width: 1600
+        | image_tag: loading: 'eager', alt: section.settings.eyebrow
+      }}
+    </div>
+  {% endif %}
+  <div class="gh-book-hero-overlay" aria-hidden="true"></div>
+  <div class="gh-book-hero-content">
+    <span class="gh-book-hero-eyebrow">{{ section.settings.eyebrow }}</span>
+    <div class="gh-book-hero-divider" aria-hidden="true"></div>
+    <div class="gh-book-hero-title">{{ section.settings.title }}</div>
+    <p class="gh-book-hero-sub">{{ section.settings.subheading }}</p>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "GH — Book Hero",
+  "settings": [
+    { "type": "image_picker", "id": "hero_image", "label": "Background image" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "God's Hill Wines · Barossa Valley" },
+    { "type": "richtext", "id": "title", "label": "Title", "default": "<p>Book an <em>Experience</em></p>" },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "Wine tastings, restaurant reservations, accommodation — choose your experience below." },
+    { "type": "range", "id": "hero_height", "label": "Height (px)", "min": 240, "max": 520, "step": 20, "default": 340 },
+    { "type": "range", "id": "overlay_opacity", "label": "Overlay %", "min": 0, "max": 90, "step": 5, "default": 70 }
+  ],
+  "presets": [{ "name": "GH — Book Hero" }]
+}
+{% endschema %}

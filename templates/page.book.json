@@ -1,0 +1,125 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gh_book_hero": {
+      "type": "gh-book-hero",
+      "settings": {
+        "eyebrow": "God's Hill Wines · Barossa Valley",
+        "title": "<p>Book an <em>Experience</em></p>",
+        "subheading": "Wine tastings, restaurant reservations, accommodation — choose your experience below.",
+        "hero_height": 340,
+        "overlay_opacity": 70
+      }
+    },
+    "gh_book_options": {
+      "type": "gh-book-options",
+      "blocks": {
+        "b_tasting": {
+          "type": "booking",
+          "settings": {
+            "category": "Cellar door",
+            "title": "Wine Tasting",
+            "badge": "Thu – Sun",
+            "badge_style": "gold",
+            "icon": "wine",
+            "description": "Experience our wines at the source. Our cellar door tastings are a guided journey through God's Hill's small-batch Barossa wines, poured with the story behind each bottle. Groups of 6 or more please book ahead.",
+            "detail_1": "Thursday – Sunday, 11am – 5pm",
+            "detail_2": "Groups of 6+ book ahead",
+            "detail_3": "34 Moppert Rd, Lyndoch SA 5351",
+            "primary_btn_label": "Call to book",
+            "primary_btn_url": "tel:+61408838004",
+            "primary_btn_style": "gold",
+            "secondary_btn_label": "Send an enquiry",
+            "secondary_btn_url": "/pages/contact",
+            "show_resdiary_embed": false
+          }
+        },
+        "b_restaurant": {
+          "type": "booking",
+          "settings": {
+            "category": "Authentic Italian food",
+            "title": "Ennia Cucina",
+            "badge": "ResDiary",
+            "badge_style": "green",
+            "icon": "fork",
+            "description": "Reserve your table at Ennia Cucina — our restaurant at the vineyard serving authentic Italian food matched with God's Hill wines.",
+            "detail_1": "Thu – Sun, Kitchen 11am – 4pm",
+            "detail_2": "All group sizes welcome",
+            "detail_3": "",
+            "primary_btn_label": "Call 0422 588 605",
+            "primary_btn_url": "tel:+61422588605",
+            "primary_btn_style": "outline",
+            "secondary_btn_label": "",
+            "secondary_btn_url": "",
+            "show_resdiary_embed": true,
+            "resdiary_embed": ""
+          }
+        },
+        "b_accommodation": {
+          "type": "booking",
+          "settings": {
+            "category": "Barossa accommodation",
+            "title": "Villa Scalzi",
+            "badge": "Stay",
+            "badge_style": "blue",
+            "icon": "house",
+            "description": "Wake up among the vines at Villa Scalzi — our heritage accommodation in the heart of the Barossa Valley.",
+            "detail_1": "Lyndoch, Barossa Valley SA",
+            "detail_2": "Subject to availability",
+            "detail_3": "",
+            "primary_btn_label": "Check availability",
+            "primary_btn_url": "/pages/accommodation",
+            "primary_btn_style": "vine",
+            "secondary_btn_label": "Enquire",
+            "secondary_btn_url": "/pages/contact",
+            "show_resdiary_embed": false
+          }
+        },
+        "b_events": {
+          "type": "booking",
+          "settings": {
+            "category": "Groups · Events · Private",
+            "title": "Private & Group Events",
+            "badge": "",
+            "badge_style": "none",
+            "icon": "mail",
+            "description": "Planning a private function, corporate event, or special occasion at the vineyard? Contact our team to discuss dates, menus, and wine packages.",
+            "detail_1": "",
+            "detail_2": "",
+            "detail_3": "",
+            "primary_btn_label": "Get in touch",
+            "primary_btn_url": "/pages/contact",
+            "primary_btn_style": "gold",
+            "secondary_btn_label": "Call us",
+            "secondary_btn_url": "tel:+61408838004",
+            "show_resdiary_embed": false
+          }
+        }
+      },
+      "block_order": ["b_tasting", "b_restaurant", "b_accommodation", "b_events"],
+      "settings": {
+        "sidebar_address": "34 Moppert Rd, Lyndoch SA 5351",
+        "sidebar_hours": "Thu – Sun, 11am – 5pm",
+        "sidebar_phone_cellar": "+61 408 838 004",
+        "sidebar_phone_restaurant": "+61 422 588 605",
+        "sidebar_email": "wine@godshill.com.au",
+        "sidebar_cta_eyebrow": "Members save more",
+        "sidebar_cta_title": "Join the Family Wine Club",
+        "sidebar_cta_body": "Members receive 15–25% off all wines, dining discounts at Ennia Cucina, and exclusive event invitations.",
+        "sidebar_cta_btn_label": "Learn more →",
+        "sidebar_cta_btn_url": "/pages/wine-club",
+        "sidebar_directions_blurb": "Only 55 minutes from Adelaide CBD. Located in Lyndoch in the famous Southern Barossa wine region.",
+        "sidebar_maps_url": "https://maps.google.com/?q=34+Moppert+Rd+Lyndoch+SA+5351"
+      }
+    }
+  },
+  "order": ["gh_book_hero", "gh_book_options"]
+}
