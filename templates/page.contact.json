@@ -12,39 +12,207 @@
     "gh_hero": {
       "type": "gh-page-hero-block",
       "settings": {
+        "hero_image": "shopify://shop_images/banner2_1.png",
         "hero_eyebrow": "Get in touch",
         "hero_title": "<p><em>Contact</em> Us</p>",
         "hero_subheading": "We'd love to hear from you — visit us at the cellar door or send a message below.",
-        "hero_height": 380
+        "hero_height": 380,
+        "overlay_opacity": 55,
+        "content_alignment": "left"
       }
     },
-    "gh_contact_intro": { "type": "gh-contact-intro", "settings": {} },
+    "gh_contact_intro": {
+      "type": "gh-contact-intro",
+      "settings": {
+        "eyebrow": "Cellar door",
+        "heading": "Scalzi Estate Vineyard & Cantina Scalzi",
+        "body_1": "God's Hill \"Cantina Scalzi\" Cellar Door open from Thursday to Sunday from 11am to 5pm. Kitchen open 11am to 4pm. We are closed Monday, Tuesday and Wednesday. Open on public holidays from 11am to 5pm.",
+        "body_2": "Wine Sales can be purchased 7 days a week, please call before coming to collect. We also take other bookings during the week for wine tasting etc; please call to book your event in. Call 0412 836 004.",
+        "image_alt": "Cantina Scalzi outdoor dining",
+        "bg_color": "#fdf8f2",
+        "accent_color": "#b8913a"
+      }
+    },
     "gh_contact_forms": {
       "type": "gh-contact-forms",
       "blocks": {
-        "way_1": { "type": "contact_way", "settings": { "icon": "phone", "label": "Cellar door, general enquiries", "value": "0412 107 926", "is_phone": true } },
-        "way_2": { "type": "contact_way", "settings": { "icon": "phone", "label": "Ennia Cucina restaurant", "value": "0422 588 605", "is_phone": true } },
-        "way_3": { "type": "contact_way", "settings": { "icon": "location", "label": "Vineyard location", "value": "Morphett Road\nLyndoch, Barossa Valley SA 5351", "is_phone": false } },
-        "way_4": { "type": "contact_way", "settings": { "icon": "building", "label": "Postal", "value": "PO Box 670, Lyndoch SA 5351", "is_phone": false } },
-        "way_5": { "type": "contact_way", "settings": { "icon": "accommodation", "label": "Looking for accommodation?", "value": "Villa Scalzi", "link_url": "https://www.villascalzi.com/", "open_in_new_tab": true, "is_phone": false } }
+        "way_1": {
+          "type": "contact_way",
+          "settings": {
+            "icon": "phone",
+            "label": "Cellar door, general enquiries",
+            "value": "0412 107 926",
+            "link_url": "",
+            "open_in_new_tab": false,
+            "is_phone": true
+          }
+        },
+        "way_2": {
+          "type": "contact_way",
+          "settings": {
+            "icon": "phone",
+            "label": "Ennia Cucina restaurant",
+            "value": "0422 588 605",
+            "link_url": "",
+            "open_in_new_tab": false,
+            "is_phone": true
+          }
+        },
+        "way_3": {
+          "type": "contact_way",
+          "settings": {
+            "icon": "location",
+            "label": "Vineyard location",
+            "value": "Morphett Road\nLyndoch, Barossa Valley SA 5351",
+            "link_url": "",
+            "open_in_new_tab": false,
+            "is_phone": false
+          }
+        },
+        "way_4": {
+          "type": "contact_way",
+          "settings": {
+            "icon": "building",
+            "label": "Postal",
+            "value": "PO Box 670, Lyndoch SA 5351",
+            "link_url": "",
+            "open_in_new_tab": false,
+            "is_phone": false
+          }
+        },
+        "way_5": {
+          "type": "contact_way",
+          "settings": {
+            "icon": "accommodation",
+            "label": "Looking for accommodation?",
+            "value": "Villa Scalzi",
+            "link_url": "https://www.villascalzi.com/",
+            "open_in_new_tab": true,
+            "is_phone": false
+          }
+        }
       },
-      "block_order": ["way_1", "way_2", "way_3", "way_4", "way_5"],
-      "settings": {}
+      "block_order": [
+        "way_1",
+        "way_2",
+        "way_3",
+        "way_4",
+        "way_5"
+      ],
+      "settings": {
+        "form_title": "Send us a message",
+        "ways_title": "Other ways to reach us",
+        "name_label": "Your Name (required)",
+        "email_label": "Your Email (required)",
+        "subject_label": "Subject",
+        "message_label": "Your Message",
+        "submit_label": "Send Message",
+        "bg_color": "#fdf8f2",
+        "ways_bg": "#f5efe3",
+        "accent_color": "#b8913a"
+      }
     },
     "gh_team_grid": {
       "type": "gh-team-grid",
       "blocks": {
-        "m1": { "type": "member", "settings": { "dept": "Assisting General Manager", "name": "Edward Scalzi", "name_2": "Felipe Scalzi", "email": "sales@godshillwines.com", "mobile": "0412 107 926 / 0408 808 150", "extra": "" } },
-        "m2": { "type": "member", "settings": { "dept": "Sales & Marketing", "name": "Carmine (Charlie) Scalzi", "email": "sales@godshillwines.com", "mobile": "0412 836 004", "extra": "Wechat: waid_asst0100w12" } },
-        "m3": { "type": "member", "settings": { "dept": "Cellar Door", "name": "Tristan Massara", "email": "tristanmassara@godshillwines.com", "mobile": "0422 588 605", "extra": "" } },
-        "m4": { "type": "member", "settings": { "dept": "Restaurant", "name": "Edward Scalzi", "email": "edward@scalziwines.com", "mobile": "0468 420 883", "extra": "" } },
-        "m5": { "type": "member", "settings": { "dept": "Export / Import", "name": "Charlie Scalzi", "email": "charlie@godshillwines.com", "mobile": "0412 836 004", "extra": "International Exports: John Gallagher · 0418 819 537" } },
-        "m6": { "type": "member", "settings": { "dept": "SA Sales", "name": "Tristan Massara", "email": "sales@scalziwines.com", "mobile": "", "extra": "" } }
+        "m1": {
+          "type": "member",
+          "settings": {
+            "dept": "Assisting General Manager",
+            "name": "Edward Scalzi",
+            "name_2": "Felipe Scalzi",
+            "email": "sales@godshillwines.com",
+            "mobile": "0412 107 926 / 0408 808 150",
+            "extra": ""
+          }
+        },
+        "m2": {
+          "type": "member",
+          "settings": {
+            "dept": "Sales & Marketing",
+            "name": "Carmine (Charlie) Scalzi",
+            "name_2": "",
+            "email": "sales@godshillwines.com",
+            "mobile": "0412 836 004",
+            "extra": "Wechat: waid_asst0100w12"
+          }
+        },
+        "m3": {
+          "type": "member",
+          "settings": {
+            "dept": "Cellar Door",
+            "name": "Tristan Massara",
+            "name_2": "",
+            "email": "tristanmassara@godshillwines.com",
+            "mobile": "0422 588 605",
+            "extra": ""
+          }
+        },
+        "m4": {
+          "type": "member",
+          "settings": {
+            "dept": "Restaurant",
+            "name": "Edward Scalzi",
+            "name_2": "",
+            "email": "edward@scalziwines.com",
+            "mobile": "0468 420 883",
+            "extra": ""
+          }
+        },
+        "m5": {
+          "type": "member",
+          "settings": {
+            "dept": "Export / Import",
+            "name": "Charlie Scalzi",
+            "name_2": "",
+            "email": "charlie@godshillwines.com",
+            "mobile": "0412 836 004",
+            "extra": "International Exports: John Gallagher · 0418 819 537"
+          }
+        },
+        "m6": {
+          "type": "member",
+          "settings": {
+            "dept": "SA Sales",
+            "name": "Tristan Massara",
+            "name_2": "",
+            "email": "sales@scalziwines.com",
+            "mobile": "",
+            "extra": ""
+          }
+        }
       },
-      "block_order": ["m1", "m2", "m3", "m4", "m5", "m6"],
-      "settings": {}
+      "block_order": [
+        "m1",
+        "m2",
+        "m3",
+        "m4",
+        "m5",
+        "m6"
+      ],
+      "settings": {
+        "heading": "Our Team",
+        "bg_color": "#fdf8f2",
+        "card_bg": "#ffffff",
+        "accent_color": "#b8913a"
+      }
     },
-    "gh_map_qr": { "type": "gh-map-qr", "settings": {} }
+    "gh_map_qr": {
+      "type": "gh-map-qr",
+      "settings": {
+        "qr_title": "Scan to find us",
+        "qr_body": "Open your camera on your phone and scan the QR code for directions to our Cellar Door.",
+        "qr_image": "shopify://shop_images/aron-trading.png",
+        "map_embed": "<iframe src=\"https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d6567.577887436052!2d138.8797896!3d-34.6094981!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ab9e34ad27abc81%3A0x92cfc5d73adf5941!2sGod's%20Hill%20Wines%20-%20Authentic%20Italian%20Restaurant%2FCellar%20Door!5e0!3m2!1sen!2sph!4v1779771913265!5m2!1sen!2sph\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>",
+        "qr_bg": "#f5efe3"
+      }
+    }
   },
-  "order": ["gh_hero", "gh_contact_intro", "gh_contact_forms", "gh_team_grid", "gh_map_qr"]
+  "order": [
+    "gh_hero",
+    "gh_contact_intro",
+    "gh_contact_forms",
+    "gh_team_grid",
+    "gh_map_qr"
+  ]
 }
