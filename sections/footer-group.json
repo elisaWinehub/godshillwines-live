@@ -33,31 +33,29 @@
             "menu": "main-menu"
           }
         },
+        "menu_links_N6MTUq": {
+          "type": "menu_links",
+          "settings": {
+            "heading": "Shop",
+            "menu": "shop"
+          }
+        },
         "contact_xremzY": {
           "type": "contact",
           "settings": {
             "heading": "Cellar Door",
+            "address": "7A Morphett Rd, Lyndoch SA 5351, Australia",
+            "phone": "+61412836004",
+            "hours": "Open Thu - Sun, 11am - 5pm",
             "body": "<p>7A Morphett Rd, Lyndoch <br/>SA 5351, Australia</p><p>+61412836004</p><p><a href=\"mailto:wine@godshill.com.au\">wine@godshill.com.au</a></p><p>Open Thu - Sun, 11am - 5pm</p>"
-          }
-        },
-        "newsletter_rTW6pT": {
-          "type": "newsletter",
-          "settings": {
-            "heading": "Stay In The Loop",
-            "intro": "<p>Subscribe to hear about releases, events & offers.</p>",
-            "show_static_newsletter": true,
-            "newsletter_placeholder": "Enter your email",
-            "newsletter_button_label": "→",
-            "enable_custom_newsletter_embed": false,
-            "newsletter_embed_html": ""
           }
         }
       },
       "block_order": [
         "brand_U6Uk4B",
         "menu_links_g7hHgT",
-        "contact_xremzY",
-        "newsletter_rTW6pT"
+        "menu_links_N6MTUq",
+        "contact_xremzY"
       ],
       "name": "God's Hill custom footer",
       "settings": {
