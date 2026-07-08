@@ -1,6 +1,12 @@
 {% liquid
   assign card_id = section.id | default: 'gh'
   assign variant = product.selected_or_first_available_variant
+  assign can_purchase = false
+  if variant
+    if variant.available or variant.inventory_policy == 'continue'
+      assign can_purchase = true
+    endif
+  endif
   assign compare_at_price = variant.compare_at_price | default: 0
   assign sale_diff = compare_at_price | minus: variant.price
   assign sale_pct = 0
@@ -19,7 +25,7 @@
 
 <article class="gh-product-card gh-product-card-{{ card_id }}">
   <a class="gh-product-card__image-wrap" href="{{ product.url | default: '#' }}" style="height: 280px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #FFFFFF; position: relative;">
-    {% if product.available == false %}
+    {% if can_purchase == false %}
       <span class="gh-product-card__badge gh-product-card__badge--sold">Sold Out</span>
     {% elsif sale_pct > 0 %}
       <span class="gh-product-card__badge gh-product-card__badge--sale">{{ sale_pct }}% OFF</span>
@@ -56,15 +62,15 @@
         <input type="hidden" name="id" value="{{ variant.id }}">
         <div class="gh-product-actions gh-product-card__actions">
           <div class="gh-qty-stepper gh-product-card__qty">
-            <button type="button" class="gh-qty-btn gh-qty-minus" aria-label="Decrease quantity" {% unless product.available %}disabled{% endunless %}>-</button>
-            <input type="number" name="quantity" value="1" min="1" class="gh-qty-input" aria-label="Quantity" {% unless product.available %}disabled{% endunless %}>
-            <button type="button" class="gh-qty-btn gh-qty-plus" aria-label="Increase quantity" {% unless product.available %}disabled{% endunless %}>+</button>
+            <button type="button" class="gh-qty-btn gh-qty-minus" aria-label="Decrease quantity" {% unless can_purchase %}disabled{% endunless %}>-</button>
+            <input type="number" name="quantity" value="1" min="1" class="gh-qty-input" aria-label="Quantity" {% unless can_purchase %}disabled{% endunless %}>
+            <button type="button" class="gh-qty-btn gh-qty-plus" aria-label="Increase quantity" {% unless can_purchase %}disabled{% endunless %}>+</button>
           </div>
           <button
             type="submit"
             name="add"
-            class="gh-add-to-cart-btn gh-product-card__btn{% unless product.available %} gh-btn-disabled{% endunless %}"
-            {% unless product.available %}disabled aria-disabled="true"{% endunless %}
+            class="gh-add-to-cart-btn gh-product-card__btn{% unless can_purchase %} gh-btn-disabled{% endunless %}"
+            {% unless can_purchase %}disabled aria-disabled="true"{% endunless %}
             data-cart-trigger>
             Add to cart
           </button>

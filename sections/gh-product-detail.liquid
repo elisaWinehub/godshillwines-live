@@ -647,6 +647,12 @@
 {% endcomment %}
 {%- render 'gh-tokens' -%}
 {% assign variant = product.selected_or_first_available_variant %}
+{% assign can_purchase = false %}
+{% if variant %}
+  {% if variant.available or variant.inventory_policy == 'continue' %}
+    {% assign can_purchase = true %}
+  {% endif %}
+{% endif %}
 
 <section class="gh-product-detail-{{ section.id }}" style="background: {{ section.settings.bg_color | default: '#FDF8F2' }};">
   <div class="gh-product-detail-shell">
@@ -824,7 +830,7 @@
                       class="gh-add-cart-btn"
                       name="add"
                       data-cart-trigger
-                      {% unless variant.available %}disabled aria-disabled="true"{% endunless %}
+                      {% unless can_purchase %}disabled aria-disabled="true"{% endunless %}
                     >
                       Add to cart
                     </button>

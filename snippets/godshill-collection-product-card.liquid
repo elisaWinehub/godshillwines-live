@@ -6,6 +6,12 @@
 {% liquid
   assign card_id = section.id | append: '-' | append: product.id
   assign v = product.selected_or_first_available_variant
+  assign can_purchase = false
+  if v
+    if v.available or v.inventory_policy == 'continue'
+      assign can_purchase = true
+    endif
+  endif
   assign show_badges = section.settings.show_badges
   assign show_vendor = section.settings.show_vendor
   assign show_qty = section.settings.show_quantity_selector
@@ -62,7 +68,7 @@
       assign ratio_css = '4 / 3'
   endcase
   assign show_atc_form = false
-  if product.available and product.variants.size == 1 and v.available
+  if product.variants.size == 1 and can_purchase
     assign show_atc_form = true
   endif
 %}
@@ -87,19 +93,19 @@
     </a>
     {% if show_badges %}
       <div class="mcp-card__badges" aria-hidden="true">
-        {% unless product.available %}
+        {% unless can_purchase %}
           <span class="mcp-badge mcp-badge--sold">{{ 'products.product.sold_out' | t }}</span>
         {% endunless %}
-        {% if on_sale and product.available %}
+        {% if on_sale and can_purchase %}
           <span class="mcp-badge mcp-badge--sale">-{{ sale_percent }}%</span>
         {% endif %}
-        {% if is_new and product.available %}
+        {% if is_new and can_purchase %}
           <span class="mcp-badge mcp-badge--new">{{ section.settings.badge_new_label | default: 'New' }}</span>
         {% endif %}
-        {% if is_bestseller and product.available %}
+        {% if is_bestseller and can_purchase %}
           <span class="mcp-badge mcp-badge--bestseller">{{ section.settings.badge_bestseller_label | default: 'Best seller' }}</span>
         {% endif %}
-        {% if custom_tag_badge != blank and product.available %}
+        {% if custom_tag_badge != blank and can_purchase %}
           <span class="mcp-badge mcp-badge--custom">{{ custom_tag_badge }}</span>
         {% endif %}
       </div>
@@ -177,11 +183,11 @@
               name="add"
               data-mcp-atc-btn
               style="background: {{ btn_bg }}; color: {{ btn_fg }}; --mcp-atc-hover: {{ btn_hover }};"
-              {% unless product.available and v.available %}
+              {% unless can_purchase %}
                 disabled aria-disabled="true"
               {% endunless %}
             >
-              {% if product.available %}
+              {% if can_purchase %}
                 <span class="svg-wrapper add-to-cart-icon" aria-hidden="true">
                   {{- 'icon-add-to-cart.svg' | inline_asset_content -}}
                 </span>
@@ -196,7 +202,7 @@
           </div>
         {% endform %}
       </product-form-component>
-    {% elsif product.available %}
+    {% elsif can_purchase %}
       <div class="mcp-card__actions">
         <a class="mcp-atc-btn mcp-atc-btn--link" href="{{ product.url }}">{{ section.settings.choose_options_label | default: 'Choose options' }}</a>
       </div>
