@@ -2,9 +2,13 @@
 
 <section class="gh-collection-hero-{{ section.id }}">
   {%- assign gh_collection_hero_image = collection.image | default: section.settings.hero_image -%}
+  {%- assign gh_collection_hero_title = section.settings.hero_title -%}
+  {%- if collection and collection.title != blank -%}
+    {%- capture gh_collection_hero_title -%}<p>{{ collection.title | escape }}</p>{%- endcapture -%}
+  {%- endif -%}
   {%- render 'gh-page-hero',
     eyebrow: section.settings.hero_eyebrow,
-    title: section.settings.hero_title,
+    title: gh_collection_hero_title,
     subheading: section.settings.hero_subheading,
     image: gh_collection_hero_image,
     height: section.settings.hero_height,
