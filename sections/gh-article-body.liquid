@@ -1,5 +1,7 @@
 {%- liquid
   assign article_category = ''
+  # Data-level fix should still be done in Shopify Admin by setting the article author to God's Hill Wines.
+  assign display_author = article.author | replace: 'Elisa DC', "God's Hill Wines" | replace: 'elisa dc', "God's Hill Wines" | replace: 'elisa_dc', "God's Hill Wines"
   for tag in article.tags
     unless tag == 'featured'
       assign article_category = tag
@@ -82,10 +84,10 @@
             <span class="gh-sidebar-info-label-{{ section.id }}">Published</span>
             <span class="gh-sidebar-info-value-{{ section.id }}">{{ article.published_at | date: '%d %B %Y' }}</span>
           </div>
-          {% if article.author != blank %}
+          {% if display_author != blank %}
             <div class="gh-sidebar-info-item-{{ section.id }}">
               <span class="gh-sidebar-info-label-{{ section.id }}">Author</span>
-              <span class="gh-sidebar-info-value-{{ section.id }}">{{ article.author }}</span>
+              <span class="gh-sidebar-info-value-{{ section.id }}">{{ display_author | default: "God's Hill Wines" }}</span>
             </div>
           {% endif %}
           {% if article.tags.size > 0 %}

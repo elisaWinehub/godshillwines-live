@@ -9,6 +9,7 @@
   assign read_words = article.content | strip_html | split: ' ' | size
   assign read_mins = read_words | divided_by: 200 | plus: 1
   assign overlay_alpha = section.settings.overlay_opacity | divided_by: 100.0
+  assign display_author = article.author | replace: 'Elisa DC', "God's Hill Wines" | replace: 'elisa dc', "God's Hill Wines" | replace: 'elisa_dc', "God's Hill Wines"
 -%}
 
 <section class="gh-art-hero-{{ section.id }}">
@@ -30,7 +31,7 @@
       <div class="gh-art-hero-meta-{{ section.id }}">
         <span>{{ article.published_at | date: '%d %B %Y' }}</span>
         <span class="gh-art-meta-sep-{{ section.id }}"></span>
-        <span>{{ article.author }}</span>
+        <span>{{ display_author | default: "God's Hill Wines" }}</span>
         <span class="gh-art-meta-sep-{{ section.id }}"></span>
         <span>{{ read_mins }} min read</span>
       </div>

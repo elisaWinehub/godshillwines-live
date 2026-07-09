@@ -14,7 +14,7 @@
     assign display_description = 'placeholders.blog_post_description' | t
   else
     assign display_title = article.title
-    assign display_author = article.author
+    assign display_author = article.author | replace: 'Elisa DC', "God's Hill Wines" | replace: 'elisa dc', "God's Hill Wines" | replace: 'elisa_dc', "God's Hill Wines"
     assign display_date = article.published_at
     assign display_description = null
   endif
