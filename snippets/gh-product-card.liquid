@@ -225,6 +225,31 @@
       color: #FDF8F2;
     }
   }
+
+  @media screen and (max-width: 640px) {
+    .gh-product-card-{{ card_id }} .gh-product-actions {
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: 8px !important;
+    }
+
+    .gh-product-card-{{ card_id }} .gh-product-actions .gh-qty-stepper,
+    .gh-product-card-{{ card_id }} .gh-product-actions .gh-qty-control {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .gh-product-card-{{ card_id }} .gh-product-actions .gh-add-to-cart-btn,
+    .gh-product-card-{{ card_id }} .gh-product-actions [name='add'],
+    .gh-product-card-{{ card_id }} .gh-product-actions .product-add {
+      width: 100% !important;
+      text-align: center;
+      justify-content: center;
+      padding: 10px 12px !important;
+      font-size: 10px;
+      white-space: nowrap;
+    }
+  }
 </style>
 
 {%- render 'gh-cart-js' -%}
