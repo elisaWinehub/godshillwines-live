@@ -3,7 +3,7 @@
   .gh-wc-join-{{ section.id }} {
     --ruby: #8B1A2E;
     --pearl: #4A6888;
-    background: {{ section.settings.bg_color | default: '#1C2B1A' }};
+    background: {{ section.settings.bg_color | default: '#000000' }};
     padding: 88px 40px;
     color: #F5EFE3;
   }
@@ -20,18 +20,18 @@
   .gh-wc-join-{{ section.id }} .gh-wc-btn--pearl { background: #4A6888; color: #F5EFE3; }
   .gh-wc-join-{{ section.id }} .gh-wc-btn--ghost { background: transparent; color: #F5EFE3; border: 0.5px solid rgba(245,239,227,0.55); }
 
-  .gh-wc-join-{{ section.id }} .gh-wc-form-card { background: #FDF8F2; color: #1C2B1A; border-radius: 4px; padding: 24px; }
+  .gh-wc-join-{{ section.id }} .gh-wc-form-card { background: #FDF8F2; color: #000000; border-radius: 4px; padding: 24px; }
   .gh-wc-join-{{ section.id }} .gh-wc-form-title { margin: 0 0 6px; font: 400 32px/1.1 'EB Garamond', Georgia, serif; }
   .gh-wc-join-{{ section.id }} .gh-wc-form-subtitle { margin: 0 0 14px; color: #6B7668; font: 400 13px/1.65 'Inter', sans-serif; }
   .gh-wc-join-{{ section.id }} .gh-wc-form-field { display: grid; gap: 6px; margin-bottom: 10px; }
   .gh-wc-join-{{ section.id }} .gh-wc-form-label { font: 500 11px/1.4 'Inter', sans-serif; letter-spacing: .06em; text-transform: uppercase; color: #6B7668; }
   .gh-wc-join-{{ section.id }} .gh-wc-form-input,
-  .gh-wc-join-{{ section.id }} .gh-wc-form-select { border: .5px solid rgba(28,43,26,.2); border-radius: 3px; background: #fff; color: #1C2B1A; padding: 10px 12px; font: 400 13px/1.4 'Inter', sans-serif; }
+  .gh-wc-join-{{ section.id }} .gh-wc-form-select { border: .5px solid rgba(28,43,26,.2); border-radius: 3px; background: #fff; color: #000000; padding: 10px 12px; font: 400 13px/1.4 'Inter', sans-serif; }
   .gh-wc-join-{{ section.id }} .gh-wc-radio-group { display: grid; gap: 8px; }
   .gh-wc-join-{{ section.id }} .gh-wc-radio { display: flex; gap: 8px; align-items: flex-start; color: #6B7668; font: 400 12px/1.5 'Inter', sans-serif; }
-  .gh-wc-join-{{ section.id }} .gh-wc-form-submit { width: 100%; border: 0; border-radius: 3px; background: #1C2B1A; color: #F5EFE3; padding: 12px; cursor: pointer; font: 500 11px/1.4 'Inter', sans-serif; letter-spacing: .09em; text-transform: uppercase; margin-top: 8px; }
+  .gh-wc-join-{{ section.id }} .gh-wc-form-submit { width: 100%; border: 0; border-radius: 3px; background: #000000; color: #F5EFE3; padding: 12px; cursor: pointer; font: 500 11px/1.4 'Inter', sans-serif; letter-spacing: .09em; text-transform: uppercase; margin-top: 8px; }
   .gh-wc-join-{{ section.id }} .gh-wc-form-note { margin: 10px 0 0; color: #6B7668; font: 400 12px/1.6 'Inter', sans-serif; }
-  .gh-wc-join-{{ section.id }} .gh-wc-form-success { margin: 0; color: #1C2B1A; }
+  .gh-wc-join-{{ section.id }} .gh-wc-form-success { margin: 0; color: #000000; }
   .gh-wc-join-{{ section.id }} .gh-wc-form-error { margin: 0 0 8px; color: #8B1A2E; }
 
   @media (max-width: 1024px) {
@@ -112,7 +112,7 @@
     { "type": "text", "id": "form_submit_label", "label": "Submit button label", "default": "Submit membership interest →" },
     { "type": "textarea", "id": "form_note", "label": "Below-button note", "default": "No payment required now. A member of our team will contact you within 2 business days to confirm your membership and arrange payment." },
     { "type": "text", "id": "form_success", "label": "Success message", "default": "Thanks! We'll be in touch within 2 business days to confirm your membership." },
-    { "type": "color", "id": "bg_color", "label": "Background", "default": "#1C2B1A" }
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#000000" }
   ],
   "presets": [{ "name": "GH — Wine Club Join" }]
 }

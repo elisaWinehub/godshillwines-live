@@ -2,13 +2,13 @@
 {%- liquid
   assign bg_color = section.settings.bg_color | default: '#F5EFE3'
   assign cell_bg = section.settings.cell_bg | default: '#F5EFE3'
-  assign text_color = section.settings.text_color | default: '#1C2B1A'
-  assign title_color = section.settings.title_color | default: '#1C2B1A'
+  assign text_color = section.settings.text_color | default: '#000000'
+  assign title_color = section.settings.title_color | default: '#000000'
   assign divider_color = section.settings.divider_color | default: '#D8C9AA'
 
   if section.settings.dark_mode
-    assign bg_color = '#1C2B1A'
-    assign cell_bg = '#1C2B1A'
+    assign bg_color = '#000000'
+    assign cell_bg = '#000000'
     assign text_color = '#F5EFE3'
     assign title_color = '#F5EFE3'
   endif
@@ -121,9 +121,9 @@
   "name": "GH — Pillars",
   "settings": [
     { "type": "color", "id": "bg_color", "label": "Background", "default": "#F5EFE3" },
-    { "type": "color", "id": "text_color", "label": "Text colour", "default": "#1C2B1A" },
+    { "type": "color", "id": "text_color", "label": "Text colour", "default": "#000000" },
     { "type": "color", "id": "cell_bg", "label": "Pillar background", "default": "#F5EFE3" },
-    { "type": "color", "id": "title_color", "label": "Pillar title colour", "default": "#1C2B1A" },
+    { "type": "color", "id": "title_color", "label": "Pillar title colour", "default": "#000000" },
     { "type": "color", "id": "divider_color", "label": "Divider colour", "default": "#D8C9AA" },
     { "type": "checkbox", "id": "dark_mode", "label": "Dark mode (override base colours)", "default": false }
   ],

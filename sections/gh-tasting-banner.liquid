@@ -33,7 +33,7 @@
 
 <style>
   .gh-tasting-banner-{{ section.id }} {
-    background: {{ section.settings.bg_color | default: '#1C2B1A' }};
+    background: {{ section.settings.bg_color | default: '#000000' }};
     color: {{ section.settings.text_color | default: '#F5EFE3' }};
   }
   .gh-tasting-banner-{{ section.id }} .gh-tasting-banner__inner {
@@ -148,7 +148,7 @@
     { "type": "url", "id": "btn_primary_url", "label": "Primary CTA URL" },
     { "type": "text", "id": "btn_secondary_label", "label": "Secondary CTA label", "default": "Plan your visit" },
     { "type": "url", "id": "btn_secondary_url", "label": "Secondary CTA URL" },
-    { "type": "color", "id": "bg_color", "label": "Background colour", "default": "#1C2B1A" },
+    { "type": "color", "id": "bg_color", "label": "Background colour", "default": "#000000" },
     { "type": "color", "id": "text_color", "label": "Text colour", "default": "#F5EFE3" }
   ],
   "blocks": [

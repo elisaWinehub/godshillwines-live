@@ -18,7 +18,7 @@
 
 <style>
   .gh-newsletter-{{ section.id }} {
-    background: {{ section.settings.bg_color | default: '#1C2B1A' }};
+    background: {{ section.settings.bg_color | default: '#000000' }};
     color: {{ section.settings.text_color | default: '#F5EFE3' }};
     padding: 72px 40px;
   }
@@ -105,7 +105,7 @@
     { "type": "text", "id": "btn_label", "label": "Button label", "default": "Subscribe" },
     { "type": "text", "id": "placeholder", "label": "Input placeholder", "default": "Your email address" },
     { "type": "text", "id": "privacy_note", "label": "Privacy note", "default": "We respect your privacy. Unsubscribe any time." },
-    { "type": "color", "id": "bg_color", "label": "Background colour", "default": "#1C2B1A" },
+    { "type": "color", "id": "bg_color", "label": "Background colour", "default": "#000000" },
     { "type": "color", "id": "accent_color", "label": "Button colour", "default": "#B8913A" },
     { "type": "color", "id": "text_color", "label": "Text colour", "default": "#F5EFE3" }
   ],

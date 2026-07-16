@@ -86,7 +86,7 @@
       font-family: var(--font-serif, 'EB Garamond', Georgia, serif);
       font-size: 20px;
       font-weight: 400;
-      color: #1C2B1A;
+      color: #000000;
       margin: 0 0 10px;
       letter-spacing: -0.01em;
     }
@@ -123,10 +123,10 @@
     }
     .gh-age-btn-no {
       background: transparent;
-      color: #1C2B1A;
+      color: #000000;
       border: 0.5px solid rgba(28,43,26,0.25);
     }
-    .gh-age-btn-no:hover { border-color: #1C2B1A; background: rgba(28,43,26,0.04); }
+    .gh-age-btn-no:hover { border-color: #000000; background: rgba(28,43,26,0.04); }
     .gh-age-legal {
       font-size: 11px;
       color: rgba(107,118,104,0.65);
@@ -201,7 +201,7 @@
   <div class="gh-age-gate" id="gh-age-gate" style="display:none; --gh-age-accent: {{ accent }};">
     <div class="gh-age-overlay" style="background: {{ overlay_hex }}; opacity: {{ overlay_opacity }};">
       <div class="gh-age-modal" id="gh-age-main">
-        <div class="gh-age-modal-header" style="background: {{ settings.age_gate_header_bg | default: '#1C2B1A' }};">
+        <div class="gh-age-modal-header" style="background: {{ settings.age_gate_header_bg | default: '#000000' }};">
           <div class="gh-age-logo-wrap">
             {% if settings.age_gate_logo != blank %}
               {{

@@ -84,9 +84,9 @@
       ],
       "settings": {
         "bg_color": "#f5efe3",
-        "text_color": "#1c2b1a",
+        "text_color": "#000000",
         "cell_bg": "#f5efe3",
-        "title_color": "#1c2b1a",
+        "title_color": "#000000",
         "dark_mode": false
       }
     },
@@ -115,7 +115,7 @@
         "btn_label": "View all awards →",
         "btn_url": "",
         "show_btn": false,
-        "bg_color": "#1c2b1a"
+        "bg_color": "#000000"
       }
     }
   },
