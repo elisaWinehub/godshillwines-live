@@ -30,7 +30,7 @@
       --hdr-icon-overlay: {{ section.settings.overlay_icon_color }};
       --gh-nav-active: {{ section.settings.nav_color }};
       --gh-nav-overlay: {{ section.settings.overlay_nav_color }};
-      --gh-header-bg-scrolled: {{ section.settings.scrolled_bg_color | default: '#1c2b1af7' }};
+      --gh-header-bg-scrolled: {{ section.settings.scrolled_bg_color | default: '#000000f7' }};
       --nav-fw: {{ section.settings.nav_font_weight }};
       --nav-size: {{ section.settings.nav_font_size }}px;
       --bp: {{ section.settings.mobile_breakpoint }}px;
@@ -203,7 +203,7 @@
     transition: background-color 0.28s ease, box-shadow 0.28s ease;
   }
   .shopify-section.gh-custom-store-header[data-gh-section-header="{{ section.id }}"][data-gh-overlay='true'][data-scrolled='true'] {
-    background-color: {{ section.settings.scrolled_bg_color | default: '#1c2b1af7' }};
+    background-color: {{ section.settings.scrolled_bg_color | default: '#000000f7' }};
     box-shadow: 0 {{ section.settings.border_width_below }}px 16px rgb(0 0 0 / {{ section.settings.shadow_strength | divided_by: 100.0 }});
   }
   .shopify-section.gh-custom-store-header[data-gh-section-header="{{ section.id }}"][data-gh-overlay='false'],
@@ -1077,7 +1077,7 @@
       "type": "color",
       "id": "scrolled_bg_color",
       "label": "Scrolled/sticky header background",
-      "default": "#1c2b1af7"
+      "default": "#000000f7"
     },
     {
       "type": "range",

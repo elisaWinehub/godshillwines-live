@@ -1,5 +1,5 @@
 {% render 'gh-tokens' %}
-{% assign bg_color = section.settings.bg_color | default: '#1C2B1A' %}
+{% assign bg_color = section.settings.bg_color | default: '#000000' %}
 {% assign text_color = section.settings.text_color | default: '#F5EFE3' %}
 {% assign accent = section.settings.accent_color | default: '#B8913A' %}
 
@@ -89,7 +89,7 @@
   "name": "GH — Infobar",
   "max_blocks": 4,
   "settings": [
-    { "type": "color", "id": "bg_color", "label": "Background colour", "default": "#1C2B1A" },
+    { "type": "color", "id": "bg_color", "label": "Background colour", "default": "#000000" },
     { "type": "color", "id": "text_color", "label": "Text colour", "default": "#F5EFE3" },
     { "type": "color", "id": "accent_color", "label": "Icon accent colour", "default": "#B8913A" }
   ],

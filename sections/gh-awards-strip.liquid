@@ -1,5 +1,5 @@
 {%- render 'gh-tokens' -%}
-<section class="gh-awards-strip-{{ section.id }}" style="background: {{ section.settings.bg_color | default: '#1C2B1A' }};">
+<section class="gh-awards-strip-{{ section.id }}" style="background: {{ section.settings.bg_color | default: '#000000' }};">
   <div class="gh-awards-strip-shell">
     <p class="gh-eyebrow">{{ section.settings.eyebrow | default: 'Award Winning Wines' }}</p>
     <span class="gh-divider"></span>
@@ -60,7 +60,7 @@
     { "type": "text", "id": "btn_label", "label": "CTA label (optional)", "default": "View all awards →" },
     { "type": "url", "id": "btn_url", "label": "CTA URL" },
     { "type": "checkbox", "id": "show_btn", "label": "Show CTA button", "default": false },
-    { "type": "color", "id": "bg_color", "label": "Background", "default": "#1C2B1A" }
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#000000" }
   ],
   "blocks": [
     {

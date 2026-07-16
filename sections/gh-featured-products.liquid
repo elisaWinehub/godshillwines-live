@@ -152,7 +152,7 @@
     border-radius: 2px;
   }
   .gh-featured-products-{{ section.id }} .gh-featured-products__promo {
-    background: {{ section.settings.promo_bg_color | default: '#1C2B1A' }};
+    background: {{ section.settings.promo_bg_color | default: '#000000' }};
     color: var(--gh-cream);
     border-radius: 4px;
     padding: 28px 24px;
@@ -235,7 +235,7 @@
     { "type": "text", "id": "promo_price", "label": "Promo price", "default": "From $420" },
     { "type": "text", "id": "promo_btn_label", "label": "Promo CTA label", "default": "Shop now" },
     { "type": "url", "id": "promo_btn_url", "label": "Promo CTA URL" },
-    { "type": "color", "id": "promo_bg_color", "label": "Promo card background", "default": "#1C2B1A" },
+    { "type": "color", "id": "promo_bg_color", "label": "Promo card background", "default": "#000000" },
     { "type": "checkbox", "id": "show_product_badge", "label": "Show \"Winter Special\" badge", "default": true },
     { "type": "text", "id": "badge_label", "label": "Badge label", "default": "Winter Special" }
   ],

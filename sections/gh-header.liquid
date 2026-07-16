@@ -2,7 +2,7 @@
   To use in themes with header section groups, add this section to the Header group and disable the default header.
 {% endcomment %}
 {% render 'gh-tokens' %}
-{% assign nav_bg = section.settings.nav_bg_scrolled | default: '#1C2B1A' %}
+{% assign nav_bg = section.settings.nav_bg_scrolled | default: '#000000' %}
 {% assign gold_color = section.settings.gold_color | default: '#B8913A' %}
 
 <header class="gh-header gh-header-{{ section.id }}" {{ section.shopify_attributes }}>
@@ -145,7 +145,7 @@
     { "type": "link_list", "id": "menu", "label": "Navigation menu", "default": "main-menu" },
     { "type": "text", "id": "book_button_label", "label": "Book Now button label", "default": "Book Now" },
     { "type": "url", "id": "book_button_link", "label": "Book Now button URL" },
-    { "type": "color", "id": "nav_bg_scrolled", "label": "Nav background (scrolled)", "default": "#1C2B1A" },
+    { "type": "color", "id": "nav_bg_scrolled", "label": "Nav background (scrolled)", "default": "#000000" },
     { "type": "color", "id": "gold_color", "label": "Accent / button colour", "default": "#B8913A" }
   ],
   "presets": [{ "name": "GH — Header" }]

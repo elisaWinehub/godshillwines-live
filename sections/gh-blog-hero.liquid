@@ -6,7 +6,7 @@
     overflow: hidden;
     display: flex;
     align-items: flex-end;
-    background: #1C2B1A;
+    background: #000000;
   }
   .gh-blog-hero-{{ section.id }} .gh-blog-hero-bg-{{ section.id }} {
     position: absolute;
@@ -81,7 +81,7 @@
     {% if section.settings.hero_image %}
       style="background-image: url('{{ section.settings.hero_image | image_url: width: 1600 }}')"
     {% else %}
-      style="background-color: #1C2B1A;"
+      style="background-color: #000000;"
     {% endif %}>
   </div>
   <div class="gh-blog-hero-overlay-{{ section.id }}"></div>

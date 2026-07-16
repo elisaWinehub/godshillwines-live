@@ -112,7 +112,7 @@
         "info_4"
       ],
       "settings": {
-        "bg_color": "#1c2b1a",
+        "bg_color": "#000000",
         "text_color": "#f5efe3",
         "accent_color": "#b8913a"
       }
@@ -131,7 +131,7 @@
         "promo_price": "From $420",
         "promo_btn_label": "Shop now",
         "promo_btn_url": "",
-        "promo_bg_color": "#1c2b1a",
+        "promo_bg_color": "#000000",
         "show_product_badge": true,
         "badge_label": "Winter Special"
       }
@@ -175,7 +175,7 @@
         "btn_primary_url": "",
         "btn_secondary_label": "Plan your visit",
         "btn_secondary_url": "",
-        "bg_color": "#1c2b1a",
+        "bg_color": "#000000",
         "text_color": "#f5efe3"
       }
     },
@@ -266,7 +266,7 @@
         "btn_label": "Subscribe",
         "placeholder": "Your email address",
         "privacy_note": "We respect your privacy. Unsubscribe any time.",
-        "bg_color": "#1c2b1a",
+        "bg_color": "#000000",
         "accent_color": "#b8913a",
         "text_color": "#f5efe3"
       }
