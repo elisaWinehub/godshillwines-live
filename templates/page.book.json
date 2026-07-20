@@ -61,7 +61,7 @@
             "secondary_btn_label": "",
             "secondary_btn_url": "",
             "show_resdiary_embed": true,
-            "resdiary_embed": "<div id=\"rd-widget-frame\" style=\"max-width: 285px; margin: auto;\"></div>\n\n \n\n<input id=\"rdwidgeturl\" name=\"rdwidgeturl\" value=\"https://booking.resdiary.com/widget/FixedSize/EnniaCucinaGodsHillWines/11809?includeJquery=false\" type=\"hidden\">\n\n<script type=\"text/javascript\" src=\"https://booking.resdiary.com/bundles/WidgetV2Loader.js\"></script>"
+            "resdiary_embed": "<div id=\"rd-widget-frame\" style=\"max-width: 600px; margin: auto;\"></div>\n\n \n\n<input id=\"rdwidgeturl\" name=\"rdwidgeturl\" value=\"https://booking.resdiary.com/widget/Standard/EnniaCucinaGodsHillWines/11809?includeJquery=false\" type=\"hidden\">\n\n<script type=\"text/javascript\" src=\"https://booking.resdiary.com/bundles/WidgetV2Loader.js\"></script>"
           }
         },
         "b_accommodation": {
