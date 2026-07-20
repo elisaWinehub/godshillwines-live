@@ -39,7 +39,8 @@
             "primary_btn_style": "gold",
             "secondary_btn_label": "Send an enquiry",
             "secondary_btn_url": "/pages/contact",
-            "show_resdiary_embed": false
+            "show_resdiary_embed": false,
+            "resdiary_embed": ""
           }
         },
         "b_restaurant": {
@@ -60,7 +61,7 @@
             "secondary_btn_label": "",
             "secondary_btn_url": "",
             "show_resdiary_embed": true,
-            "resdiary_embed": ""
+            "resdiary_embed": "<div id=\"rd-widget-frame\" style=\"max-width: 285px; margin: auto;\"></div>\n\n \n\n<input id=\"rdwidgeturl\" name=\"rdwidgeturl\" value=\"https://booking.resdiary.com/widget/FixedSize/EnniaCucinaGodsHillWines/11809?includeJquery=false\" type=\"hidden\">\n\n<script type=\"text/javascript\" src=\"https://booking.resdiary.com/bundles/WidgetV2Loader.js\"></script>"
           }
         },
         "b_accommodation": {
@@ -80,7 +81,8 @@
             "primary_btn_style": "vine",
             "secondary_btn_label": "Enquire",
             "secondary_btn_url": "/pages/contact",
-            "show_resdiary_embed": false
+            "show_resdiary_embed": false,
+            "resdiary_embed": ""
           }
         },
         "b_events": {
@@ -100,11 +102,17 @@
             "primary_btn_style": "gold",
             "secondary_btn_label": "Call us",
             "secondary_btn_url": "tel:+61408838004",
-            "show_resdiary_embed": false
+            "show_resdiary_embed": false,
+            "resdiary_embed": ""
           }
         }
       },
-      "block_order": ["b_tasting", "b_restaurant", "b_accommodation", "b_events"],
+      "block_order": [
+        "b_tasting",
+        "b_restaurant",
+        "b_accommodation",
+        "b_events"
+      ],
       "settings": {
         "sidebar_address": "34 Moppert Rd, Lyndoch SA 5351",
         "sidebar_hours": "Thu – Sun, 11am – 5pm",
@@ -117,9 +125,13 @@
         "sidebar_cta_btn_label": "Learn more →",
         "sidebar_cta_btn_url": "/pages/wine-club",
         "sidebar_directions_blurb": "Only 55 minutes from Adelaide CBD. Located in Lyndoch in the famous Southern Barossa wine region.",
-        "sidebar_maps_url": "https://maps.google.com/?q=34+Moppert+Rd+Lyndoch+SA+5351"
+        "sidebar_maps_url": "https://maps.google.com/?q=34+Moppert+Rd+Lyndoch+SA+5351",
+        "bg_color": "#fdf8f2"
       }
     }
   },
-  "order": ["gh_book_hero", "gh_book_options"]
+  "order": [
+    "gh_book_hero",
+    "gh_book_options"
+  ]
 }
