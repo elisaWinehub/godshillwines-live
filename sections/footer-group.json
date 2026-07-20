@@ -17,7 +17,7 @@
         "brand_U6Uk4B": {
           "type": "brand",
           "settings": {
-            "logo": "shopify://shop_images/gods-hill-wines-logo-white.png",
+            "logo": "shopify://shop_images/gods-hill-wines-logo.png",
             "logo_width": 120,
             "show_logo_fallback": true,
             "tagline": "<p>Family owned. Barossa made.<br/>Shared with the world.</p>",
@@ -68,7 +68,7 @@
         "padding_bottom": 40,
         "bg_color": "#ae9b46",
         "text_color": "#d7d0c3",
-        "heading_color": "#a67b22",
+        "heading_color": "#595344",
         "link_color": "#d7d0c3",
         "accent_color": "#a67b22",
         "bottom_bar_bg": "#080f0c",
